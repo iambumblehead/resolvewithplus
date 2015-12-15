@@ -1,5 +1,5 @@
 // Filename: resolvewithplus.spec.js  
-// Timestamp: 2015.12.11-17:54:31 (last modified)
+// Timestamp: 2015.12.15-07:19:46 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
 var resolvewithplus = require('../src/resolvewithplus'),

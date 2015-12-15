@@ -1,5 +1,5 @@
 // Filename: resolvewith.js  
-// Timestamp: 2015.12.11-17:54:08 (last modified)
+// Timestamp: 2015.12.15-07:20:04 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>  
 
 var fs = require('fs'),
@@ -8,7 +8,7 @@ var fs = require('fs'),
 var resolvewith = module.exports = (function (o) {
   
   o = function (requirepath, withpath, opts) {
-    return o.begin(requirepath, withpath, opts);
+    return o.begin(requirepath, withpath, opts || {});
   };
   
   // https://nodejs.org/api/modules.html#modules_module_require_id

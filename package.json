@@ -1,6 +1,6 @@
 {
   "name": "resolvewithplus",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license" : "MIT",
   "main": "src/resolvewithplus.js",
   "readmeFilename": "README.md",
