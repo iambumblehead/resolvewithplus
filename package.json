@@ -1,0 +1,29 @@
+{
+  "name": "resolvewithplus",
+  "version": "0.0.1",
+  "license" : "MIT",
+  "main": "src/resolvewithplus.js",
+  "readmeFilename": "README.md",
+  "description": "resolvewith with extra power",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iambumblehead/resolvewithplus.git"
+  },
+  "keywords": [
+    "dependency",
+    "browserify",
+    "browser",    
+    "commonjs",    
+    "resolve",
+    "file"
+  ],
+  "dependencies" : {
+  },
+  "devDependencies" : {
+    "jasmine-node" : "~1.14.x",
+    "optfn": "~0.0.x"
+  },
+  "scripts" : {
+    "test" : "node node_modules/jasmine-node/bin/jasmine-node --verbose test/"
+  }
+}
