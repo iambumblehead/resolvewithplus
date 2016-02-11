@@ -72,7 +72,7 @@ var resolvewith = module.exports = (function (o) {
 
   o.getpackagepath = function (jsonfile, opts) {
     return o.isfilesync(jsonfile) && (jsonfile = require(jsonfile)) &&
-      ((opts && opts.browser && jsonfile.browser) || jsonfile.main);
+      ((opts && opts.browser && jsonfile.browser && jsonfile.browser['index.js']) || jsonfile.main);
   };
 
   // https://nodejs.org/api/modules.html#modules_module_require_id
