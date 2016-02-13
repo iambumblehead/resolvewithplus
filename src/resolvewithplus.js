@@ -1,11 +1,11 @@
-// Filename: resolvewith.js  
-// Timestamp: 2015.12.15-07:20:04 (last modified)
+// Filename: resolvewithplus.js  
+// Timestamp: 2016.02.12-16:47:59 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>  
 
 var fs = require('fs'),
     path = require('path');
 
-var resolvewith = module.exports = (function (o) {
+var resolvewithplus = module.exports = (function (o) {
   
   o = function (requirepath, withpath, opts) {
     return o.begin(requirepath, withpath, opts || {});
@@ -23,10 +23,17 @@ var resolvewith = module.exports = (function (o) {
   // 4. THROW "not found"
   //
   o.begin = function (requirepath, withpath, opts) {
-    var fullpath = null;
+    var fullpath = null,
+        altrequirepath = null;
 
     if (typeof withpath === 'string') {
       withpath = o.getasdirname(withpath);
+      // bower, tragically, allows parent package.json files to define alternative
+      // paths to required files. More tragically, some pacakges use this behaviour
+      if (opts.browser) {
+        requirepath = o.getbower_alternate_requirepath(withpath, requirepath, opts)
+          || requirepath;
+      }
     } else {
       withpath = process.cwd();
     }
@@ -70,9 +77,25 @@ var resolvewith = module.exports = (function (o) {
     return stat && (stat.isFile() || stat.isFIFO());
   };
 
+  o.getbrowserindex = function (packagejson, opts) {
+    var browserobj =  opts && opts.browser && packagejson.browser,
+        indexprop,
+        indexval;
+    
+    if (browserobj) {
+      indexprop = Object.keys(browserobj).filter(function (prop) {
+        return /index.js$/.test(prop);
+      })[0];
+
+      indexval = indexprop in browserobj && browserobj[indexprop];
+    }
+
+    return indexval;
+  };
+
   o.getpackagepath = function (jsonfile, opts) {
     return o.isfilesync(jsonfile) && (jsonfile = require(jsonfile)) &&
-      ((opts && opts.browser && jsonfile.browser && jsonfile.browser['index.js']) || jsonfile.main);
+      (o.getbrowserindex(jsonfile, opts) || jsonfile.main);
   };
 
   // https://nodejs.org/api/modules.html#modules_module_require_id
@@ -113,7 +136,7 @@ var resolvewith = module.exports = (function (o) {
         relpath,
         json = path.join(d, 'package.json'),
         json_bower = path.join(d, 'bower.json');
-    
+
     if ((relpath =
          o.getpackagepath(json, opts) ||
          o.getpackagepath(json_bower, opts))) {
@@ -122,8 +145,8 @@ var resolvewith = module.exports = (function (o) {
       ['index.js',
        'index.json',
        'index.node'].some(function (f) {
-        return o.isfilesync(path.join(d, f)) && (filepath = path.join(d, f));
-      });
+         return o.isfilesync(path.join(d, f)) && (filepath = path.join(d, f));
+       });
     }
 
     return filepath;
@@ -160,6 +183,38 @@ var resolvewith = module.exports = (function (o) {
     }(dirarr, dirarr.length));
   };
 
+  o.getfirstparent_packagejson = function (start) {
+    var join = path.join,
+        parts = start.split(path.sep), x,
+        packagejson,
+        packagejsonpath;
+
+    for (x = parts.length; x--;) {
+      if (parts[x]) {
+        packagejsonpath = join('/', join.apply(x, parts.slice(0, x + 1)), 'package.json');
+        if (o.isfilesync(packagejsonpath)) {
+          packagejson = require(packagejsonpath);
+          break;
+        }
+      }
+    }
+    
+    return packagejson;
+  };
+
+  o.getbower_alternate_requirepath = function (start, requirepath, opts) {
+    var parent_packagejson = o.getfirstparent_packagejson(start),
+        alternate_requirepath;
+        
+    if (parent_packagejson) {
+      if (parent_packagejson.browser) {
+        alternate_requirepath = parent_packagejson.browser[requirepath];
+      }
+    }
+    
+    return alternate_requirepath;
+  };
+
   // https://nodejs.org/api/modules.html#modules_module_require_id  
   // 
   // NODE_MODULES_PATHS(START)
@@ -187,7 +242,7 @@ var resolvewith = module.exports = (function (o) {
         dirarr.push(join('/', join.apply(x, parts.slice(0, x + 1)), 'bower_components'));        
       }
     }
-
+    
     return dirarr;
   };
   
