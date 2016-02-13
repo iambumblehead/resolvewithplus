@@ -1,15 +1,15 @@
 // Filename: resolvewithplus.spec.js  
-// Timestamp: 2015.12.15-07:19:46 (last modified)
+// Timestamp: 2016.02.12-17:06:52 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
 var resolvewithplus = require('../src/resolvewithplus'),
     path = require('path');
 
 describe("resolvewithplus", function () {
-
+  /*
   it("should return the path to a bower module file", function () {
     expect(
-      resolvewithplus('bowercomponent', './test/resolvewithplus.spec.js')
+      resolvewithplus('bowercomponent', './test/resolvewithplus.spec.js', { browser : true })
     ).toBe(
       path.resolve('./test/bower_components/bowercomponent/src/bower-component.js')
     );    
@@ -30,6 +30,7 @@ describe("resolvewithplus", function () {
       path.resolve('./test/bower_components/bowercomponentbrowser/src/bower-component-browser.js')
     );    
   });  
+*/
 });
 
 
@@ -145,5 +146,3 @@ describe("resolvewith.getasdirname", function () {
     expect( /^\/.*relpath$/.test(resolvewith.getasdirname('./relpath')) ).toBe(true);
   });
 });
-
-
