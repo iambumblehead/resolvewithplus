@@ -1,5 +1,5 @@
 // Filename: resolvewithplus.js  
-// Timestamp: 2016.02.12-16:47:59 (last modified)
+// Timestamp: 2016.02.19-10:28:39 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>  
 
 var fs = require('fs'),
@@ -81,13 +81,16 @@ var resolvewithplus = module.exports = (function (o) {
     var browserobj =  opts && opts.browser && packagejson.browser,
         indexprop,
         indexval;
-    
-    if (browserobj) {
-      indexprop = Object.keys(browserobj).filter(function (prop) {
-        return /index.js$/.test(prop);
-      })[0];
 
-      indexval = indexprop in browserobj && browserobj[indexprop];
+    if (browserobj) {
+      if (typeof browserobj === 'string') {
+        indexval = browserobj;
+      } else if (typeof browserobj === 'object') {
+        indexprop = Object.keys(browserobj).filter(function (prop) {
+          return /index.js$/.test(prop);
+        })[0];
+        indexval = indexprop in browserobj && browserobj[indexprop];        
+      }
     }
 
     return indexval;
