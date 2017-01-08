@@ -1,5 +1,5 @@
 // Filename: resolvewithplus.js  
-// Timestamp: 2016.02.19-10:28:39 (last modified)
+// Timestamp: 2017.01.07-23:42:02 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>  
 
 var fs = require('fs'),
@@ -50,11 +50,12 @@ var resolvewithplus = module.exports = (function (o) {
   };  
 
   o.isdirpath = function (p) {
-    return /^\.?\.?\//.test(p);
+    return /^\.?\.?(\/|\\)/.test(p);
   };
 
   o.isrelpath = function (p) {
-    return /^.\.?(?=\/)/.test(p);
+    return /^.\.?(?=\/)/.test(p)
+      || /^.\.?(?=\\)/.test(p);
   };
 
   o.iscoremodule = function (p) {
@@ -157,7 +158,7 @@ var resolvewithplus = module.exports = (function (o) {
 
   o.getasfileordir = function (requirepath, withpath, opts) {
     var temppath;
-
+    
     if (o.isrelpath(requirepath)) {
       temppath = path.join(withpath, requirepath);
     } else {
@@ -194,7 +195,7 @@ var resolvewithplus = module.exports = (function (o) {
 
     for (x = parts.length; x--;) {
       if (parts[x]) {
-        packagejsonpath = join('/', join.apply(x, parts.slice(0, x + 1)), 'package.json');
+        packagejsonpath = join(path.sep, join.apply(x, parts.slice(0, x + 1)), 'package.json');
         if (o.isfilesync(packagejsonpath)) {
           packagejson = require(packagejsonpath);
           break;
@@ -241,8 +242,14 @@ var resolvewithplus = module.exports = (function (o) {
       }
 
       if (parts[x]) {
-        dirarr.push(join('/', join.apply(x, parts.slice(0, x + 1)), 'node_modules'));
-        dirarr.push(join('/', join.apply(x, parts.slice(0, x + 1)), 'bower_components'));        
+        if (path.sep === '/') {
+          dirarr.push(join(path.sep, join.apply(x, parts.slice(0, x + 1)), 'node_modules'));
+          dirarr.push(join(path.sep, join.apply(x, parts.slice(0, x + 1)), 'bower_components'));
+        } else {
+          // windows stuff
+          dirarr.push(path.resolve(join(join.apply(x, parts.slice(0, x + 1)), 'node_modules')));
+          dirarr.push(path.resolve(join(join.apply(x, parts.slice(0, x + 1)), 'bower_components')));
+        }
       }
     }
     

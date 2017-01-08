@@ -1,44 +1,15 @@
 // Filename: resolvewithplus.spec.js  
-// Timestamp: 2016.02.12-17:06:52 (last modified)
+// Timestamp: 2017.01.07-23:40:31 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
 var resolvewithplus = require('../src/resolvewithplus'),
+    resolvewith = resolvewithplus,
     path = require('path');
-
-describe("resolvewithplus", function () {
-  /*
-  it("should return the path to a bower module file", function () {
-    expect(
-      resolvewithplus('bowercomponent', './test/resolvewithplus.spec.js', { browser : true })
-    ).toBe(
-      path.resolve('./test/bower_components/bowercomponent/src/bower-component.js')
-    );    
-  });
-
-  it("should return the path to a bower module file", function () {
-    expect(
-      resolvewithplus('bowercomponentbrowser', './test/resolvewithplus.spec.js')
-    ).toBe(
-      path.resolve('./test/bower_components/bowercomponentbrowser/src/bower-component.js')
-    );    
-  });  
-
-  it("should return the path to a bower module's browser file", function () {
-    expect(
-      resolvewithplus('bowercomponentbrowser', './test/resolvewithplus.spec.js', { browser : true })
-    ).toBe(
-      path.resolve('./test/bower_components/bowercomponentbrowser/src/bower-component-browser.js')
-    );    
-  });  
-*/
-});
-
-
 //
 // should pass resolve with tests as well
 //
 
-var resolvewith = resolvewithplus;
+
 
 describe("resolvewith", function () {
   it("should return a core module reference as require.resolve id", function () {
@@ -138,11 +109,5 @@ describe("resolvewith", function () {
     ).toBe(
       resolvewith('path', path.resolve('../resolvewithplus/test/'))    
     );    
-  });
-});
-
-describe("resolvewith.getasdirname", function () {
-  it("should return a relative path as a fullpath", function () {
-    expect( /^\/.*relpath$/.test(resolvewith.getasdirname('./relpath')) ).toBe(true);
   });
 });
