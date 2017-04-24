@@ -1,15 +1,14 @@
 // Filename: resolvewithplus.js  
-// Timestamp: 2017.01.07-23:42:02 (last modified)
+// Timestamp: 2017.04.23-22:43:22 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>  
 
-var fs = require('fs'),
-    path = require('path');
+const fs = require('fs'),
+      path = require('path');
 
-var resolvewithplus = module.exports = (function (o) {
+const resolvewithplus = module.exports = (o => {
   
-  o = function (requirepath, withpath, opts) {
-    return o.begin(requirepath, withpath, opts || {});
-  };
+  o = (requirepath, withpath, opts) =>
+    o.begin(requirepath, withpath, opts || {});
   
   // https://nodejs.org/api/modules.html#modules_module_require_id
   //
@@ -22,7 +21,7 @@ var resolvewithplus = module.exports = (function (o) {
   // 3. LOAD_NODE_MODULES(X, dirname(Y))
   // 4. THROW "not found"
   //
-  o.begin = function (requirepath, withpath, opts) {
+  o.begin = (requirepath, withpath, opts) => {
     var fullpath = null,
         altrequirepath = null;
 
@@ -49,16 +48,15 @@ var resolvewithplus = module.exports = (function (o) {
     return fullpath;
   };  
 
-  o.isdirpath = function (p) {
-    return /^\.?\.?(\/|\\)/.test(p);
-  };
+  o.isdirpath = (p) =>
+    /^\.?\.?(\/|\\)/.test(p);
 
-  o.isrelpath = function (p) {
-    return /^.\.?(?=\/)/.test(p)
-      || /^.\.?(?=\\)/.test(p);
-  };
+  o.isrelpath = (p) =>
+    /^.\.?(?=\/)/.test(p)
+    || /^.\.?(?=\\)/.test(p);
 
-  o.iscoremodule = function (p) {
+
+  o.iscoremodule = (p) => {
     try {
       return p === require.resolve(p);
     } catch (e) {
@@ -66,7 +64,7 @@ var resolvewithplus = module.exports = (function (o) {
     }
   };
 
-  o.isfilesync = function (file) {
+  o.isfilesync = (file) => {
     var stat;
     
     try {
@@ -78,7 +76,7 @@ var resolvewithplus = module.exports = (function (o) {
     return stat && (stat.isFile() || stat.isFIFO());
   };
 
-  o.getbrowserindex = function (packagejson, opts) {
+  o.getbrowserindex = (packagejson, opts) => {
     var browserobj =  opts && opts.browser && packagejson.browser,
         indexprop,
         indexval;
@@ -87,9 +85,9 @@ var resolvewithplus = module.exports = (function (o) {
       if (typeof browserobj === 'string') {
         indexval = browserobj;
       } else if (typeof browserobj === 'object') {
-        indexprop = Object.keys(browserobj).filter(function (prop) {
-          return /index.js$/.test(prop);
-        })[0];
+        indexprop = Object.keys(browserobj).filter((prop) => (
+          /index.[tj]sx?$/.test(prop)
+        ))[0];
         indexval = indexprop in browserobj && browserobj[indexprop];        
       }
     }
@@ -97,10 +95,9 @@ var resolvewithplus = module.exports = (function (o) {
     return indexval;
   };
 
-  o.getpackagepath = function (jsonfile, opts) {
-    return o.isfilesync(jsonfile) && (jsonfile = require(jsonfile)) &&
+  o.getpackagepath = (jsonfile, opts) =>
+    o.isfilesync(jsonfile) && (jsonfile = require(jsonfile)) &&
       (o.getbrowserindex(jsonfile, opts) || jsonfile.main);
-  };
 
   // https://nodejs.org/api/modules.html#modules_module_require_id
   //
@@ -109,17 +106,18 @@ var resolvewithplus = module.exports = (function (o) {
   // 2. If X.js is a file, load X.js as JavaScript text.  STOP
   // 3. If X.json is a file, parse X.json to a JavaScript Object.  STOP
   // 4. If X.node is a file, load X.node as binary addon.  STOP  
-  o.getasfilesync = function (f) {
+  o.getasfilesync = (f) => {
     var filepath = null;
     
     if (o.isfilesync(f)) {
       filepath = f;
     } else {
       ['.js',
+       '.ts',
+       '.tsx',
        '.json',
-       '.node'].some(function (ext) {
-        return o.isfilesync(f + ext) && (filepath = f + ext);
-      });
+       '.node'].some((ext) => (
+         o.isfilesync(f + ext) && (filepath = f + ext)));
     }
     
     return filepath;
@@ -135,7 +133,7 @@ var resolvewithplus = module.exports = (function (o) {
   // 2. If X/index.js is a file, load X/index.js as JavaScript text.  STOP
   // 3. If X/index.json is a file, parse X/index.json to a JavaScript object. STOP
   // 4. If X/index.node is a file, load X/index.node as binary addon.  STOP
-  o.getasdirsync = function (d, opts) {
+  o.getasdirsync = (d, opts) => {
     var filepath = null,
         relpath,
         json = path.join(d, 'package.json'),
@@ -147,16 +145,17 @@ var resolvewithplus = module.exports = (function (o) {
       filepath = o.getasfilesync(path.join(d, relpath));
     } else {
       ['index.js',
+       'index.ts',
+       'index.tsx',       
        'index.json',
-       'index.node'].some(function (f) {
-         return o.isfilesync(path.join(d, f)) && (filepath = path.join(d, f));
-       });
+       'index.node'].some((f) => (
+         o.isfilesync(path.join(d, f)) && (filepath = path.join(d, f))));
     }
 
     return filepath;
   };
 
-  o.getasfileordir = function (requirepath, withpath, opts) {
+  o.getasfileordir = (requirepath, withpath, opts) => {
     var temppath;
     
     if (o.isrelpath(requirepath)) {
@@ -177,17 +176,17 @@ var resolvewithplus = module.exports = (function (o) {
   //    b. LOAD_AS_DIRECTORY(DIR/X)
   //
   // array sorting so that longer paths are tested first (closer to withpath)    
-  o.getasnode_module = function (n, start, opts) {
-    var dirarr = o.getasnode_module_paths(n, start, opts).sort(function (a, b) {
-      return a.length > b.length;
-    });
+  o.getasnode_module = (n, start, opts) => {
+    var dirarr = o.getasnode_module_paths(n, start, opts).sort((a, b) => (
+      a.length > b.length
+    ));
 
     return (function next (dirarr, x) {
       return !x-- ? null : (o.getasfileordir(path.join(dirarr[x], n), null, opts) || next(dirarr, x));
     }(dirarr, dirarr.length));
   };
 
-  o.getfirstparent_packagejson = function (start) {
+  o.getfirstparent_packagejson = (start) => {
     var join = path.join,
         parts = start.split(path.sep), x,
         packagejson,
@@ -206,7 +205,7 @@ var resolvewithplus = module.exports = (function (o) {
     return packagejson;
   };
 
-  o.getbower_alternate_requirepath = function (start, requirepath, opts) {
+  o.getbower_alternate_requirepath = (start, requirepath, opts) => {
     var parent_packagejson = o.getfirstparent_packagejson(start),
         alternate_requirepath;
         
@@ -231,7 +230,7 @@ var resolvewithplus = module.exports = (function (o) {
   //    b. DIRS = DIRS + DIR
   //    c. let I = I - 1
   // 5. return DIRS
-  o.getasnode_module_paths = function (n, start, opts) {
+  o.getasnode_module_paths = (n, start, opts) => {
     var join = path.join,
         parts = start.split(path.sep), x,
         dirarr = [];
@@ -256,10 +255,9 @@ var resolvewithplus = module.exports = (function (o) {
     return dirarr;
   };
   
-  o.getasdirname = function (p) {
-    return path.resolve(path.extname(p) ? path.dirname(p) : p);
-  };
+  o.getasdirname = (p) => 
+    path.resolve(path.extname(p) ? path.dirname(p) : p);
   
   return o;
 
-}());
+})();

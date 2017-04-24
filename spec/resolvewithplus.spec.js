@@ -1,5 +1,5 @@
 // Filename: resolvewithplus.spec.js  
-// Timestamp: 2017.01.07-23:40:31 (last modified)
+// Timestamp: 2017.04.23-23:31:33 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
 var resolvewithplus = require('../src/resolvewithplus'),
@@ -21,30 +21,30 @@ describe("resolvewith", function () {
   });
   
   it("should return a full path when given the relative path to an index file", function () {
-    var fullpath = path.resolve('./test/testfiles/');
+    var fullpath = path.resolve('./spec/testfiles/');
 
     expect(
       resolvewith('./path/to/indexfile', fullpath)
     ).toBe(
-      path.resolve('./test/testfiles/path/to/indexfile/index.js')
+      path.resolve('./spec/testfiles/path/to/indexfile/index.js')
     );
 
     expect(
       resolvewith('../testfiles/path/to/indexfile', fullpath)
     ).toBe(
-      path.resolve('./test/testfiles/path/to/indexfile/index.js')
+      path.resolve('./spec/testfiles/path/to/indexfile/index.js')
     );
 
     expect(
       resolvewith('./path/to/indexfile/index', fullpath)
     ).toBe(
-      path.resolve('./test/testfiles/path/to/indexfile/index.js')
+      path.resolve('./spec/testfiles/path/to/indexfile/index.js')
     );
 
     expect(
       resolvewith('./path/to/indexfile/index.js', fullpath)
     ).toBe(
-      path.resolve('./test/testfiles/path/to/indexfile/index.js')
+      path.resolve('./spec/testfiles/path/to/indexfile/index.js')
     );        
 
   });
@@ -57,9 +57,9 @@ describe("resolvewith", function () {
     );
 
     expect(
-      resolvewith('./test/testfiles/path/to/indexfile')      
+      resolvewith('./spec/testfiles/path/to/indexfile')      
     ).toBe(
-      path.resolve('./test/testfiles/path/to/indexfile/index.js')      
+      path.resolve('./spec/testfiles/path/to/indexfile/index.js')      
     );        
   });
 
@@ -72,7 +72,7 @@ describe("resolvewith", function () {
   });
 
   it("should return a full path when given the id to a module", function () {
-    var fullpath = path.resolve('./test/testfiles/');
+    var fullpath = path.resolve('./spec/testfiles/');
 
     expect(
       resolvewith('optfn', fullpath)
@@ -82,7 +82,7 @@ describe("resolvewith", function () {
   });
 
   it("should return a null when given the id to a module inaccessible from withpath", function () {
-    var fullpath = path.resolve('./test/testfiles/');
+    var fullpath = path.resolve('./spec/testfiles/');
     
     expect(
       resolvewith('notamodulename', path.join(fullpath + '/path/to/indexfile'))
@@ -95,19 +95,19 @@ describe("resolvewith", function () {
     expect(
       require.resolve('../src/resolvewithplus')
     ).toBe(
-      resolvewith('../src/resolvewithplus', path.resolve('../resolvewithplus/test/'))
+      resolvewith('../src/resolvewithplus', path.resolve('../resolvewithplus/spec/'))
     );
 
     expect(
       require.resolve('./testfiles/testscript.js')
     ).toBe(
-      resolvewith('./testfiles/testscript.js', path.resolve('../resolvewithplus/test/'))
+      resolvewith('./testfiles/testscript.js', path.resolve('../resolvewithplus/spec/'))
     );
 
     expect(
       require.resolve('path')
     ).toBe(
-      resolvewith('path', path.resolve('../resolvewithplus/test/'))    
+      resolvewith('path', path.resolve('../resolvewithplus/spec/'))    
     );    
   });
 });
