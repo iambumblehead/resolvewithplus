@@ -1,8 +1,8 @@
 {
   "name": "resolvewithplus",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "license" : "MIT",
-  "main": "src/resolvewithplus.js",
+  "main": "src/resolvewithplus",
   "readmeFilename": "README.md",
   "description": "resolvewith with extra power",
   "repository": {
@@ -23,6 +23,6 @@
     "optfn": "~0.0.x"
   },
   "scripts" : {
-    "test": "node node_modules/jasmine/bin/jasmine.js --verbose"
+    "test": "jasmine --verbose"
   }
 }

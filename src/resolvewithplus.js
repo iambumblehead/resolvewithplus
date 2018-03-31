@@ -1,5 +1,5 @@
 // Filename: resolvewithplus.js  
-// Timestamp: 2017.04.23-22:43:22 (last modified)
+// Timestamp: 2018.03.31-14:19:54 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>  
 
 const fs = require('fs'),
@@ -113,6 +113,7 @@ const resolvewithplus = module.exports = (o => {
       filepath = f;
     } else {
       ['.js',
+       '.mjs',
        '.ts',
        '.tsx',
        '.json',
@@ -145,8 +146,9 @@ const resolvewithplus = module.exports = (o => {
       filepath = o.getasfilesync(path.join(d, relpath));
     } else {
       ['index.js',
+       'index.mjs',
        'index.ts',
-       'index.tsx',       
+       'index.tsx',
        'index.json',
        'index.node'].some((f) => (
          o.isfilesync(path.join(d, f)) && (filepath = path.join(d, f))));

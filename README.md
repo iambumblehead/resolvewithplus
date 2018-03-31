@@ -1,10 +1,8 @@
 resolvewithplus
 ===============
-**(c)[Bumblehead][0], 2016** [MIT-license](#license)
+**(c)[Bumblehead][0]** [MIT-license](#license)
 
-### overview
-
-[_resolvewith_ resolves][1] a name used in CommonJS's `require(name)` relative to the path of a file, following the [node.js specification][2] exactly.  For example,
+[_resolvewith_ resolves][1] a name used in CommonJS's `require(name)` or ES6's `import 'name'` relative to the path of a file, following the [node.js specification][2] exactly.  For example,
 
 ```javascript
 resolvewithplus('./testfiles/testscript.js', '/Users/bumble/resolvewith/test/')
@@ -12,7 +10,7 @@ resolvewithplus('./testfiles/testscript.js', '/Users/bumble/resolvewith/test/')
 resolvewithplus('testmodule', '/Users/bumble/resolvewith/test/')
 // '/Users/bumble/resolvewith/node_modules/testmodule/index.js'
 ```
-_resolvewithplus_, however, is a new version of [resolvewith][1] behaviour with additional non-standard behaviour included. It recognizes [bower][3] module dependencies and it recognizes the [browser property][4] in a package.json (or bower.json) to define browser-specific entry files.
+_resolvewithplus_, however, is a new version of [resolvewith][1] behaviour with additional non-standard behaviour included. It recognizes .ts, .tsx, and .mjs files as well as the [browser property][4] in a package.json (or bower.json) to define browser-specific entry files.
 
 ```javascript
 resolvewithplus('bowermodule', '/Users/bumble/resolvewith/test/', { browser : true });
@@ -25,14 +23,11 @@ resolvewithplus('bowermodule', '/Users/bumble/resolvewith/test/', { browser : tr
 [3]: https://github.com/bower/spec/blob/master/json.md
 [4]: https://github.com/substack/browserify-handbook#browser-field
 
----------------------------------------------------------
-#### <a id="license">license
-
  ![scrounge](https://github.com/iambumblehead/scroungejs/raw/master/img/hand.png) 
 
 (The MIT License)
 
-Copyright (c) 2015 [Bumblehead][0] <chris@bumblehead.com>
+Copyright (c) [Bumblehead][0] <chris@bumblehead.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
