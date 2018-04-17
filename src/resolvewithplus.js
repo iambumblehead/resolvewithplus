@@ -77,7 +77,8 @@ const resolvewithplus = module.exports = (o => {
   };
 
   o.getbrowserindex = (packagejson, opts) => {
-    var browserobj =  opts && opts.browser && packagejson.browser,
+    let moduleobj =  opts && opts.ismodule && packagejson.module,
+        browserobj = moduleobj || opts && opts.browser && packagejson.browser,
         indexprop,
         indexval;
 
@@ -208,7 +209,7 @@ const resolvewithplus = module.exports = (o => {
   };
 
   o.getbower_alternate_requirepath = (start, requirepath, opts) => {
-    var parent_packagejson = o.getfirstparent_packagejson(start),
+    let parent_packagejson = o.getfirstparent_packagejson(start),
         alternate_requirepath;
         
     if (parent_packagejson) {
