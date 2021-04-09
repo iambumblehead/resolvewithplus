@@ -1,7 +1,7 @@
 {
   "name": "resolvewithplus",
-  "version": "0.1.1",
-  "license" : "MIT",
+  "version": "0.1.2",
+  "license": "MIT",
   "main": "src/resolvewithplus",
   "readmeFilename": "README.md",
   "description": "resolvewith with extra power",
@@ -12,17 +12,17 @@
   "keywords": [
     "dependency",
     "browserify",
-    "browser",    
-    "commonjs",    
+    "browser",
+    "commonjs",
     "resolve",
     "file"
   ],
-  "devDependencies" : {
+  "devDependencies": {
     "jasmine": "2.5.3",
     "jasmine-spec-reporter": "3.2.0",
     "optfn": "~0.0.x"
   },
-  "scripts" : {
+  "scripts": {
     "test": "jasmine --verbose"
   }
 }

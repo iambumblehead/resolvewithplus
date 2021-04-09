@@ -184,8 +184,8 @@ const resolvewithplus = module.exports = (o => {
       a.length > b.length
     ));
 
-    return (function next (dirarr, x) {
-      return !x-- ? null : (o.getasfileordir(path.join(dirarr[x], n), null, opts) || next(dirarr, x));
+    return (function next (dirarr, x, len = x - 1) {
+      return !x-- ? null : (o.getasfileordir(path.join(dirarr[len - x], n), null, opts) || next(dirarr, x, len));
     }(dirarr, dirarr.length));
   };
 
