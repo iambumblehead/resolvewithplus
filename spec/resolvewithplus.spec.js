@@ -2,112 +2,88 @@
 // Timestamp: 2017.04.23-23:31:33 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
-var resolvewithplus = require('../src/resolvewithplus'),
-    resolvewith = resolvewithplus,
-    path = require('path');
-//
-// should pass resolve with tests as well
-//
+const test = require('ava');
+const resolvewithplus = require('../src/resolvewithplus');
+const path = require('path');
 
+test("should return a core module reference as require.resolve id", t => {
+  t.is( resolvewithplus('path'), require.resolve('path') );    
+});
 
+test("should return a full path when given the relative path to an index file", t => {
+  const fullpath = path.resolve('./spec/testfiles/');
 
-describe("resolvewith", function () {
-  it("should return a core module reference as require.resolve id", function () {
-    expect(
-      resolvewith('path')
-    ).toBe(
-      require.resolve('path')
-    );    
-  });
+  t.is(
+    resolvewithplus('./path/to/indexfile', fullpath),
+    path.resolve('./spec/testfiles/path/to/indexfile/index.js')
+  );
+
+  t.is(
+    resolvewithplus('../testfiles/path/to/indexfile', fullpath),
+    path.resolve('./spec/testfiles/path/to/indexfile/index.js')
+  );
+
+  t.is(
+    resolvewithplus('./path/to/indexfile/index', fullpath),
+    path.resolve('./spec/testfiles/path/to/indexfile/index.js')
+  );
+
+  t.is(
+    resolvewithplus('./path/to/indexfile/index.js', fullpath),
+    path.resolve('./spec/testfiles/path/to/indexfile/index.js')
+  );
+});
+
+test("should use the process path as a default 'with' path (second parameter)", t => {
+  t.is(
+    resolvewithplus('./path/to/indexfile'),
+    null
+  );
+
+  t.is(
+    resolvewithplus('./spec/testfiles/path/to/indexfile'),
+    path.resolve('./spec/testfiles/path/to/indexfile/index.js')      
+  );        
+});
+
+test("should return null if a path does not exist", t => {
+  t.is(
+    resolvewithplus('./path/does/not/exist'),
+    null
+  );
+});
+
+test("should return a full path when given the id to a module", t => {
+  const fullpath = path.resolve('./spec/testfiles/');
+
+  t.is(
+    resolvewithplus('optfn', fullpath),
+    path.resolve('./node_modules/optfn/optfn.js')
+  );
+});
+
+test("should return a null when given the id to a module inaccessible from withpath", t => {
+  const fullpath = path.resolve('./spec/testfiles/');
   
-  it("should return a full path when given the relative path to an index file", function () {
-    var fullpath = path.resolve('./spec/testfiles/');
+  t.is(
+    resolvewithplus('notamodulename', path.join(fullpath + '/path/to/indexfile')),
+    null
+  );        
+});
 
-    expect(
-      resolvewith('./path/to/indexfile', fullpath)
-    ).toBe(
-      path.resolve('./spec/testfiles/path/to/indexfile/index.js')
-    );
+test("should follow the behaviour of require.resolve", t => {
+  t.is(
+    require.resolve('../src/resolvewithplus'),
+    resolvewithplus('../src/resolvewithplus', path.resolve('../resolvewithplus/spec/'))
+  );
 
-    expect(
-      resolvewith('../testfiles/path/to/indexfile', fullpath)
-    ).toBe(
-      path.resolve('./spec/testfiles/path/to/indexfile/index.js')
-    );
+  t.is(
+    require.resolve('./testfiles/testscript.js'),
+    resolvewithplus('./testfiles/testscript.js', path.resolve('../resolvewithplus/spec/'))
+  );
 
-    expect(
-      resolvewith('./path/to/indexfile/index', fullpath)
-    ).toBe(
-      path.resolve('./spec/testfiles/path/to/indexfile/index.js')
-    );
-
-    expect(
-      resolvewith('./path/to/indexfile/index.js', fullpath)
-    ).toBe(
-      path.resolve('./spec/testfiles/path/to/indexfile/index.js')
-    );        
-
-  });
-
-  it("should use the process path as a default 'with' path (second parameter)", function () {
-    expect(
-      resolvewith('./path/to/indexfile')
-    ).toBe(
-      null
-    );
-
-    expect(
-      resolvewith('./spec/testfiles/path/to/indexfile')      
-    ).toBe(
-      path.resolve('./spec/testfiles/path/to/indexfile/index.js')      
-    );        
-  });
-
-  it("should return null if a path does not exist", function () {
-    expect(
-      resolvewith('./path/does/not/exist')
-    ).toBe(
-      null
-    );
-  });
-
-  it("should return a full path when given the id to a module", function () {
-    var fullpath = path.resolve('./spec/testfiles/');
-
-    expect(
-      resolvewith('optfn', fullpath)
-    ).toBe(
-      path.resolve('./node_modules/optfn/optfn.js')
-    );
-  });
-
-  it("should return a null when given the id to a module inaccessible from withpath", function () {
-    var fullpath = path.resolve('./spec/testfiles/');
-    
-    expect(
-      resolvewith('notamodulename', path.join(fullpath + '/path/to/indexfile'))
-    ).toBe(
-      null
-    );        
-  });
-
-  it("should follow the behaviour of require.resolve", function () {
-    expect(
-      require.resolve('../src/resolvewithplus')
-    ).toBe(
-      resolvewith('../src/resolvewithplus', path.resolve('../resolvewithplus/spec/'))
-    );
-
-    expect(
-      require.resolve('./testfiles/testscript.js')
-    ).toBe(
-      resolvewith('./testfiles/testscript.js', path.resolve('../resolvewithplus/spec/'))
-    );
-
-    expect(
-      require.resolve('path')
-    ).toBe(
-      resolvewith('path', path.resolve('../resolvewithplus/spec/'))    
-    );    
-  });
+  t.is(
+    require.resolve('path'),
+    resolvewithplus('path', path.resolve('../resolvewithplus/spec/'))    
+  );    
 });
