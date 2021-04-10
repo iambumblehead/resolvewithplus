@@ -1,6 +1,6 @@
 {
   "name": "resolvewithplus",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "src/resolvewithplus",
   "readmeFilename": "README.md",
@@ -19,6 +19,7 @@
   ],
   "devDependencies": {
     "ava": "4.0.0-alpha.2",
+    "koa": "^2.13.1",
     "optfn": "~0.0.x"
   },
   "scripts": {

@@ -87,3 +87,12 @@ test("should follow the behaviour of require.resolve", t => {
     resolvewithplus('path', path.resolve('../resolvewithplus/spec/'))    
   );    
 });
+
+test("should handle package.json 'exports' field", t => {
+  const fullpath = path.resolve('./spec/testfiles/');
+  
+  t.is(
+    resolvewithplus('koa', fullpath, { esm: true }),
+    path.resolve('./node_modules/koa/dist/koa.mjs')
+  );
+});

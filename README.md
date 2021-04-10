@@ -10,9 +10,14 @@ resolvewithplus('./testfiles/testscript.js', '/Users/bumble/resolvewith/test/')
 resolvewithplus('testmodule', '/Users/bumble/resolvewith/test/')
 // '/Users/bumble/resolvewith/node_modules/testmodule/index.js'
 ```
-_resolvewithplus_, however, is a new version of [resolvewith][1] behaviour with additional non-standard behaviour included. It recognizes .ts, .tsx, and .mjs files as well as the [browser property][4] in a package.json (or bower.json) to define browser-specific entry files.
 
+Recent support is added for esm module resolution. Note, the ESM resolution spec is not fully implemented,
 ```javascript
+resolvewithplus('koa', '/Users/bumble/resolvewith/test/', { esm : true });
+// '/Users/bumble/resolvewith/node_modules/koa/dist/koa.mjs'
+resolvewithplus('koa', '/Users/bumble/resolvewith/test/');
+// '/Users/bumble/resolvewith/node_modules/koa/lib/application.js'
+
 resolvewithplus('bowermodule', '/Users/bumble/resolvewith/test/', { browser : true });
 // '/Users/bumble/resolvewith/bower_components/bowermodule/build/bowermoduleweb.js'
 ```

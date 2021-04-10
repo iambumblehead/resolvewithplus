@@ -79,6 +79,7 @@ const resolvewithplus = module.exports = (o => {
   o.getbrowserindex = (packagejson, opts) => {
     let moduleobj =  opts && opts.ismodule && packagejson.module,
         browserobj = moduleobj || opts && opts.browser && packagejson.browser,
+        esmexportsobj = opts.esm && packagejson.exports,
         indexprop,
         indexval;
 
@@ -93,12 +94,18 @@ const resolvewithplus = module.exports = (o => {
       }
     }
 
+    if (esmexportsobj && esmexportsobj['.']) {
+      if (typeof esmexportsobj['.'].import === 'string') {
+        indexval = esmexportsobj['.'].import;
+      }
+    }
+
     return indexval;
   };
 
-  o.getpackagepath = (jsonfile, opts) =>
+  o.getpackagepath = (jsonfile, opts) => (
     o.isfilesync(jsonfile) && (jsonfile = require(jsonfile)) &&
-      (o.getbrowserindex(jsonfile, opts) || jsonfile.main);
+      (o.getbrowserindex(jsonfile, opts) || jsonfile.main) );
 
   // https://nodejs.org/api/modules.html#modules_module_require_id
   //
