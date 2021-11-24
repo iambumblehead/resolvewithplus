@@ -73,8 +73,8 @@ test("should return a null when given the id to a module inaccessible from withp
 
 test("should follow the behaviour of require.resolve", t => {
   t.is(
-    require.resolve('../src/resolvewithplus'),
-    resolvewithplus('../src/resolvewithplus', path.resolve('../resolvewithplus/spec/'))
+    require.resolve('../resolvewithplus'),
+    resolvewithplus('../resolvewithplus', path.resolve('../resolvewithplus/spec/'))
   );
 
   t.is(
