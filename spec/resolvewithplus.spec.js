@@ -3,7 +3,7 @@
 // Author(s): bumblehead <chris@bumblehead.com>
 
 const test = require('ava');
-const resolvewithplus = require('../src/resolvewithplus');
+const resolvewithplus = require('../resolvewithplus');
 const path = require('path');
 
 test("should return a core module reference as require.resolve id", t => {
