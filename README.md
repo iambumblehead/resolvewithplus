@@ -1,6 +1,6 @@
 resolvewithplus
 ===============
-**(c)[Bumblehead][0]**
+[![npm version](https://badge.fury.io/js/resolvewithplus.svg)](https://badge.fury.io/js/resolvewithplus) [![Build Status](https://github.com/iambumblehead/resolvewithplus/workflows/nodejs-ci/badge.svg)][2]
 
 _resolvewithplus_ is an iteration of the _resolvewith_ package, which resolves CJS modules following [the original node.js spec.][2] _resolvewithplus_ adds incomplete support for ESM-style `import 'name'` resolution.
 
