@@ -1,9 +1,8 @@
-// Filename: resolvewithplus.js  
-// Timestamp: 2018.03.31-14:19:54 (last modified)
-// Author(s): bumblehead <chris@bumblehead.com>  
-
 const fs = require('fs');
 const path = require('path');
+// const module = require('module');
+// const dependencyAsset = await import.meta.resolve('component-lib/asset.js');
+// const require = module.createRequire(import.meta.url);
 
 module.exports = (o => {
   o = (requirepath, withpath, opts) =>
