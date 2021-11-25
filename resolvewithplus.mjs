@@ -64,7 +64,7 @@ export default (o => {
   o.getbrowserindex = (packagejson, opts) => {
     let moduleobj =  opts && opts.ismodule && packagejson.module;
     let browserobj = moduleobj || opts && opts.browser && packagejson.browser;
-    let esmexportsobj = opts.esm && packagejson.exports;
+    let esmexportsobj = packagejson.exports;
     let indexprop;
     let indexval;
 

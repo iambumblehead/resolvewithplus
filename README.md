@@ -12,13 +12,10 @@ resolvewithplus('testmodule', '/Users/bumble/resolvewith/test/')
 // '/Users/bumble/resolvewith/node_modules/testmodule/index.js'
 
 // ESM
-resolvewithplus('koa', '/Users/bumble/resolvewith/test/', { esm : true });
+resolvewithplus('koa', '/Users/bumble/resolvewith/test/');
 // '/Users/bumble/resolvewith/node_modules/koa/dist/koa.mjs'
 resolvewithplus('koa', '/Users/bumble/resolvewith/test/');
 // '/Users/bumble/resolvewith/node_modules/koa/lib/application.js'
-
-resolvewithplus('bowermodule', '/Users/bumble/resolvewith/test/', { browser : true });
-// '/Users/bumble/resolvewith/bower_components/bowermodule/build/bowermoduleweb.js'
 ```
 
 [0]: http://www.bumblehead.com                            "bumblehead"
