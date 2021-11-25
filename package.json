@@ -1,10 +1,14 @@
 {
   "name": "resolvewithplus",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "MIT",
   "main": "resolvewithplus.js",
   "readmeFilename": "README.md",
   "description": "resolvewith with extra power",
+  "files": [
+    "resolvewithplus.js",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/iambumblehead/resolvewithplus.git"
@@ -15,14 +19,18 @@
     "browser",
     "commonjs",
     "resolve",
+    "esm",
+    "resolution",
     "file"
   ],
   "devDependencies": {
     "ava": "4.0.0-alpha.2",
+    "eslint": "^8.0.1",
     "koa": "^2.13.1",
     "optfn": "~0.0.x"
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava resolvewithplus.spec.js",
+    "lint": "eslint ./*js"
   }
 }
