@@ -2,11 +2,12 @@
   "name": "resolvewithplus",
   "version": "0.4.0",
   "license": "MIT",
-  "main": "resolvewithplus.js",
+  "main": "resolvewithplus.mjs",
   "readmeFilename": "README.md",
   "description": "resolvewith with extra power",
+  "type": "module",
   "files": [
-    "resolvewithplus.js",
+    "resolvewithplus.mjs",
     "README.md"
   ],
   "repository": {
@@ -30,7 +31,7 @@
     "optfn": "~0.0.x"
   },
   "scripts": {
-    "test": "ava resolvewithplus.spec.js",
-    "lint": "eslint ./*js"
+    "test": "ava resolvewithplus.spec.mjs",
+    "lint": "eslint ./*mjs"
   }
 }

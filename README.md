@@ -2,7 +2,7 @@ resolvewithplus
 ===============
 [![npm version](https://badge.fury.io/js/resolvewithplus.svg)](https://badge.fury.io/js/resolvewithplus) [![Build Status](https://github.com/iambumblehead/resolvewithplus/workflows/nodejs-ci/badge.svg)][2]
 
-_resolvewithplus_ is an iteration of the _resolvewith_ package, which resolves CJS modules following [the original node.js spec.][2] _resolvewithplus_ adds incomplete support for ESM-style `import 'name'` resolution.
+_resolvewithplus_ is an iteration of the _resolvewith_ package, which resolves CJS modules following [the original node.js spec.][2] _resolvewithplus_ is changed to an ESM module and adds support for ESM-style `import 'name'` resolutions. Resolving ESM paths is complex and ESM support will be lacking for edge-cases.
 
 ```javascript
 // CJS
@@ -12,13 +12,10 @@ resolvewithplus('testmodule', '/Users/bumble/resolvewith/test/')
 // '/Users/bumble/resolvewith/node_modules/testmodule/index.js'
 
 // ESM
-resolvewithplus('koa', '/Users/bumble/resolvewith/test/', { esm : true });
+resolvewithplus('koa', '/Users/bumble/resolvewith/test/');
 // '/Users/bumble/resolvewith/node_modules/koa/dist/koa.mjs'
 resolvewithplus('koa', '/Users/bumble/resolvewith/test/');
 // '/Users/bumble/resolvewith/node_modules/koa/lib/application.js'
-
-resolvewithplus('bowermodule', '/Users/bumble/resolvewith/test/', { browser : true });
-// '/Users/bumble/resolvewith/bower_components/bowermodule/build/bowermoduleweb.js'
 ```
 
 [0]: http://www.bumblehead.com                            "bumblehead"
