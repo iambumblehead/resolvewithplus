@@ -2,7 +2,7 @@ resolvewithplus
 ===============
 [![npm version](https://badge.fury.io/js/resolvewithplus.svg)](https://badge.fury.io/js/resolvewithplus) [![Build Status](https://github.com/iambumblehead/resolvewithplus/workflows/nodejs-ci/badge.svg)][2]
 
-_resolvewithplus_ is an iteration of the _resolvewith_ package, which resolves CJS modules following [the original node.js spec.][2] _resolvewithplus_ is changed to an ESM module and adds support for ESM-style `import 'name'` resolutions. Resolving ESM paths is complex and ESM support will be lacking for edge-cases.
+_resolvewithplus_ is an iteration of the _resolvewith_ package, which resolves CJS modules following [the original node.js spec.][2] _resolvewithplus_ is changed to an ESM module and adds support for ESM-style `import 'name'` resolutions. When packages export both ESM and CJS, `resolvewithplus` will return the ESM path. Resolving ESM paths is complex and ESM support will be lacking for edge-cases.
 
 ```javascript
 // CJS
@@ -11,10 +11,12 @@ resolvewithplus('./testfiles/testscript.js', '/Users/bumble/resolvewith/test/')
 resolvewithplus('testmodule', '/Users/bumble/resolvewith/test/')
 // '/Users/bumble/resolvewith/node_modules/testmodule/index.js'
 
-// ESM
+// ESM paths are returned by default and not CJS paths
 resolvewithplus('koa', '/Users/bumble/resolvewith/test/');
 // '/Users/bumble/resolvewith/node_modules/koa/dist/koa.mjs'
-resolvewithplus('koa', '/Users/bumble/resolvewith/test/');
+
+// use the older 'resolvewith' package to resolve CJS paths
+resolvewith('koa', '/Users/bumble/resolvewith/test/');
 // '/Users/bumble/resolvewith/node_modules/koa/lib/application.js'
 ```
 
