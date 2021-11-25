@@ -1,18 +1,17 @@
 resolvewithplus
 ===============
-**(c)[Bumblehead][0]** [MIT-license](#license)
+**(c)[Bumblehead][0]**
 
-[_resolvewith_ resolves][1] a name used in CommonJS's `require(name)` or ES6's `import 'name'` relative to the path of a file, following the [node.js specification][2] exactly.  For example,
+_resolvewithplus_ is an iteration of the _resolvewith_ package, which resolves CJS modules following [the original node.js spec.][2] _resolvewithplus_ adds incomplete support for ESM-style `import 'name'` resolution.
 
 ```javascript
+// CJS
 resolvewithplus('./testfiles/testscript.js', '/Users/bumble/resolvewith/test/')
 // '/Users/bumble/resolvewith/test/testfiles/testscript.js'
 resolvewithplus('testmodule', '/Users/bumble/resolvewith/test/')
 // '/Users/bumble/resolvewith/node_modules/testmodule/index.js'
-```
 
-Recent support is added for esm module resolution. Note, the ESM resolution spec is not fully implemented,
-```javascript
+// ESM
 resolvewithplus('koa', '/Users/bumble/resolvewith/test/', { esm : true });
 // '/Users/bumble/resolvewith/node_modules/koa/dist/koa.mjs'
 resolvewithplus('koa', '/Users/bumble/resolvewith/test/');
