@@ -2,9 +2,9 @@
 // Timestamp: 2017.04.23-23:31:33 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
-const test = require('ava');
-const resolvewithplus = require('../resolvewithplus');
-const path = require('path');
+import test from 'ava';
+import path from 'path';
+import resolvewithplus from './resolvewithplus.mjs';
 
 test('should return a core module reference as require.resolve id', t => {
   t.is(resolvewithplus('path'), 'path');
@@ -61,7 +61,7 @@ test('should return null when given id to withpath inaccessible module', t => {
 
 test('should follow the behaviour of require.resolve', t => {
   t.is(
-    path.resolve('./resolvewithplus.js'),
+    path.resolve('./resolvewithplus.mjs'),
     resolvewithplus('../resolvewithplus', path.resolve('../resolvewithplus/')));
 
   t.is(

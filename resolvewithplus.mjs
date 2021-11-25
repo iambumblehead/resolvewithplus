@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-// const module = require('module');
-// const dependencyAsset = await import.meta.resolve('component-lib/asset.js');
-// const require = module.createRequire(import.meta.url);
+import fs from 'fs';
+import path from 'path';
+import module from 'module';
 
-module.exports = (o => {
+const require = module.createRequire(import.meta.url);
+
+export default (o => {
   o = (requirepath, withpath, opts) =>
     o.begin(requirepath, withpath, opts || {});
   
@@ -251,5 +251,4 @@ module.exports = (o => {
     path.resolve(path.extname(p) ? path.dirname(p) : p);
   
   return o;
-
 })();
