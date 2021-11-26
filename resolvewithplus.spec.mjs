@@ -86,5 +86,5 @@ test('should handle package.json "exports" field', t => {
 test('should return values from cache', t => {
   resolvewithplus.cache['filepathkey'] = 'filepathvalue';
 
-  t.is(resolvewithplus('filepath', 'key'), 'filepathvalue' );
+  t.is(resolvewithplus('filepath', 'key'), 'filepathvalue');
 });
