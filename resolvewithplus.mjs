@@ -5,8 +5,16 @@ import module from 'module';
 const require = module.createRequire(import.meta.url);
 
 export default (o => {
-  o = (requirepath, withpath, opts) =>
-    o.begin(requirepath, withpath, opts || {});
+  o = (requirepath, withpath, opts) => {
+    let resolvedpath = o.cache[requirepath+withpath];
+    if (resolvedpath) return resolvedpath;
+
+    resolvedpath = o.begin(requirepath, withpath, opts || {});
+
+    return o.cache[requirepath+withpath] = resolvedpath;
+  };
+
+  o.cache = {};
   
   // https://nodejs.org/api/modules.html#modules_module_require_id
   //
@@ -45,8 +53,9 @@ export default (o => {
 
   o.iscoremodule = p => {
     try {
-      return p === require.resolve(p) &&
-        !(p.includes(path.sep) && path.existsSync(p));
+      return !/^[/.]/.test(p)
+        && p === require.resolve(p)
+        && !(p.includes(path.sep) && path.existsSync(p));
     } catch (e) {
       return false;
     }
