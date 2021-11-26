@@ -45,7 +45,8 @@ export default (o => {
 
   o.iscoremodule = p => {
     try {
-      return p === require.resolve(p);
+      return p === require.resolve(p) &&
+        !(p.includes(path.sep) && path.existsSync(p));
     } catch (e) {
       return false;
     }
