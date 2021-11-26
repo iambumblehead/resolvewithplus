@@ -82,3 +82,9 @@ test('should handle package.json "exports" field', t => {
     resolvewithplus('koa', fullpath, { esm : true }),
     path.resolve('./node_modules/koa/dist/koa.mjs'));
 });
+
+test('should return values from cache', t => {
+  resolvewithplus.cache['filepathkey'] = 'filepathvalue';
+
+  t.is(resolvewithplus('filepath', 'key'), 'filepathvalue');
+});
