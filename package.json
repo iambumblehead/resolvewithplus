@@ -1,6 +1,6 @@
 {
   "name": "resolvewithplus",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "license": "ISC",
   "main": "resolvewithplus.mjs",
   "readmeFilename": "README.md",
