@@ -1,7 +1,7 @@
 {
   "name": "resolvewithplus",
   "version": "0.5.0",
-  "license": "MIT",
+  "license": "ISC",
   "main": "resolvewithplus.mjs",
   "readmeFilename": "README.md",
   "description": "resolvewith with extra power",
