@@ -47,7 +47,9 @@ export default (o => {
     }
 
     return fullpath;
-  };  
+  };
+
+  o.iscoremodule = p => isBuiltinRe.test(p);
 
   o.isfilesync = (file, stat) => {
     try {
