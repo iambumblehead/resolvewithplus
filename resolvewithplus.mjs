@@ -3,6 +3,10 @@ import path from 'path';
 import module from 'module';
 
 const require = module.createRequire(import.meta.url);
+const isBuiltinRe = new RegExp(
+  '^('+module.builtinModules.join('|').replace('/', '\/')+')$');
+const isDirPathRe = /^\.?\.?(\/|\\)/;
+const isRelPathRe = /^.\.?(?=\/|\\)/;
 
 export default (o => {
   o = (requirepath, withpath, opts) => {
@@ -30,11 +34,9 @@ export default (o => {
   o.begin = (requirepath, withpath, opts) => {
     var fullpath = null;
 
-    if (typeof withpath === 'string') {
-      withpath = o.getasdirname(withpath);
-    } else {
-      withpath = process.cwd();
-    }
+    withpath = typeof withpath === 'string'
+      ? o.getasdirname(withpath)
+      : process.cwd();
 
     if (o.iscoremodule(requirepath)) {
       fullpath = requirepath;
@@ -47,19 +49,11 @@ export default (o => {
     return fullpath;
   };  
 
-  o.isdirpath = p => /^\.?\.?(\/|\\)/.test(p);
+  o.isdirpath = p => isDirPathRe.test(p);
 
-  o.isrelpath = p => /^.\.?(?=\/)/.test(p) || /^.\.?(?=\\)/.test(p);
+  o.isrelpath = p => isRelPathRe.test(p);
 
-  o.iscoremodule = p => {
-    try {
-      return !/^[/.]/.test(p)
-        && p === require.resolve(p)
-        && !(p.includes(path.sep) && path.existsSync(p));
-    } catch (e) {
-      return false;
-    }
-  };
+  o.iscoremodule = p => isBuiltinRe.test(p);
 
   o.isfilesync = (file, stat) => {
     try {
@@ -153,13 +147,9 @@ export default (o => {
   };
 
   o.getasfileordir = (requirepath, withpath, opts) => {
-    var temppath;
-    
-    if (o.isrelpath(requirepath)) {
-      temppath = path.join(withpath, requirepath);
-    } else {
-      temppath = requirepath;
-    }
+    const temppath = o.isrelpath(requirepath)
+      ? path.join(withpath, requirepath)
+      : requirepath;
 
     return o.getasfilesync(temppath, opts) || o.getasdirsync(temppath, opts);
   };
@@ -204,19 +194,6 @@ export default (o => {
     }
     
     return packagejson;
-  };
-
-  o.getbower_alternate_requirepath = (start, requirepath) => {
-    let parentPackagejson = o.getfirstparent_packagejson(start);
-    let alternateRequirepath;
-        
-    if (parentPackagejson) {
-      if (parentPackagejson.browser) {
-        alternateRequirepath = parentPackagejson.browser[requirepath];
-      }
-    }
-    
-    return alternateRequirepath;
   };
 
   // https://nodejs.org/api/modules.html#modules_module_require_id  
