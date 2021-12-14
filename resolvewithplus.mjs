@@ -3,7 +3,8 @@ import path from 'path';
 import module from 'module';
 
 const require = module.createRequire(import.meta.url);
-const isBuiltinRe = new RegExp('^('+module.builtinModules.join('|').replace('/', '\/')+')$');
+const isBuiltinRe = new RegExp(
+  '^('+module.builtinModules.join('|').replace('/', '\/')+')$');
 const isDirPathRe = /^\.?\.?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
 
