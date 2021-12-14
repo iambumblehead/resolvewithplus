@@ -35,23 +35,19 @@ export default (o => {
     var fullpath = null;
 
     withpath = typeof withpath === 'string'
-      ? o.getasdirname(withpath)
+      ? o.getasdirname(decodeURI(withpath))
       : process.cwd();
 
-    if (o.iscoremodule(requirepath)) {
+    if (isBuiltinRe.test(requirepath)) {
       fullpath = requirepath;
-    } else if (o.isdirpath(requirepath)) {
+    } else if (isDirPathRe.test(requirepath)) {
       fullpath = o.getasfileordir(requirepath, withpath, opts);
     } else {
       fullpath = o.getasnode_module(requirepath, withpath, opts);
     }
 
     return fullpath;
-  };  
-
-  o.isdirpath = p => isDirPathRe.test(p);
-
-  o.isrelpath = p => isRelPathRe.test(p);
+  };
 
   o.iscoremodule = p => isBuiltinRe.test(p);
 
@@ -147,7 +143,7 @@ export default (o => {
   };
 
   o.getasfileordir = (requirepath, withpath, opts) => {
-    const temppath = o.isrelpath(requirepath)
+    const temppath = isRelPathRe.test(requirepath)
       ? path.join(withpath, requirepath)
       : requirepath;
 
