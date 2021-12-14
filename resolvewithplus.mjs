@@ -7,7 +7,6 @@ const isBuiltinRe = new RegExp(
   '^('+module.builtinModules.join('|').replace('/', '\/')+')$');
 const isDirPathRe = /^\.?\.?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
-const whitespaceRe = /%20/g;
 
 export default (o => {
   o = (requirepath, withpath, opts) => {
@@ -36,7 +35,7 @@ export default (o => {
     var fullpath = null;
 
     withpath = typeof withpath === 'string'
-      ? o.getasdirname(withpath.replace(whitespaceRe, ' '))
+      ? o.getasdirname(decodeURI(withpath))
       : process.cwd();
 
     if (isBuiltinRe.test(requirepath)) {
