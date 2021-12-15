@@ -8,9 +8,7 @@ const isBuiltinRe = new RegExp(
 const isDirPathRe = /^\.?\.?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
 const isSupportedIndexRe = /index.[tj]sx?$/;
-
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
-
 
 export default (o => {
   o = (requirepath, withpath, opts) => {
