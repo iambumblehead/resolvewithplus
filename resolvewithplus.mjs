@@ -218,7 +218,8 @@ export default (o => {
             join(sep, join.apply(x, parts.slice(1, x + 1)), node_modules)));
       } else {
         // windows stuff
-        // [ "D:", "a", "resolvewithplus", "resolvewithplus", "testfiles"  ]
+        // [ "D:", "a", "windows", "path"  ]
+        // [ "", "a", "linux", "path"  ]
         dirarr.push(
           path.resolve(
             join(join.apply(x, parts.slice(1, x + 1)), node_modules)));

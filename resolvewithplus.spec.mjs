@@ -105,7 +105,7 @@ test.only('getasnode_module_paths, should return list of paths (posix)', t => {
   const fullpath = path.resolve('./testfiles/path/to/indexfile');
   const { sep } = path;
   const paths = fullpath.split(sep).slice(1).reduce((prev, p, i) => {
-    p = path.join(i ? prev[0][i-1] : sep, p);
+    p = path.resolve(path.join(i ? prev[0][i-1] : sep, p));
     
     prev[0].push(p);
     prev[1].push(path.join(p, 'node_modules'));
