@@ -210,15 +210,18 @@ export default (o => {
       if (parts[x] === '' || parts[x].includes(node_modules))
         continue;
 
-      if (sep === '/') {
+      if (true || sep === '/') {
         dirarr.push(
           path.resolve(
-            join(sep, join.apply(x, parts.slice(0, x + 1)), node_modules)));
+            //join(join.apply(x, parts.slice(0, x + 1)), node_modules)));
+            //join(sep, join.apply(x, parts.slice(0, x + 1)), node_modules)));
+            join(sep, join.apply(x, parts.slice(1, x + 1)), node_modules)));
       } else {
         // windows stuff
+        // [ "D:", "a", "resolvewithplus", "resolvewithplus", "testfiles"  ]
         dirarr.push(
           path.resolve(
-            join(join.apply(x, parts.slice(0, x + 1)), node_modules)));
+            join(join.apply(x, parts.slice(1, x + 1)), node_modules)));
       }
     }
     

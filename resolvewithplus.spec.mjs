@@ -101,7 +101,7 @@ test('getasdirsync, should return path with index, if found', t => {
   t.is(resolvewithplus.getasdirsync(fullpath), path.join(fullpath, 'index.js'));
 });
 
-test('getasnode_module_paths, should return list of paths (posix)', t => {
+test.only('getasnode_module_paths, should return list of paths (posix)', t => {
   const fullpath = path.resolve('./testfiles/path/to/indexfile');
   const { sep } = path;
   const paths = fullpath.split(sep).slice(1).reduce((prev, p, i) => {
@@ -121,6 +121,16 @@ test('getasnode_module_paths, should return list of paths (posix)', t => {
   //   '/home/bumble/resolvewithplus/node_modules',
   //   '/home/bumble/node_modules',
   //   '/home/node_modules'
+  // ]
+
+  // [
+  //   'D:\\a\\resolvewithplus\\testfiles\\path\\to\\indexfile\\node_modules',
+  //   'D:\\a\\resolvewithplus\\testfiles\\path\\to\\node_modules',
+  //   'D:\\a\\resolvewithplus\\testfiles\\path\\node_modules',
+  //   'D:\\a\\resolvewithplus\\testfiles\\node_modules',
+  //   'D:\\a\\resolvewithplus\\node_modules',
+  //   'D:\\a\\node_modules',
+  //   'D:\\a\\resolvewithplus\\node_modules'
   // ]
 
   t.deepEqual(
