@@ -7,8 +7,10 @@ const isBuiltinRe = new RegExp(
   '^('+module.builtinModules.join('|').replace('/', '\/')+')$');
 const isDirPathRe = /^\.?\.?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
+const isSupportedIndexRe = /index.[tj]sx?$/;
 
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
+
 
 export default (o => {
   o = (requirepath, withpath, opts) => {
@@ -75,7 +77,7 @@ export default (o => {
         indexval = browserobj;
       } else if (typeof browserobj === 'object') {
         [ indexprop ] = Object.keys(browserobj)
-          .filter(prop => /index.[tj]sx?$/.test(prop));
+          .filter(prop => isSupportedIndexRe.test(prop));
         indexval = indexprop in browserobj && browserobj[indexprop];        
       }
     }
@@ -157,7 +159,7 @@ export default (o => {
   // array sorting so that longer paths are tested first (closer to withpath)
   o.getasnode_module = (n, start, opts) => {
     const dirarr = o
-      .getasnode_module_paths(n, start)
+      .getasnode_module_paths(start)
       .sort((a, b) => a.length > b.length);
 
     return (function next (dirarr, x, len = x - 1) {
@@ -200,34 +202,20 @@ export default (o => {
   //    b. DIRS = DIRS + DIR
   //    c. let I = I - 1
   // 5. return DIRS
-  o.getasnode_module_paths = (n, start) => {
-    const node_modules = 'node_modules';
-    let { join, sep } = path;
-    let parts = start.split(sep);
-    let dirarr = [];
+  o.getasnode_module_paths = start => start.split(path.sep).slice(1)
+    .reduce((prev, p, i) => {
+      if (p === 'node_modules')
+        return prev;
 
-    for (let x = parts.length; x--;) {
-      if (parts[x] === '' || parts[x].includes(node_modules))
-        continue;
-
-      if (true || sep === '/') {
-        dirarr.push(
-          path.resolve(
-            //join(join.apply(x, parts.slice(0, x + 1)), node_modules)));
-            //join(sep, join.apply(x, parts.slice(0, x + 1)), node_modules)));
-            join(sep, join.apply(x, parts.slice(1, x + 1)), node_modules)));
-      } else {
-        // windows stuff
-        // [ "D:", "a", "windows", "path"  ]
-        // [ "", "a", "linux", "path"  ]
-        dirarr.push(
-          path.resolve(
-            join(join.apply(x, parts.slice(1, x + 1)), node_modules)));
-      }
-    }
+      // windows and linux paths split differently
+      // [ "D:", "a", "windows", "path" ] vs [ "", "linux", "path" ]
+      p = path.resolve(path.join(i ? prev[0][i-1] : path.sep, p));
     
-    return dirarr;
-  };
+      prev[0].push(p);
+      prev[1].push(path.join(p, 'node_modules'));
+
+      return prev;
+    }, [ [], [] ])[1].reverse();
   
   o.getasdirname = p => 
     path.resolve(path.extname(p) ? path.dirname(p) : p);
