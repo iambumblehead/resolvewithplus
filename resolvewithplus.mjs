@@ -210,15 +210,16 @@ export default (o => {
       if (parts[x] === '' || parts[x].includes(node_modules))
         continue;
 
-      if (sep === '/') {
-        dirarr.push(
-          join(sep, join.apply(x, parts.slice(0, x + 1)), node_modules));
-      } else {          
-        // windows stuff
-        dirarr.push(
-          path.resolve(
-            join(join.apply(x, parts.slice(0, x + 1)), node_modules)));
-      }
+      //      if (sep === '/') {
+      dirarr.push(
+        path.resolve(
+          join(sep, join.apply(x, parts.slice(0, x + 1)), node_modules)));
+      //      } else {
+      // windows stuff
+      //        dirarr.push(
+      //          path.resolve(
+      //          join(join.apply(x, parts.slice(0, x + 1)), node_modules)));
+      //      }
     }
     
     return dirarr;
