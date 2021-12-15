@@ -7,6 +7,8 @@ const isBuiltinRe = new RegExp(
   '^('+module.builtinModules.join('|').replace('/', '\/')+')$');
 const isDirPathRe = /^\.?\.?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
+const isSupportedIndexRe = /index.[tj]sx?$/;
+const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 
 export default (o => {
   o = (requirepath, withpath, opts) => {
@@ -43,7 +45,7 @@ export default (o => {
     } else if (isDirPathRe.test(requirepath)) {
       fullpath = o.getasfileordir(requirepath, withpath, opts);
     } else {
-      fullpath = o.getasnode_module(requirepath, withpath, opts);
+      fullpath = o.getasnode_module(requirepath, withpath);
     }
 
     return fullpath;
@@ -73,7 +75,7 @@ export default (o => {
         indexval = browserobj;
       } else if (typeof browserobj === 'object') {
         [ indexprop ] = Object.keys(browserobj)
-          .filter(prop => /index.[tj]sx?$/.test(prop));
+          .filter(prop => isSupportedIndexRe.test(prop));
         indexval = indexprop in browserobj && browserobj[indexprop];        
       }
     }
@@ -104,7 +106,7 @@ export default (o => {
     if (o.isfilesync(f)) {
       filepath = f;
     } else {
-      [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ]
+      supportedExtensions
         .some(ext => o.isfilesync(f + ext) && (filepath = f + ext));
     }
     
@@ -129,14 +131,8 @@ export default (o => {
     if ((relpath = o.getpackagepath(json, opts))) {
       filepath = o.getasfilesync(path.join(d, relpath));
     } else {
-      [ 'index.js',
-        'index.mjs',
-        'index.ts',
-        'index.tsx',
-        'index.json',
-        'index.node'
-      ].some(f => (
-        o.isfilesync(path.join(d, f)) && (filepath = path.join(d, f))));
+      supportedExtensions.some(f => (
+        (f = path.join(d, `index${f}`)) && o.isfilesync(f) && (filepath = f)));
     }
 
     return filepath;
@@ -160,9 +156,9 @@ export default (o => {
   //
   // array sorting so that longer paths are tested first (closer to withpath)
   o.getasnode_module = (n, start, opts) => {
-    var dirarr = o.getasnode_module_paths(n, start, opts).sort((a, b) => (
-      a.length > b.length
-    ));
+    const dirarr = o
+      .getasnode_module_paths(start)
+      .sort((a, b) => a.length > b.length);
 
     return (function next (dirarr, x, len = x - 1) {
       return !x--
@@ -204,31 +200,20 @@ export default (o => {
   //    b. DIRS = DIRS + DIR
   //    c. let I = I - 1
   // 5. return DIRS
-  o.getasnode_module_paths = (n, start) => {
-    let { join, sep } = path;
-    let parts = start.split(sep);
-    let dirarr = [];
+  o.getasnode_module_paths = start => start.split(path.sep).slice(1)
+    .reduce((prev, p, i) => {
+      if (p === 'node_modules')
+        return prev;
 
-    for (let x = parts.length; x--;) {
-      if (/node_modules/.test(parts[x])) {
-        continue;
-      }
-
-      if (parts[x]) {
-        if (sep === '/') {
-          dirarr.push(
-            join(sep, join.apply(x, parts.slice(0, x + 1)), 'node_modules'));
-        } else {
-          // windows stuff
-          dirarr.push(
-            path.resolve(
-              join(join.apply(x, parts.slice(0, x + 1)), 'node_modules')));
-        }
-      }
-    }
+      // windows and linux paths split differently
+      // [ "D:", "a", "windows", "path" ] vs [ "", "linux", "path" ]
+      p = path.resolve(path.join(i ? prev[0][i-1] : path.sep, p));
     
-    return dirarr;
-  };
+      prev[0].push(p);
+      prev[1].push(path.join(p, 'node_modules'));
+
+      return prev;
+    }, [ [], [] ])[1].reverse();
   
   o.getasdirname = p => 
     path.resolve(path.extname(p) ? path.dirname(p) : p);

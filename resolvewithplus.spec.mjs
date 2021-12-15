@@ -88,3 +88,53 @@ test('should return values from cache', t => {
 
   t.is(resolvewithplus('filepath', 'key'), 'filepathvalue');
 });
+
+test('getasfilesync, should return path with extension, if found', t => {
+  const fullpath = path.resolve('./node_modules/optfn/optfn');
+
+  t.is(resolvewithplus.getasfilesync(fullpath), `${fullpath}.js`);
+});
+
+test('getasdirsync, should return path with index, if found', t => {
+  const fullpath = path.resolve('./testfiles/path/to/indexfile');
+
+  t.is(resolvewithplus.getasdirsync(fullpath), path.join(fullpath, 'index.js'));
+});
+
+test('getasnode_module_paths, should return list of paths (posix)', t => {
+  const fullpath = path.resolve('./testfiles/path/to/indexfile');
+  const { sep } = path;
+  const paths = fullpath.split(sep).slice(1).reduce((prev, p, i) => {
+    if (p === 'node_modules')
+      return prev;
+
+    p = path.resolve(path.join(i ? prev[0][i-1] : sep, p));
+    
+    prev[0].push(p);
+    prev[1].push(path.join(p, 'node_modules'));
+
+    return prev;
+  }, [ [], [] ])[1].reverse();
+
+  // [
+  //   '/home/bumble/resolvewithplus/testfiles/path/to/indexfile/node_modules',
+  //   '/home/bumble/resolvewithplus/testfiles/path/to/node_modules',
+  //   '/home/bumble/resolvewithplus/testfiles/path/node_modules',
+  //   '/home/bumble/resolvewithplus/testfiles/node_modules',
+  //   '/home/bumble/resolvewithplus/node_modules',
+  //   '/home/bumble/node_modules',
+  //   '/home/node_modules'
+  // ]
+  //
+  // [
+  //   'D:\\a\\resolvewithplus\\testfiles\\path\\to\\indexfile\\node_modules',
+  //   'D:\\a\\resolvewithplus\\testfiles\\path\\to\\node_modules',
+  //   'D:\\a\\resolvewithplus\\testfiles\\path\\node_modules',
+  //   'D:\\a\\resolvewithplus\\testfiles\\node_modules',
+  //   'D:\\a\\resolvewithplus\\node_modules',
+  //   'D:\\a\\node_modules'
+  // ]
+
+  t.deepEqual(
+    resolvewithplus.getasnode_module_paths(fullpath), paths);
+});
