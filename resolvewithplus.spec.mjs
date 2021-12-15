@@ -98,7 +98,7 @@ test('getasfilesync, should return path with extension, if found', t => {
 test('getasdirsync, should return path with index, if found', t => {
   const fullpath = path.resolve('./testfiles/path/to/indexfile');
 
-  t.is(resolvewithplus.getasdirsync(fullpath), `${fullpath}/index.js`);
+  t.is(resolvewithplus.getasdirsync(fullpath), path.join(fullpath, 'index.js'));
 });
 
 test('getasnode_module_paths, should return list of paths (posix)', t => {
