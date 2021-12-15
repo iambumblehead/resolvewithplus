@@ -200,9 +200,9 @@ export default (o => {
   //    b. DIRS = DIRS + DIR
   //    c. let I = I - 1
   // 5. return DIRS
-  o.getasnode_module_paths = (n, start, sep = path.sep) => {
+  o.getasnode_module_paths = (n, start) => {
     const node_modules = 'node_modules';
-    let { join } = path;
+    let { join, sep } = path;
     let parts = start.split(sep);
     let dirarr = [];
 
@@ -210,16 +210,16 @@ export default (o => {
       if (parts[x] === '' || parts[x].includes(node_modules))
         continue;
 
-      //      if (sep === '/') {
-      dirarr.push(
-        path.resolve(
-          join(sep, join.apply(x, parts.slice(0, x + 1)), node_modules)));
-      //      } else {
-      // windows stuff
-      //        dirarr.push(
-      //          path.resolve(
-      //          join(join.apply(x, parts.slice(0, x + 1)), node_modules)));
-      //      }
+      if (sep === '/') {
+        dirarr.push(
+          path.resolve(
+            join(sep, join.apply(x, parts.slice(0, x + 1)), node_modules)));
+      } else {
+        // windows stuff
+        dirarr.push(
+          path.resolve(
+            join(join.apply(x, parts.slice(0, x + 1)), node_modules)));
+      }
     }
     
     return dirarr;

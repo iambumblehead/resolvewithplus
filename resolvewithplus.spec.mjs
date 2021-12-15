@@ -124,5 +124,5 @@ test('getasnode_module_paths, should return list of paths (posix)', t => {
   // ]
 
   t.deepEqual(
-    resolvewithplus.getasnode_module_paths('modulename', fullpath, sep), paths);
+    resolvewithplus.getasnode_module_paths('modulename', fullpath), paths);
 });
