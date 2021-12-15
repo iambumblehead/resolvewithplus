@@ -103,8 +103,9 @@ test('getasdirsync, should return path with index, if found', t => {
 
 test('getasnode_module_paths, should return list of paths (posix)', t => {
   const fullpath = path.resolve('./testfiles/path/to/indexfile');
-  const paths = fullpath.split('/').slice(1).reduce((prev, p, i) => {
-    p = path.join(i ? prev[0][i-1] : '/', p);
+  const { sep } = path;
+  const paths = fullpath.split(sep).slice(1).reduce((prev, p, i) => {
+    p = path.join(i ? prev[0][i-1] : sep, p);
     
     prev[0].push(p);
     prev[1].push(path.join(p, 'node_modules'));
@@ -123,5 +124,5 @@ test('getasnode_module_paths, should return list of paths (posix)', t => {
   // ]
 
   t.deepEqual(
-    resolvewithplus.getasnode_module_paths('modulename', fullpath, '/'), paths);
+    resolvewithplus.getasnode_module_paths('modulename', fullpath, sep), paths);
 });
