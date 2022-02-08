@@ -83,6 +83,14 @@ test('should handle package.json "exports" field', t => {
     path.resolve('./node_modules/koa/dist/koa.mjs'));
 });
 
+test('should handle package.json "exports" field, $.[0].import', t => {
+  const fullpath = path.resolve('./testfiles/');
+  
+  t.is(
+    resolvewithplus('yargs', fullpath, { esm : true }),
+    path.resolve('./node_modules/yargs/index.mjs'));
+});
+
 test('should return values from cache', t => {
   resolvewithplus.cache['filepathkey'] = 'filepathvalue';
 

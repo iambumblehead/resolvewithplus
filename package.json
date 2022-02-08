@@ -1,6 +1,6 @@
 {
   "name": "resolvewithplus",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "ISC",
   "main": "resolvewithplus.mjs",
   "readmeFilename": "README.md",
@@ -25,10 +25,11 @@
     "file"
   ],
   "devDependencies": {
-    "ava": "4.0.0-alpha.2",
+    "ava": "^4.0.1",
     "eslint": "^8.0.1",
-    "koa": "^2.13.1",
-    "optfn": "~0.0.x"
+    "koa": "^2.13.4",
+    "optfn": "~0.0.x",
+    "yargs": "^17.3.1"
   },
   "scripts": {
     "test": "ava resolvewithplus.spec.mjs",

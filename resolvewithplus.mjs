@@ -84,6 +84,22 @@ export default (o => {
       if (typeof esmexportsobj['.'].import === 'string') {
         indexval = esmexportsobj['.'].import;
       }
+
+      // this export pattern used by "yargs"
+      //
+      // "exports": {
+      //   ".": [{
+      //     "import": "./index.mjs",
+      //     "require": "./index.cjs"
+      //   }, "./index.cjs" ]
+      // }
+      if (Array.isArray(esmexportsobj['.'])) {
+        indexval = esmexportsobj['.'].reduce((prev, elem) => {
+          return (typeof elem === 'object' && elem.import)
+            ? elem.import
+            : prev;
+        }, null);
+      }
     }
 
     return indexval;
