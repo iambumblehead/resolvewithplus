@@ -80,7 +80,9 @@ export default (o => {
       }
     }
 
-    if (esmexportsobj && esmexportsobj['.']) {
+    if (typeof esmexportsobj === 'string') {
+      indexval = esmexportsobj;
+    } else if (esmexportsobj && esmexportsobj['.']) {
       if (typeof esmexportsobj['.'].import === 'string') {
         indexval = esmexportsobj['.'].import;
       }
