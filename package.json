@@ -34,6 +34,6 @@
   "scripts": {
     "test": "ava resolvewithplus.spec.mjs",
     "lint": "eslint ./*mjs",
-    "prepublish": "n=resolvewithplus.mjs && npx esbuild $n --minify > $n"
+    "prepublish": "n=resolvewithplus.mjs; o=$(npx esbuild $n --minify); echo $o > $n"
   }
 }
