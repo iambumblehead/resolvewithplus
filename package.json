@@ -1,14 +1,13 @@
 {
   "name": "resolvewithplus",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "license": "ISC",
   "main": "resolvewithplus.mjs",
   "readmeFilename": "README.md",
   "description": "resolvewith with extra power",
   "type": "module",
   "files": [
-    "resolvewithplus.mjs",
-    "README.md"
+    "resolvewithplus.mjs"
   ],
   "repository": {
     "type": "git",
@@ -34,6 +33,7 @@
   },
   "scripts": {
     "test": "ava resolvewithplus.spec.mjs",
-    "lint": "eslint ./*mjs"
+    "lint": "eslint ./*mjs",
+    "prepublish": "n=resolvewithplus.mjs && npx esbuild $n --minify > $n"
   }
 }
