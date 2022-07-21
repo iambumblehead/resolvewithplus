@@ -23,10 +23,8 @@ resolvewith('koa', '/Users/bumble/resolvewith/test/');
 _resolvewithplus_ caches and reuse results it generates. The first call follows rules to locate the file. Subsequent calls using the values return reults from a key store.
 
 
-[0]: http://www.bumblehead.com                            "bumblehead"
 [1]: https://github.com/iambumblehead/resolvewith/blob/master/src/resolvewith.js
 [2]: https://nodejs.org/api/modules.html#modules_module_require_id
-[3]: https://github.com/bower/spec/blob/master/json.md
-[4]: https://github.com/substack/browserify-handbook#browser-field
+
 
  ![scrounge](https://github.com/iambumblehead/scroungejs/raw/master/img/hand.png) 
