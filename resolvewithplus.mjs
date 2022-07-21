@@ -9,6 +9,8 @@ const isDirPathRe = /^\.?\.?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
 const isSupportedIndexRe = /index.[tj]sx?$/;
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
+const node_modules = 'node_modules';
+const packagejson = 'package.json';
 
 export default (o => {
   o = (requirepath, withpath, opts) => {
@@ -144,7 +146,7 @@ export default (o => {
   o.getasdirsync = (d, opts) => {
     let filepath = null;
     let relpath;
-    let json = path.join(d, 'package.json');
+    let json = path.join(d, packagejson);
 
     if ((relpath = o.getpackagepath(json, opts))) {
       filepath = o.getasfilesync(path.join(d, relpath));
@@ -195,7 +197,7 @@ export default (o => {
     for (let x = parts.length; x--;) {
       if (parts[x]) {
         packagejsonpath =
-          join(sep, join.apply(x, parts.slice(0, x + 1)), 'package.json');
+          join(sep, join.apply(x, parts.slice(0, x + 1)), packagejson);
         if (o.isfilesync(packagejsonpath)) {
           packagejson = require(packagejsonpath);
           break;
@@ -220,7 +222,7 @@ export default (o => {
   // 5. return DIRS
   o.getasnode_module_paths = start => start.split(path.sep).slice(1)
     .reduce((prev, p, i) => {
-      if (p === 'node_modules')
+      if (p === node_modules)
         return prev;
 
       // windows and linux paths split differently
@@ -228,7 +230,7 @@ export default (o => {
       p = path.resolve(path.join(i ? prev[0][i-1] : path.sep, p));
     
       prev[0].push(p);
-      prev[1].push(path.join(p, 'node_modules'));
+      prev[1].push(path.join(p, node_modules));
 
       return prev;
     }, [ [], [] ])[1].reverse();
