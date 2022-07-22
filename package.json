@@ -1,6 +1,6 @@
 {
   "name": "resolvewithplus",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "license": "ISC",
   "main": "resolvewithplus.mjs",
   "readmeFilename": "README.md",
@@ -34,7 +34,8 @@
   "scripts": {
     "test": "ava resolvewithplus.spec.mjs",
     "lint": "eslint ./*mjs",
-    "mini": "n=resolvewithplus.mjs; o=$(npx esbuild $n --minify); echo $o > $n",
+    "mini": "npx esbuild resolvewithplus.mjs --minify --allow-overwrite --outfile=resolvewithplus.mjs",
+    "test-ci": "npm run mini && npm run test",
     "prepublishOnly": "npm run mini; npm test; npm pkg delete devDependencies scripts"
   }
 }
