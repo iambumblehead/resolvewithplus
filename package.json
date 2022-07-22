@@ -34,7 +34,7 @@
   "scripts": {
     "test": "ava resolvewithplus.spec.mjs",
     "lint": "eslint ./*mjs",
-    "mini": "n=resolvewithplus.mjs; o=$(npx esbuild $n --minify); echo $o > $n",
+    "mini": "n=resolvewithplus.mjs; o=$(npx esbuild $n --minify-whitespace --minify-identifiers); echo $o > $n",
     "test-ci": "npm run mini && npm run test",
     "prepublishOnly": "npm run mini; npm test; npm pkg delete devDependencies scripts"
   }
