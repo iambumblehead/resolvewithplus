@@ -29,12 +29,12 @@
     "eslint": "^8.0.1",
     "koa": "^2.13.4",
     "optfn": "~0.0.x",
-    "yargs": "^17.3.1"
+    "yargs": "^17.3.1",
   },
   "scripts": {
     "test": "ava resolvewithplus.spec.mjs",
     "lint": "eslint ./*mjs",
-    "mini": "n=resolvewithplus.mjs; npx esbuild $n --minify --outfile=o; cp o $n",
+    "mini": "npx esbuild resolvewithplus.mjs --minify --allow-overwrite --outfile=resolvewithplus.mjs",
     "test-ci": "npm run mini && npm run test",
     "prepublishOnly": "npm run mini; npm test; npm pkg delete devDependencies scripts"
   }
