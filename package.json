@@ -29,7 +29,7 @@
     "eslint": "^8.0.1",
     "koa": "^2.13.4",
     "optfn": "~0.0.x",
-    "yargs": "^17.3.1",
+    "yargs": "^17.3.1"
   },
   "scripts": {
     "test": "ava resolvewithplus.spec.mjs",
