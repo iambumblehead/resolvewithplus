@@ -2,6 +2,7 @@
 // Timestamp: 2017.04.23-23:31:33 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
+import url from 'url';
 import test from 'ava';
 import path from 'path';
 import resolvewithplus from './resolvewithplus.mjs';
@@ -60,15 +61,20 @@ test('should return null when given id to withpath inaccessible module', t => {
 });
 
 test('should follow the behaviour of require.resolve', t => {
+  const dirname = path.dirname(url.fileURLToPath(import.meta.url));
+  // needed in case, resolvewith is cloned to a different directory name
+  const resolvewithrootdirname = path.basename(dirname);
+  const resolvewithresolved = path.resolve(`../${resolvewithrootdirname}/`);
+
   t.is(
     path.resolve('./resolvewithplus.mjs'),
-    resolvewithplus('../resolvewithplus', path.resolve('../resolvewithplus/')));
+    resolvewithplus(`../${resolvewithrootdirname}`, resolvewithresolved));
 
   t.is(
     path.resolve('./testfiles/testscript.js'),
     resolvewithplus(
       './testfiles/testscript.js',
-      path.resolve('../resolvewithplus/')));
+      path.resolve(resolvewithresolved)));
 
   t.is(
     'path',
@@ -153,4 +159,62 @@ test('getasnode_module_paths, should return list of paths (posix)', t => {
 
   t.deepEqual(
     resolvewithplus.getasnode_module_paths(fullpath), paths);
+});
+
+test('should handle exports.import path definition', t => {
+  t.is(resolvewithplus.getbrowserindex({
+    name : 'test',
+    exports : {
+      types : './index.d.ts',
+      require : './index.js',
+      import : './index.mjs'
+    }
+  }), './index.mjs');
+});
+
+test('should handle exports["."].import path definition', t => {
+  // used by 'koa@2.13.4'
+  t.is(resolvewithplus.getbrowserindex({
+    name : 'test',
+    exports : {
+      '.' : {
+        require : './index.js',
+        import : './index.mjs'
+      }
+    }
+  }), './index.mjs');
+});
+
+test('should handle exports stringy path definition', t => {
+  // used by 'got'
+  t.is(resolvewithplus.getbrowserindex({
+    name : 'test',
+    exports : './index.mjs'
+  }), './index.mjs');
+});
+
+test('should handle mixed exports', t => {
+  // used by 'yargs@17.5.1'
+  t.is(resolvewithplus.getbrowserindex({
+    name : 'test',
+    exports : {
+      './package.json' : './package.json',
+      '.' : [ {
+        import : './index.mjs',
+        require : './index.cjs'
+      }, './index.cjs' ],
+      './helpers' : {
+        import : './helpers/helpers.mjs',
+        require : './helpers/index.js'
+      },
+      './browser' : {
+        import : './browser.mjs',
+        types : './browser.d.ts'
+      },
+      './yargs' : [ {
+        import : './yargs.mjs',
+        require : './yargs'
+      }, './yargs' ]
+    }
+  }), './index.mjs');
 });
