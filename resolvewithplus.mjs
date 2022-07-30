@@ -82,27 +82,34 @@ export default (o => {
       }
     }
 
-    if (typeof esmexportsobj === 'string') {
-      indexval = esmexportsobj;
-    } else if (esmexportsobj && esmexportsobj['.']) {
-      if (typeof esmexportsobj['.'].import === 'string') {
-        indexval = esmexportsobj['.'].import;
-      }
+    if (esmexportsobj) {
+      if (typeof esmexportsobj === 'string') {
+        indexval = esmexportsobj;
+      } else if (typeof esmexportsobj.import === 'string') {
+        // "exports": {
+        //   "import": "./index.mjs"
+        // }
+        indexval = esmexportsobj.import;
+      } else if (esmexportsobj['.']) {
+        if (typeof esmexportsobj['.'].import === 'string') {
+          indexval = esmexportsobj['.'].import;
+        }
 
-      // this export pattern used by "yargs"
-      //
-      // "exports": {
-      //   ".": [{
-      //     "import": "./index.mjs",
-      //     "require": "./index.cjs"
-      //   }, "./index.cjs" ]
-      // }
-      if (Array.isArray(esmexportsobj['.'])) {
-        indexval = esmexportsobj['.'].reduce((prev, elem) => {
-          return (typeof elem === 'object' && elem.import)
-            ? elem.import
-            : prev;
-        }, null);
+        // this export pattern used by "yargs"
+        //
+        // "exports": {
+        //   ".": [{
+        //     "import": "./index.mjs",
+        //     "require": "./index.cjs"
+        //   }, "./index.cjs" ]
+        // }
+        if (Array.isArray(esmexportsobj['.'])) {
+          indexval = esmexportsobj['.'].reduce((prev, elem) => {
+            return (typeof elem === 'object' && elem.import)
+              ? elem.import
+              : prev;
+          }, null);
+        }
       }
     }
 
