@@ -8,6 +8,7 @@ const isBuiltinRe = new RegExp(
 const isDirPathRe = /^\.?\.?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
 const isSupportedIndexRe = /index.[tj]sx?$/;
+const isResolveWithPathRe = /[\\/]resolvewithplus[\\/]/;
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 const node_modules = 'node_modules';
 const packagejson = 'package.json';
@@ -229,7 +230,9 @@ export default (o => {
   // 5. return DIRS
   o.getasnode_module_paths = start => start.split(path.sep).slice(1)
     .reduce((prev, p, i) => {
-      if (p === node_modules)
+      // the second condition allow resolvewithplus unit-tests to pass,
+      // when resolvewithplus is inside another package's node_modules
+      if (p === node_modules && !isResolveWithPathRe.test(start))
         return prev;
 
       // windows and linux paths split differently
