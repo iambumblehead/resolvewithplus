@@ -11,33 +11,34 @@ import resolvewithplus from '../../resolvewithplus.js';
 test('should return a core module reference as require.resolve id', t => {
   assert.strictEqual(resolvewithplus('path'), 'path');
 });
-/*
-test('should return a full path when given relative path to index file', t => {
-  const fullpath = path.resolve('./testfiles/');
+
+test('should return a full path when given relative path to index file', () => {
+  const fullpath = path.resolve('../testfiles/');
+  const indexPath = path.resolve('../testfiles/path/to/indexfile/index.js')
 
   assert.strictEqual(
     resolvewithplus('./path/to/indexfile', fullpath),
-    path.resolve('./testfiles/path/to/indexfile/index.js'));
+    indexPath);
 
   assert.strictEqual(
     resolvewithplus('../testfiles/path/to/indexfile', fullpath),
-    path.resolve('./testfiles/path/to/indexfile/index.js'));
+    indexPath);
 
   assert.strictEqual(
     resolvewithplus('./path/to/indexfile/index', fullpath),
-    path.resolve('./testfiles/path/to/indexfile/index.js'));
+    indexPath);
 
   assert.strictEqual(
     resolvewithplus('./path/to/indexfile/index.js', fullpath),
-    path.resolve('./testfiles/path/to/indexfile/index.js'));
+    indexPath);
 });
 
 test('should use process path as a default "with" path, second param', t => {
   assert.strictEqual(resolvewithplus('./path/to/indexfile'), null);
 
   assert.strictEqual(
-    resolvewithplus('./testfiles/path/to/indexfile'),
-    path.resolve('./testfiles/path/to/indexfile/index.js'));        
+    resolvewithplus('../testfiles/path/to/indexfile'),
+    path.resolve('../testfiles/path/to/indexfile/index.js'));        
 });
 
 test('should return null if a path does not exist', t => {
@@ -45,65 +46,69 @@ test('should return null if a path does not exist', t => {
 });
 
 test('should return a full path when given the id to a module', t => {
-  const fullpath = path.resolve('./testfiles/');
+  const fullpath = path.resolve('../testfiles/');
 
   assert.strictEqual(
     resolvewithplus('optfn', fullpath),
-    path.resolve('./node_modules/optfn/optfn.js'));
+    path.resolve('../node_modules/optfn/optfn.js'));
 });
 
 test('should return null when given id to withpath inaccessible module', t => {
-  const fullpath = path.resolve('./testfiles/');
+  const fullpath = path.resolve('../testfiles/');
+  const fullpathindexfile = path.join(fullpath + '/path/to/indexfile');
   
   assert.strictEqual(
-    resolvewithplus(
-      'notamodulename', path.join(fullpath + '/path/to/indexfile')),
-    null);        
+    resolvewithplus( 'notamodulename', fullpathindexfile), null);
 });
 
 test('should follow the behaviour of require.resolve', t => {
   const dirname = path.dirname(url.fileURLToPath(import.meta.url));
+  const dirnameroot = path.resolve(dirname + '/../../');
+  
   // needed in case, resolvewith is cloned to a different directory name
-  const resolvewithrootdirname = path.basename(dirname);
-  const resolvewithresolved = path.resolve(`../${resolvewithrootdirname}/`);
+  const resolvewithrootdirname = path.basename(dirnameroot);
+  const resolvewithresolved = path
+    .resolve(`../../../${resolvewithrootdirname}/`);
 
   assert.strictEqual(
-    path.resolve('./resolvewithplus.mjs'),
+    path.resolve('../../resolvewithplus.js'),
     resolvewithplus(`../${resolvewithrootdirname}`, resolvewithresolved));
 
+  const resolvewithedpath = resolvewithplus(
+    './tests/testfiles/testscript.js',
+    path.resolve(resolvewithresolved) );
+
   assert.strictEqual(
-    path.resolve('./testfiles/testscript.js'),
-    resolvewithplus(
-      './testfiles/testscript.js',
-      path.resolve(resolvewithresolved)));
+    path.resolve('../testfiles/testscript.js'),
+    resolvewithedpath );
 
   assert.strictEqual(
     'path',
-    resolvewithplus('path', path.resolve('../resolvewithplus/')));
+    resolvewithplus('path', path.resolve('../../../resolvewithplus/')));
 });
 
 test('should handle package.json "exports" field', t => {
-  const fullpath = path.resolve('./testfiles/');
+  const fullpath = path.resolve('../testfiles/');
   
   assert.strictEqual(
     resolvewithplus('koa', fullpath, { esm : true }),
-    path.resolve('./node_modules/koa/dist/koa.mjs'));
+    path.resolve('../node_modules/koa/dist/koa.mjs'));
 });
 
 test('should handle package.json "exports" field, $.[0].import', t => {
-  const fullpath = path.resolve('./testfiles/');
+  const fullpath = path.resolve('../testfiles/');
   
   assert.strictEqual(
     resolvewithplus('yargs', fullpath, { esm : true }),
-    path.resolve('./node_modules/yargs/index.mjs'));
+    path.resolve('../node_modules/yargs/index.mjs'));
 });
 
 test('should handle package.json stringy "exports" field (got)', t => {
-  const fullpath = path.resolve('./testfiles/');
+  const fullpath = path.resolve('../testfiles/');
   
   assert.strictEqual(
     resolvewithplus('got', fullpath, { esm : true }),
-    path.resolve('./node_modules/got/dist/source/index.js'));
+    path.resolve('../node_modules/got/dist/source/index.js'));
 });
 
 test('should return values from cache', t => {
@@ -113,19 +118,21 @@ test('should return values from cache', t => {
 });
 
 test('getasfilesync, should return path with extension, if found', t => {
-  const fullpath = path.resolve('./node_modules/optfn/optfn');
+  const fullpath = path.resolve('../node_modules/optfn/optfn');
 
   assert.strictEqual(resolvewithplus.getasfilesync(fullpath), `${fullpath}.js`);
 });
 
 test('getasdirsync, should return path with index, if found', t => {
-  const fullpath = path.resolve('./testfiles/path/to/indexfile');
+  const fullpath = path.resolve('../testfiles/path/to/indexfile');
+  const fullpathindexjs = path.join(fullpath, 'index.js');
 
-  assert.strictEqual(resolvewithplus.getasdirsync(fullpath), path.join(fullpath, 'index.js'));
+  assert.strictEqual(
+    resolvewithplus.getasdirsync(fullpath), fullpathindexjs);
 });
 
 test('getasnode_module_paths, should return list of paths (posix)', t => {
-  const fullpath = path.resolve('./testfiles/path/to/indexfile');
+  const fullpath = path.resolve('../testfiles/path/to/indexfile');
   const { sep } = path;
   const paths = fullpath.split(sep).slice(1).reduce((prev, p, i) => {
     if (p === 'node_modules' && !/[\\/]resolvewithplus[\\/]/.test(fullpath))
@@ -157,8 +164,7 @@ test('getasnode_module_paths, should return list of paths (posix)', t => {
   //   'D:\\a\\resolvewithplus\\node_modules',
   //   'D:\\a\\node_modules'
   // ]
-
-  t.deepEqual(
+  assert.deepEqual(
     resolvewithplus.getasnode_module_paths(fullpath), paths);
 });
 
@@ -219,4 +225,4 @@ test('should handle mixed exports', t => {
     }
   }), './index.mjs');
 });
-*/
+
