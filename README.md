@@ -1,6 +1,6 @@
 resolvewithplus
 ===============
-[![npm version](https://badge.fury.io/js/resolvewithplus.svg)](https://badge.fury.io/js/resolvewithplus) [![Build Status](https://github.com/iambumblehead/resolvewithplus/workflows/nodejs-ci/badge.svg)][2][[![install size](https://packagephobia.now.sh/badge?p=resolvewithplus)](https://packagephobia.now.sh/result?p=resolvewithplus)
+![npm](https://img.shields.io/npm/v/resolvewithplus) [![Build Status](https://github.com/iambumblehead/resolvewithplus/workflows/nodejs-ci/badge.svg)][2] [![install size](https://packagephobia.now.sh/badge?p=resolvewithplus)](https://packagephobia.now.sh/result?p=resolvewithplus)
 
 _resolvewithplus_ iterates on the _resolvewith_ package for resolving CJS modules following [the original node.js spec.][2] _resolvewithplus_ is changed to an ESM module and adds support for ESM `import 'name'` resolutions.
 
