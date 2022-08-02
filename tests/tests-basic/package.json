@@ -1,0 +1,14 @@
+{
+  "type": "module",
+  "description": "resolvewithplus unit tests, node native runner",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iambumblehead/resolvewithplus.git"
+  },
+  "dependencies": {
+    "resolvewithplus": "file:.."
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
