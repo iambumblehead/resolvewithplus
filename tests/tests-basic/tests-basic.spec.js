@@ -3,50 +3,51 @@
 // Author(s): bumblehead <chris@bumblehead.com>
 
 import url from 'url';
-import test from 'ava';
 import path from 'path';
-import resolvewithplus from './resolvewithplus.mjs';
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import resolvewithplus from '../../resolvewithplus.js';
 
 test('should return a core module reference as require.resolve id', t => {
-  t.is(resolvewithplus('path'), 'path');
+  assert.strictEqual(resolvewithplus('path'), 'path');
 });
-
+/*
 test('should return a full path when given relative path to index file', t => {
   const fullpath = path.resolve('./testfiles/');
 
-  t.is(
+  assert.strictEqual(
     resolvewithplus('./path/to/indexfile', fullpath),
     path.resolve('./testfiles/path/to/indexfile/index.js'));
 
-  t.is(
+  assert.strictEqual(
     resolvewithplus('../testfiles/path/to/indexfile', fullpath),
     path.resolve('./testfiles/path/to/indexfile/index.js'));
 
-  t.is(
+  assert.strictEqual(
     resolvewithplus('./path/to/indexfile/index', fullpath),
     path.resolve('./testfiles/path/to/indexfile/index.js'));
 
-  t.is(
+  assert.strictEqual(
     resolvewithplus('./path/to/indexfile/index.js', fullpath),
     path.resolve('./testfiles/path/to/indexfile/index.js'));
 });
 
 test('should use process path as a default "with" path, second param', t => {
-  t.is(resolvewithplus('./path/to/indexfile'), null);
+  assert.strictEqual(resolvewithplus('./path/to/indexfile'), null);
 
-  t.is(
+  assert.strictEqual(
     resolvewithplus('./testfiles/path/to/indexfile'),
     path.resolve('./testfiles/path/to/indexfile/index.js'));        
 });
 
 test('should return null if a path does not exist', t => {
-  t.is(resolvewithplus('./path/does/not/exist'), null);
+  assert.strictEqual(resolvewithplus('./path/does/not/exist'), null);
 });
 
 test('should return a full path when given the id to a module', t => {
   const fullpath = path.resolve('./testfiles/');
 
-  t.is(
+  assert.strictEqual(
     resolvewithplus('optfn', fullpath),
     path.resolve('./node_modules/optfn/optfn.js'));
 });
@@ -54,7 +55,7 @@ test('should return a full path when given the id to a module', t => {
 test('should return null when given id to withpath inaccessible module', t => {
   const fullpath = path.resolve('./testfiles/');
   
-  t.is(
+  assert.strictEqual(
     resolvewithplus(
       'notamodulename', path.join(fullpath + '/path/to/indexfile')),
     null);        
@@ -66,17 +67,17 @@ test('should follow the behaviour of require.resolve', t => {
   const resolvewithrootdirname = path.basename(dirname);
   const resolvewithresolved = path.resolve(`../${resolvewithrootdirname}/`);
 
-  t.is(
+  assert.strictEqual(
     path.resolve('./resolvewithplus.mjs'),
     resolvewithplus(`../${resolvewithrootdirname}`, resolvewithresolved));
 
-  t.is(
+  assert.strictEqual(
     path.resolve('./testfiles/testscript.js'),
     resolvewithplus(
       './testfiles/testscript.js',
       path.resolve(resolvewithresolved)));
 
-  t.is(
+  assert.strictEqual(
     'path',
     resolvewithplus('path', path.resolve('../resolvewithplus/')));
 });
@@ -84,7 +85,7 @@ test('should follow the behaviour of require.resolve', t => {
 test('should handle package.json "exports" field', t => {
   const fullpath = path.resolve('./testfiles/');
   
-  t.is(
+  assert.strictEqual(
     resolvewithplus('koa', fullpath, { esm : true }),
     path.resolve('./node_modules/koa/dist/koa.mjs'));
 });
@@ -92,7 +93,7 @@ test('should handle package.json "exports" field', t => {
 test('should handle package.json "exports" field, $.[0].import', t => {
   const fullpath = path.resolve('./testfiles/');
   
-  t.is(
+  assert.strictEqual(
     resolvewithplus('yargs', fullpath, { esm : true }),
     path.resolve('./node_modules/yargs/index.mjs'));
 });
@@ -100,7 +101,7 @@ test('should handle package.json "exports" field, $.[0].import', t => {
 test('should handle package.json stringy "exports" field (got)', t => {
   const fullpath = path.resolve('./testfiles/');
   
-  t.is(
+  assert.strictEqual(
     resolvewithplus('got', fullpath, { esm : true }),
     path.resolve('./node_modules/got/dist/source/index.js'));
 });
@@ -108,19 +109,19 @@ test('should handle package.json stringy "exports" field (got)', t => {
 test('should return values from cache', t => {
   resolvewithplus.cache['filepathkey'] = 'filepathvalue';
 
-  t.is(resolvewithplus('filepath', 'key'), 'filepathvalue');
+  assert.strictEqual(resolvewithplus('filepath', 'key'), 'filepathvalue');
 });
 
 test('getasfilesync, should return path with extension, if found', t => {
   const fullpath = path.resolve('./node_modules/optfn/optfn');
 
-  t.is(resolvewithplus.getasfilesync(fullpath), `${fullpath}.js`);
+  assert.strictEqual(resolvewithplus.getasfilesync(fullpath), `${fullpath}.js`);
 });
 
 test('getasdirsync, should return path with index, if found', t => {
   const fullpath = path.resolve('./testfiles/path/to/indexfile');
 
-  t.is(resolvewithplus.getasdirsync(fullpath), path.join(fullpath, 'index.js'));
+  assert.strictEqual(resolvewithplus.getasdirsync(fullpath), path.join(fullpath, 'index.js'));
 });
 
 test('getasnode_module_paths, should return list of paths (posix)', t => {
@@ -162,7 +163,7 @@ test('getasnode_module_paths, should return list of paths (posix)', t => {
 });
 
 test('should handle exports.import path definition', t => {
-  t.is(resolvewithplus.getbrowserindex({
+  assert.strictEqual(resolvewithplus.getbrowserindex({
     name : 'test',
     exports : {
       types : './index.d.ts',
@@ -174,7 +175,7 @@ test('should handle exports.import path definition', t => {
 
 test('should handle exports["."].import path definition', t => {
   // used by 'koa@2.13.4'
-  t.is(resolvewithplus.getbrowserindex({
+  assert.strictEqual(resolvewithplus.getbrowserindex({
     name : 'test',
     exports : {
       '.' : {
@@ -187,7 +188,7 @@ test('should handle exports["."].import path definition', t => {
 
 test('should handle exports stringy path definition', t => {
   // used by 'got'
-  t.is(resolvewithplus.getbrowserindex({
+  assert.strictEqual(resolvewithplus.getbrowserindex({
     name : 'test',
     exports : './index.mjs'
   }), './index.mjs');
@@ -195,7 +196,7 @@ test('should handle exports stringy path definition', t => {
 
 test('should handle mixed exports', t => {
   // used by 'yargs@17.5.1'
-  t.is(resolvewithplus.getbrowserindex({
+  assert.strictEqual(resolvewithplus.getbrowserindex({
     name : 'test',
     exports : {
       './package.json' : './package.json',
@@ -218,3 +219,4 @@ test('should handle mixed exports', t => {
     }
   }), './index.mjs');
 });
+*/
