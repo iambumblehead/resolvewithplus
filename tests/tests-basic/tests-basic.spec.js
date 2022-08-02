@@ -128,7 +128,7 @@ test('getasnode_module_paths, should return list of paths (posix)', t => {
   const fullpath = path.resolve('./testfiles/path/to/indexfile');
   const { sep } = path;
   const paths = fullpath.split(sep).slice(1).reduce((prev, p, i) => {
-    if (p === 'node_modules')
+    if (p === 'node_modules' && !/[\\/]resolvewithplus[\\/]/.test(fullpath))
       return prev;
 
     p = path.resolve(path.join(i ? prev[0][i-1] : sep, p));
