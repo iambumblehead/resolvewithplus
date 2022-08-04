@@ -2,29 +2,89 @@ resolvewithplus
 ===============
 ![npm](https://img.shields.io/npm/v/resolvewithplus) [![Build Status](https://github.com/iambumblehead/resolvewithplus/workflows/nodejs-ci/badge.svg)][2] [![install size](https://packagephobia.now.sh/badge?p=resolvewithplus)](https://packagephobia.now.sh/result?p=resolvewithplus)
 
-_resolvewithplus_ iterates on the _resolvewith_ package for resolving CJS modules following [the original node.js spec.][2] _resolvewithplus_ is changed to an ESM module and adds support for ESM `import 'name'` resolutions.
-
-When a package exports both ESM and CJS, `resolvewithplus` returns the ESM path (tries to). Resolving ESM paths is complex and ESM support will be lacking for edge-cases.
-
 ```javascript
-// ESM paths are returned by default rather than CJS paths
-resolvewithplus('koa', '/Users/bumble/resolvewith/test/');
-// '/Users/bumble/resolvewith/node_modules/koa/dist/koa.mjs'
-
-// A CJS path is returned when the ESM path is not found
-resolvewithplus('./testfiles/testscript.js', '/Users/bumble/resolvewith/test/')
-// '/Users/bumble/resolvewith/test/testfiles/testscript.js'
-
-// use the older 'resolvewith' package to resolve CJS paths
-resolvewith('koa', '/Users/bumble/resolvewith/test/');
-// '/Users/bumble/resolvewith/node_modules/koa/lib/application.js'
+resolvewithplus( 'koa', '/root/resolvewith/test/' );
+// '/root/resolvewith/node_modules/koa/dist/koa.mjs'
 ```
 
-_resolvewithplus_ caches and reuse results it generates. The first call follows rules to locate the file. Subsequent calls using the values return reults from a key store.
+`resolvewithplus` resolves module paths à la the [`import.meta.resolve` node.js function][33] or the [`import-meta-resolve` npm package.][35] `resolvewithplus` [is only ~5.12kB][36] compared to [import-meta-resolve's ~182kB size,][37] at this time of writing. `resolvewithplus` has limited goals and exists mostly to be small and to resolve module paths for `esmock`,
+ * returns a path string or null, doesn't try to follow node.js' error-handling behaviour,
+ * locates modules at the local-filesystem only,
+ * locates paths with non-standard extensions such as ".tsx",
+ * caches module paths it returns, and returns the same paths for subsequent matching calls,
+ * still improving and fails to resolve some ESM export patterns, please report any issue you find,
+ * is called the same way as `import.meta.resolve`, with two parameters "specifier" and a "parent"
 
+More "complicated" ESM export patterns may yet be un-supported, for example ["#" sign subpath-patterns][38] are still un-supported `{ imports: { '#main': './main.js' } }`. The support chart below shows export patterns currently supported by esmock,
 
-[1]: https://github.com/iambumblehead/resolvewith/blob/master/src/resolvewith.js
-[2]: https://nodejs.org/api/modules.html#modules_module_require_id
-
+<table>
+  <tbody>
+    <tr>
+      <td align="left"><b>top-level exports</b><br /><pre lang="json">
+{
+  "name": "test",
+  "exports": "./main.js"
+}
+      </pre></td>
+      <td align="left" style="white-space:normal;">some notes about the pattern</td>
+    </tr>
+    <tr>
+      <td align="left"><b>subpath exports, simplified</b><br /><pre lang="json">
+{
+  "name": "test",
+  "exports": {
+    "types": "./main.ts",
+    "require": "./main.js",
+    "import": "./main.mjs"
+  }
+}
+      </pre></td>
+      <td align="left" style="white-space:normal;">some notes about the pattern</td>
+    </tr>
+    <tr>
+      <td align="left"><b>subpath exports, nested</b><br /><pre lang="json">
+{
+  "name": "test",
+  "exports": {
+    "." : {
+      "require": "./main.js",
+      "import": "./main.mjs"
+    }
+  }
+}
+      </pre></td>
+      <td align="left" style="white-space:normal;">some notes about the pattern</td>
+    </tr>
+    <tr>
+      <td align="left"><b>subpath exports, nested list</b><br /><pre lang="json">
+{
+  "name": "test",
+  "exports": {
+    "." : [ {
+      "import" : "./index.mjs",
+      "require" : "./index.cjs"
+    }, "./index.cjs" ]
+  }
+}
+      </pre></td>
+      <td align="left" style="white-space:normal;">some notes about the pattern</td>
+    </tr>
+  </tbody>
+</table>
 
  ![scrounge](https://github.com/iambumblehead/scroungejs/raw/master/img/hand.png) 
+
+[20]: https://github.com/iambumblehead/esmock/pull/68#issuecomment-1191884521
+[30]: https://github.com/facebook/jest/issues/11786#issuecomment-907136701
+[31]: https://nodejs.org/api/esm.html#resolver-algorithm-specification
+[32]: https://nodejs.org/api/packages.html#package-entry-points
+[33]: https://nodejs.org/api/esm.html#importmetaresolvespecifier-parent
+[34]: https://github.com/nodejs/modules/issues/550
+[35]: https://www.npmjs.com/package/import-meta-resolve
+[36]: https://packagephobia.com/result?p=resolvewithplus
+[37]: https://packagephobia.com/result?p=import-meta-resolve
+[38]: https://nodejs.org/api/packages.html#subpath-patterns
+[39]: https://github.com/iambumblehead/resolvewithplus
+
+
+
