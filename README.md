@@ -20,16 +20,14 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
 <table>
   <tbody>
     <tr>
-      <td align="left"><pre lang="json">
-{
+      <td align="left"><pre lang="json">{
   "name": "test",
   "exports": "./main.js"
 }</pre></td>
       <td align="left" style="white-space:normal;"><b>top-level exports</b><br />some notes about the pattern</td>
     </tr>
     <tr>
-      <td align="left"><pre lang="json">
-{
+      <td align="left"><pre lang="json">{
   "name": "test",
   "exports": {
     "types": "./main.ts",
@@ -40,8 +38,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
       <td align="left" style="white-space:normal;"><b>subpath exports, simplified</b><br />some notes about the pattern</td>
     </tr>
     <tr>
-      <td align="left"><pre lang="json">
-{
+      <td align="left"><pre lang="json">{
   "name": "test",
   "exports": {
     "." : {
@@ -53,8 +50,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
       <td align="left" style="white-space:normal;"><b>subpath exports, nested</b><br />some notes about the pattern</td>
     </tr>
     <tr>
-      <td align="left"><pre lang="json">
-{
+      <td align="left"><pre lang="json">{
   "name": "test",
   "exports": {
     "." : [ {
