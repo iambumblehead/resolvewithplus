@@ -8,12 +8,13 @@ resolvewithplus( 'koa', '/root/resolvewith/test/' );
 ```
 
 `resolvewithplus` resolves module paths à la the [`import.meta.resolve` node.js function][33] or the [`import-meta-resolve` npm package.][35] `resolvewithplus` [is only ~5.12kB][36] compared to [import-meta-resolve's ~182kB size,][37] at this time of writing. `resolvewithplus` has limited goals and exists mostly to be small and to resolve module paths for `esmock`,
- * returns a path string or null, doesn't try to follow node.js' error-handling behaviour,
- * locates modules at the local-filesystem only,
- * locates paths with non-standard extensions such as ".tsx",
- * caches module paths it returns, and returns the same paths for subsequent matching calls,
- * still improving and fails to resolve some ESM export patterns, please report any issue you find,
- * is called the same way as `import.meta.resolve`, with two parameters "specifier" and a "parent"
+  * returns a path string or null, doesn't try to follow node.js' error-handling behaviour,
+  * locates modules at the local-filesystem only,
+  * locates paths with non-standard extensions such as ".tsx",
+  * caches module paths it returns, and returns the same paths for subsequent matching calls,
+  * still improving and fails to resolve some ESM export patterns, please report any issue you find,
+  * is called the same way as `import.meta.resolve`, with two parameters "specifier" and a "parent"
+
 
 More "complicated" ESM export patterns may yet be un-supported, for example ["#" sign subpath-patterns][38] are still un-supported `{ imports: { '#main': './main.js' } }`. The support chart below shows export patterns currently supported by esmock,
 
@@ -25,7 +26,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
   "name": "test",
   "exports": "./main.js"
 }</pre></td>
-      <td align="left" style="white-space:normal;"><b>top-level exports</b><br />some notes about the pattern</td>
+      <td align="left" style="white-space:normal;"><b>top-level exports</b></td>
     </tr>
     <tr>
       <td align="left">&nbsp;
@@ -37,7 +38,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
     "import": "./main.mjs"
   }
 }</pre></td>
-      <td align="left" style="white-space:normal;"><b>subpath exports, simplified</b><br />some notes about the pattern</td>
+      <td align="left" style="white-space:normal;"><b>subpath exports, simplified</b></td>
     </tr>
     <tr>
       <td align="left">&nbsp;
@@ -50,7 +51,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
     }
   }
 }</pre></td>
-      <td align="left" style="white-space:normal;"><b>subpath exports, nested</b><br />some notes about the pattern</td>
+      <td align="left" style="white-space:normal;"><b>subpath exports, nested</b></td>
     </tr>
     <tr>
       <td align="left">&nbsp;
@@ -63,7 +64,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
     }, "./index.cjs" ]
   }
 }</pre></td>
-      <td align="left" style="white-space:normal;"><b>subpath exports, nested list</b><br />some notes about the pattern</td>
+      <td align="left" style="white-space:normal;"><b>subpath exports, nested list</b></td>
     </tr>
   </tbody>
 </table>
