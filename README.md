@@ -7,7 +7,7 @@ resolvewithplus('koa', '/root/resolvewith/test/')
 // '/root/resolvewith/node_modules/koa/dist/koa.mjs'
 ```
 
-`resolvewithplus` resolves module paths à la the [import.meta.resolve node.js function][33] or the [import-meta-resolve npm package.][35] `resolvewithplus` [is only ~6kB][36] compared to [import-meta-resolve's ~182kB size.][37] `resolvewithplus` has limited goals and exists mostly to be small and to resolve module paths for `esmock`. For more details, [see the wiki.](https://github.com/iambumblehead/resolvewithplus/wiki)
+`resolvewithplus` resolves module paths à la [node.js' import.meta.resolve function][33] and the [import-meta-resolve npm package.][35] It exists mostly to be small and to resolve module paths for `esmock`. [It's size is ~6kB][36] compared to [import-meta-resolve's ~182kB size.][37] For more details, [see the wiki.](https://github.com/iambumblehead/resolvewithplus/wiki)
 
  ![scrounge](https://github.com/iambumblehead/scroungejs/raw/master/img/hand.png) 
 
