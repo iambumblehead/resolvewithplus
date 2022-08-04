@@ -1,6 +1,6 @@
 resolvewithplus
 ===============
-![npm](https://img.shields.io/npm/v/resolvewithplus) [![Build Status](https://github.com/iambumblehead/resolvewithplus/workflows/nodejs-ci/badge.svg)][2] [![install size](https://packagephobia.now.sh/badge?p=resolvewithplus)](https://packagephobia.now.sh/result?p=resolvewithplus)
+![npm](https://img.shields.io/npm/v/resolvewithplus) ![Build Status](https://github.com/iambumblehead/resolvewithplus/workflows/nodejs-ci/badge.svg) [![install size](https://packagephobia.now.sh/badge?p=resolvewithplus)](https://packagephobia.now.sh/result?p=resolvewithplus)
 
 ```javascript
 resolvewithplus( 'koa', '/root/resolvewith/test/' );
@@ -24,8 +24,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
 {
   "name": "test",
   "exports": "./main.js"
-}
-      </pre></td>
+}</pre></td>
       <td align="left" style="white-space:normal;">some notes about the pattern</td>
     </tr>
     <tr>
@@ -37,8 +36,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
     "require": "./main.js",
     "import": "./main.mjs"
   }
-}
-      </pre></td>
+}</pre></td>
       <td align="left" style="white-space:normal;">some notes about the pattern</td>
     </tr>
     <tr>
@@ -51,8 +49,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
       "import": "./main.mjs"
     }
   }
-}
-      </pre></td>
+}</pre></td>
       <td align="left" style="white-space:normal;">some notes about the pattern</td>
     </tr>
     <tr>
@@ -65,8 +62,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
       "require" : "./index.cjs"
     }, "./index.cjs" ]
   }
-}
-      </pre></td>
+}</pre></td>
       <td align="left" style="white-space:normal;">some notes about the pattern</td>
     </tr>
   </tbody>
