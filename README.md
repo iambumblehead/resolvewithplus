@@ -20,15 +20,15 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
 <table>
   <tbody>
     <tr>
-      <td align="left"><b>top-level exports</b><br /><pre lang="json">
+      <td align="left"><pre lang="json">
 {
   "name": "test",
   "exports": "./main.js"
 }</pre></td>
-      <td align="left" style="white-space:normal;">some notes about the pattern</td>
+      <td align="left" style="white-space:normal;"><b>top-level exports</b><br />some notes about the pattern</td>
     </tr>
     <tr>
-      <td align="left"><b>subpath exports, simplified</b><br /><pre lang="json">
+      <td align="left"><pre lang="json">
 {
   "name": "test",
   "exports": {
@@ -37,10 +37,10 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
     "import": "./main.mjs"
   }
 }</pre></td>
-      <td align="left" style="white-space:normal;">some notes about the pattern</td>
+      <td align="left" style="white-space:normal;"><b>subpath exports, simplified</b><br />some notes about the pattern</td>
     </tr>
     <tr>
-      <td align="left"><b>subpath exports, nested</b><br /><pre lang="json">
+      <td align="left"><pre lang="json">
 {
   "name": "test",
   "exports": {
@@ -50,10 +50,10 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
     }
   }
 }</pre></td>
-      <td align="left" style="white-space:normal;">some notes about the pattern</td>
+      <td align="left" style="white-space:normal;"><b>subpath exports, nested</b><br />some notes about the pattern</td>
     </tr>
     <tr>
-      <td align="left"><b>subpath exports, nested list</b><br /><pre lang="json">
+      <td align="left"><pre lang="json">
 {
   "name": "test",
   "exports": {
@@ -63,7 +63,7 @@ More "complicated" ESM export patterns may yet be un-supported, for example ["#"
     }, "./index.cjs" ]
   }
 }</pre></td>
-      <td align="left" style="white-space:normal;">some notes about the pattern</td>
+      <td align="left" style="white-space:normal;"><b>subpath exports, nested list</b><br />some notes about the pattern</td>
     </tr>
   </tbody>
 </table>
