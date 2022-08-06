@@ -95,10 +95,13 @@ export default (o => {
         // }
         indexval = esmexportsobj.import;
       } else if (esmexportsobj['.']) {
+        // "exports": {
+        //   ".": "./lib/index.js"
+        // }
         if (typeof esmexportsobj['.'] === 'string') {
           indexval = esmexportsobj['.'];
         }
-        
+
         if (typeof esmexportsobj['.'].import === 'string') {
           indexval = esmexportsobj['.'].import;
         }
