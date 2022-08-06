@@ -225,4 +225,3 @@ test('should handle mixed exports', () => {
     }
   }), './index.mjs');
 });
-

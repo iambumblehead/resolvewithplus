@@ -3,6 +3,10 @@ import path from 'path';
 import module from 'module';
 
 const require = module.createRequire(import.meta.url);
+// https://nodejs.org/api/fs.html#fsrealpathpath-options-callback
+// realpath removes '..', '.' and converts symlinks to the true path,
+// which is also used by nodejs' internal resolver
+const realpath = fs.realpathSync.native;
 const isBuiltinRe = new RegExp(
   '^('+module.builtinModules.join('|').replace('/', '\/')+')$');
 const isDirPathRe = /^\.?\.?(\/|\\)/;
@@ -47,14 +51,13 @@ export default (o => {
       fullpath = requirepath;
     } else if (isDirPathRe.test(requirepath)) {
       fullpath = o.getasfileordir(requirepath, withpath, opts);
+      fullpath = fullpath && realpath(fullpath);
     } else {
       fullpath = o.getasnode_module(requirepath, withpath);
+      fullpath = fullpath && realpath(fullpath);
     }
 
-    // https://nodejs.org/api/fs.html#fsrealpathpath-options-callback
-    // realpath removes '..', '.' and converts symlinks to the true path,
-    // which is also used by nodejs' internal resolver
-    return fullpath && fs.realpathSync.native(fullpath);
+    return fullpath;
   };
 
   o.iscoremodule = p => isBuiltinRe.test(p);
