@@ -6,6 +6,7 @@
     "url": "https://github.com/iambumblehead/resolvewithplus.git"
   },
   "dependencies": {
+    "nodejsexample_01_exports": "file:nodejsexample_01_exports",
     "resolvewithplus": "file:.."
   },
   "scripts": {
