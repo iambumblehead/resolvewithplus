@@ -22,6 +22,8 @@ test('should mock all exports from nodejsexample_01_exports', () => {
     .resolve('./nodejsexample_01_exports/lib/index.js');
   const noderesolvedfeatureindex = path
     .resolve('./nodejsexample_01_exports/feature/index.js');
+  const noderesolvedpackagejson = path
+    .resolve('./nodejsexample_01_exports/package.json');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_01_exports'),
@@ -50,4 +52,8 @@ test('should mock all exports from nodejsexample_01_exports', () => {
   assert.strictEqual(
     resolvewithplus('nodejsexample_01_exports/feature/index.js'),
     noderesolvedfeatureindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_01_exports/package.json'),
+    noderesolvedpackagejson)
 });
