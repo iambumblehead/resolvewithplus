@@ -1,8 +1,14 @@
 {
   "name": "resolvewithplus",
   "version": "0.8.6",
+  "engines" : { 
+    "node" : ">=12.16.0"
+  },
   "license": "ISC",
   "main": "resolvewithplus.js",
+  "exports": {
+    "import": "./resolvewithplus.js"
+  },
   "readmeFilename": "README.md",
   "description": "resolvewith with extra power",
   "type": "module",

@@ -49,11 +49,11 @@ export default (o => {
 
     if (isBuiltinRe.test(requirepath)) {
       fullpath = requirepath;
-    } else if (isDirPathRe.test(requirepath)) {
-      fullpath = o.getasfileordir(requirepath, withpath, opts);
-      fullpath = fullpath && realpath(fullpath);
     } else {
-      fullpath = o.getasnode_module(requirepath, withpath);
+      fullpath = isDirPathRe.test(requirepath)
+        ? o.getasfileordir(requirepath, withpath, opts)
+        : o.getasnode_module(requirepath, withpath);
+
       fullpath = fullpath && realpath(fullpath);
     }
 
@@ -104,7 +104,11 @@ export default (o => {
         if (typeof esmexportsobj['.'] === 'string') {
           indexval = esmexportsobj['.'];
         }
-
+        // "exports": {
+        //   ".": {
+        //     "import": "./lib/index.js"
+        //   }
+        // }
         if (typeof esmexportsobj['.'].import === 'string') {
           indexval = esmexportsobj['.'].import;
         }

@@ -7,6 +7,9 @@
   },
   "dependencies": {
     "nodejsexample_01_exports": "file:nodejsexample_01_exports",
+    "nodejsexample_02_exports": "file:nodejsexample_02_exports",
+    "nodejsexample_03_exports": "file:nodejsexample_03_exports",
+    "nodejsexample_04_exports": "file:nodejsexample_04_exports",
     "resolvewithplus": "file:.."
   },
   "scripts": {
