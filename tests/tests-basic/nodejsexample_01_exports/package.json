@@ -1,0 +1,18 @@
+{
+  "name": "nodejsexample_01_exports",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iambumblehead/resolvewithplus.git"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./lib": "./lib/index.js",
+    "./lib/index": "./lib/index.js",
+    "./lib/index.js": "./lib/index.js",
+    "./feature": "./feature/index.js",
+    "./feature/index": "./feature/index.js",
+    "./feature/index.js": "./feature/index.js",
+    "./package.json": "./package.json"
+  }
+}

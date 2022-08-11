@@ -169,7 +169,7 @@ test('getasnode_module_paths, should return list of paths (posix)', () => {
 });
 
 test('should handle exports.import path definition', () => {
-  assert.strictEqual(resolvewithplus.getbrowserindex({
+  assert.strictEqual(resolvewithplus.gettargetindex({
     name : 'test',
     exports : {
       types : './index.d.ts',
@@ -181,7 +181,7 @@ test('should handle exports.import path definition', () => {
 
 test('should handle exports["."].import path definition', () => {
   // used by 'koa@2.13.4'
-  assert.strictEqual(resolvewithplus.getbrowserindex({
+  assert.strictEqual(resolvewithplus.gettargetindex({
     name : 'test',
     exports : {
       '.' : {
@@ -194,7 +194,7 @@ test('should handle exports["."].import path definition', () => {
 
 test('should handle exports stringy path definition', () => {
   // used by 'got'
-  assert.strictEqual(resolvewithplus.getbrowserindex({
+  assert.strictEqual(resolvewithplus.gettargetindex({
     name : 'test',
     exports : './index.mjs'
   }), './index.mjs');
@@ -202,7 +202,7 @@ test('should handle exports stringy path definition', () => {
 
 test('should handle mixed exports', () => {
   // used by 'yargs@17.5.1'
-  assert.strictEqual(resolvewithplus.getbrowserindex({
+  assert.strictEqual(resolvewithplus.gettargetindex({
     name : 'test',
     exports : {
       './package.json' : './package.json',
@@ -225,4 +225,3 @@ test('should handle mixed exports', () => {
     }
   }), './index.mjs');
 });
-

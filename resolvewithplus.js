@@ -3,6 +3,10 @@ import path from 'path';
 import module from 'module';
 
 const require = module.createRequire(import.meta.url);
+// https://nodejs.org/api/fs.html#fsrealpathpath-options-callback
+// realpath removes '..', '.' and converts symlinks to the true path,
+// which is also used by nodejs' internal resolver
+const realpath = fs.realpathSync.native;
 const isBuiltinRe = new RegExp(
   '^('+module.builtinModules.join('|').replace('/', '\/')+')$');
 const isDirPathRe = /^\.?\.?(\/|\\)/;
@@ -47,8 +51,10 @@ export default (o => {
       fullpath = requirepath;
     } else if (isDirPathRe.test(requirepath)) {
       fullpath = o.getasfileordir(requirepath, withpath, opts);
+      fullpath = fullpath && realpath(fullpath);
     } else {
       fullpath = o.getasnode_module(requirepath, withpath);
+      fullpath = fullpath && realpath(fullpath);
     }
 
     return fullpath;
@@ -66,7 +72,7 @@ export default (o => {
     return stat && (stat.isFile() || stat.isFIFO());
   };
 
-  o.getbrowserindex = (packagejson, opts) => {
+  o.gettargetindex = (packagejson, opts) => {
     let moduleobj =  opts && opts.ismodule && packagejson.module;
     let browserobj = moduleobj || opts && opts.browser && packagejson.browser;
     let esmexportsobj = packagejson.exports;
@@ -92,6 +98,13 @@ export default (o => {
         // }
         indexval = esmexportsobj.import;
       } else if (esmexportsobj['.']) {
+        // "exports": {
+        //   ".": "./lib/index.js"
+        // }
+        if (typeof esmexportsobj['.'] === 'string') {
+          indexval = esmexportsobj['.'];
+        }
+
         if (typeof esmexportsobj['.'].import === 'string') {
           indexval = esmexportsobj['.'].import;
         }
@@ -119,7 +132,7 @@ export default (o => {
 
   o.getpackagepath = (jsonfile, opts) => (
     o.isfilesync(jsonfile) && (jsonfile = require(jsonfile)) &&
-      (o.getbrowserindex(jsonfile, opts) || jsonfile.main));
+      (o.gettargetindex(jsonfile, opts) || jsonfile.main));
 
   // https://nodejs.org/api/modules.html#modules_module_require_id
   //
