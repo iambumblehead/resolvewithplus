@@ -3,7 +3,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from 'resolvewithplus';
 
-// from: https://nodejs.org/api/packages.html#package-entry-points
+// from: https://nodejs.org/api/packages.html#package-entry-pointsw
 // {
 //   "name": "my-package",
 //   "exports": {
@@ -55,5 +55,60 @@ test('should mock all exports from nodejsexample_01_exports', () => {
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_01_exports/package.json'),
+    noderesolvedpackagejson)
+});
+
+// from: https://nodejs.org/api/packages.html#package-entry-pointsw
+// {
+//   "name": "my-package",
+//   "exports": {
+//     ".": "./lib/index.js",
+//     "./lib": "./lib/index.js",
+//     "./lib/*": "./lib/*.js",
+//     "./lib/*.js": "./lib/*.js",
+//     "./feature": "./feature/index.js",
+//     "./feature/*": "./feature/*.js",
+//     "./feature/*.js": "./feature/*.js",
+//     "./package.json": "./package.json"
+//   }
+// }
+test('should mock all exports from nodejsexample_02_exports', async () => {
+  const noderesolvedlibindex = path
+    .resolve('./nodejsexample_02_exports/lib/index.js');
+  const noderesolvedfeatureindex = path
+    .resolve('./nodejsexample_02_exports/feature/index.js');
+  const noderesolvedpackagejson = path
+    .resolve('./nodejsexample_02_exports/package.json');
+  
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_02_exports'),
+    noderesolvedlibindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_02_exports/lib'),
+    noderesolvedlibindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_02_exports/lib/index'),
+    noderesolvedlibindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_02_exports/lib/index.js'),
+    noderesolvedlibindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_02_exports/feature'),
+    noderesolvedfeatureindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_02_exports/feature/index'),
+    noderesolvedfeatureindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_02_exports/feature/index.js'),
+    noderesolvedfeatureindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_02_exports/package.json'),
     noderesolvedpackagejson)
 });
