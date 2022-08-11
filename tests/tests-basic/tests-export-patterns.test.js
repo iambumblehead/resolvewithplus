@@ -72,7 +72,7 @@ test('should mock all exports from nodejsexample_01_exports', () => {
 //     "./package.json": "./package.json"
 //   }
 // }
-test('should mock all exports from nodejsexample_02_exports', async () => {
+test('should mock all exports from nodejsexample_02_exports', () => {
   const noderesolvedlibindex = path
     .resolve('./nodejsexample_02_exports/lib/index.js');
   const noderesolvedfeatureindex = path
