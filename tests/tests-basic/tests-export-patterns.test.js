@@ -150,3 +150,25 @@ test('should mock all exports from nodejsexample_04_exports', () => {
     resolvewithplus('nodejsexample_04_exports'),
     noderesolvedlibindex);
 });
+
+// from: https://nodejs.org/api/packages.html#package-entry-points
+// {
+//   "exports": {
+//     ".": "./index.js",
+//     "./submodule.js": "./src/submodule.js"
+//   }
+// }
+test('should mock all exports from nodejsexample_05_exports, subpaths', () => {
+  const noderesolvedindex = path
+    .resolve('./nodejsexample_05_exports/index.js');
+  const noderesolvedsubmodule = path
+    .resolve('./nodejsexample_05_exports/src/submodule.js');
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_05_exports'),
+    noderesolvedindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_05_exports/submodule.js'),
+    noderesolvedsubmodule);
+});
