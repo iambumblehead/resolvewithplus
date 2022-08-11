@@ -58,7 +58,7 @@ test('should mock all exports from nodejsexample_01_exports', () => {
     noderesolvedpackagejson)
 });
 
-// from: https://nodejs.org/api/packages.html#package-entry-pointsw
+// from: https://nodejs.org/api/packages.html#package-entry-points
 // {
 //   "name": "my-package",
 //   "exports": {
