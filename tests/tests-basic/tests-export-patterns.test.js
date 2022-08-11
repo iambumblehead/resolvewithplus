@@ -3,7 +3,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from 'resolvewithplus';
 
-// from: https://nodejs.org/api/packages.html#package-entry-pointsw
+// from: https://nodejs.org/api/packages.html#package-entry-points
 // {
 //   "name": "my-package",
 //   "exports": {
