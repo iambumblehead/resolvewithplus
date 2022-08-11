@@ -112,3 +112,41 @@ test('should mock all exports from nodejsexample_02_exports', () => {
     resolvewithplus('nodejsexample_02_exports/package.json'),
     noderesolvedpackagejson)
 });
+
+// from: https://nodejs.org/api/packages.html#package-entry-points
+// {
+//   "name": "my-package",
+//   "exports": {
+//     ".": "./lib/index.js",
+//     "./feature/*.js": "./feature/*.js",
+//     "./feature/internal/*": null
+//   }
+// }
+test('should mock all exports from nodejsexample_03_exports', () => {
+  const noderesolvedlibindex = path
+    .resolve('./nodejsexample_03_exports/lib/index.js');
+  const noderesolvedfeatureindex = path
+    .resolve('./nodejsexample_03_exports/feature/index.js');
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_03_exports'),
+    noderesolvedlibindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_03_exports/feature'),
+    noderesolvedfeatureindex);
+});
+
+// from: https://nodejs.org/api/packages.html#package-entry-points
+// {
+//   "name": "my-package",
+//   "exports": "./lib/index.js"
+// }
+test('should mock all exports from nodejsexample_04_exports', () => {
+  const noderesolvedlibindex = path
+    .resolve('./nodejsexample_04_exports/lib/index.js');
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_04_exports'),
+    noderesolvedlibindex);
+});
