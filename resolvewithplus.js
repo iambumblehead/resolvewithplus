@@ -15,10 +15,12 @@ const isWin32PathRe = /\\/g;
 const isWin32DriveRe = /^[a-zA-Z]:/;
 const isSupportedIndexRe = /index.[tj]sx?$/;
 const isResolveWithPathRe = /[\\/]resolvewithplus[\\/]/;
-const packageNameRe = /(^@[^/]*\/[^/]*|^[^/]*)/;
+const packageNameRe = /(^@[^/]*\/[^/]*|^[^/]*)\/?(.*)$/;
+const isESMImportSubpathRe = /^#/;
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 const node_modules = 'node_modules';
 const packagejson = 'package.json';
+const isobj = o => o && typeof o === 'object';
 
 
 export default (o => {
@@ -82,6 +84,15 @@ export default (o => {
     return stat && (stat.isFile() || stat.isFIFO());
   };
 
+  // target === '@scoped/package/specifier',
+  //  return [ '@scoped/package', 'file' ]
+  //
+  // target === 'package/specifier',
+  //  return [ '@packge/specifier', 'specifier' ]
+  //
+  o.gettargetnameandspecifier = target =>
+    (String(target).match(packageNameRe) || []).slice(1);
+
   o.gettargetindex = (packagejson, opts) => {
     let moduleobj =  opts && opts.ismodule && packagejson.module;
     let browserobj = moduleobj || opts && opts.browser && packagejson.browser;
@@ -92,7 +103,7 @@ export default (o => {
     if (browserobj) {
       if (typeof browserobj === 'string') {
         indexval = browserobj;
-      } else if (typeof browserobj === 'object') {
+      } else if (isobj(browserobj)) {
         [ indexprop ] = Object.keys(browserobj)
           .filter(prop => isSupportedIndexRe.test(prop));
         indexval = indexprop in browserobj && browserobj[indexprop];        
@@ -133,7 +144,7 @@ export default (o => {
         // }
         if (Array.isArray(esmexportsobj['.'])) {
           indexval = esmexportsobj['.'].reduce((prev, elem) => {
-            return (typeof elem === 'object' && elem.import)
+            return (isobj(elem) && elem.import)
               ? elem.import
               : prev;
           }, null);
@@ -200,6 +211,24 @@ export default (o => {
     return o.getasfilesync(temppath, opts) || o.getasdirsync(temppath, opts);
   };
 
+  o.getasesmimportpathfrompjson = (targetpath, specifier, pjson) => {
+    const pjsonimports = pjson && pjson.imports;
+    let firstmatch = null;
+
+    if (pjsonimports) {
+      if (typeof pjsonimports[specifier] === 'string') {
+        firstmatch = pjsonimports[specifier];
+      }
+      if (isobj(pjsonimports[specifier])) {
+        if (typeof pjsonimports[specifier].default === 'string') {
+          firstmatch = path.join(targetpath, pjsonimports[specifier].default);
+        }
+      }
+    }
+
+    return firstmatch;
+  };
+
   // https://nodejs.org/api/esm.html
   //
   // PACKAGE_RESOLVE(packageSpecifier, parentURL)
@@ -217,12 +246,8 @@ export default (o => {
   // 7. Let packageSubpath be "." concatenated with the substring of
   //    packageSpecifier from the position at the length of packageName.
   // (removed steps 8-12 related to urls and error cases)
-  o.getaspackagename = pspecifier => (
-    String(pspecifier).match(packageNameRe) || [])[0];
-
-  o.getasesmsubpathfrompjson = (targetpath, pname, pspecifier, pjson) => {
-    // @package/name/subpath => ./subpath
-    const pspecifiersubpath = pspecifier.replace(pname, '.');
+  o.getasesmexportpathfrompjson = (targetpath, pname, pspecifier, pjson) => {
+    const pspecifiersubpath = './' + pspecifier;
     const pjsonexports = pjson && pjson.exports;
     let firstmatch = null;
 
@@ -242,7 +267,7 @@ export default (o => {
       if (pjsonexports['.']) {
         if (Array.isArray(pjsonexports['.'])) {
           firstmatch = pjsonexports['.'].reduce((prev, elem) => {
-            return (typeof elem === 'object' && elem[pspecifiersubpath])
+            return (isobj(elem) && elem[pspecifiersubpath])
               ? elem[pspecifiersubpath]
               : prev;
           }, firstmatch);
@@ -254,13 +279,20 @@ export default (o => {
       && path.join(targetpath, pname, firstmatch);
   };
 
-  o.getasesmsubpath = (targetpath, pname, pspecifier, opts) => {
+  o.getasesmexportpath = (targetpath, pname, pspecifier, opts) => {
     const pjsonpath = path.join(targetpath, pname, 'package.json');
     const pjsonpathexists = o.isfilesync(pjsonpath);
     const pjson = pjsonpathexists && require(pjsonpath);
 
     return pjsonpathexists &&
-      o.getasesmsubpathfrompjson(targetpath, pname, pspecifier, pjson, opts);
+      o.getasesmexportpathfrompjson(targetpath, pname, pspecifier, pjson, opts);
+  };
+
+  o.getasnode_module_from_subpath = (pspecifier, start, opts) => {
+    const packagejsonpath = o.getasfirst_parent_packagejson_path(start);
+
+    return packagejsonpath && o.getasesmimportpathfrompjson(
+      path.dirname(packagejsonpath), pspecifier, require(packagejsonpath));
   };
 
   // https://nodejs.org/api/modules.html#modules_module_require_id
@@ -272,16 +304,20 @@ export default (o => {
   //    b. LOAD_AS_DIRECTORY(DIR/X)
   //
   // array sorting so that longer paths are tested first (closer to withpath)
-  o.getasnode_module = (pspecifier, start, opts) => {
-    const pname = o.getaspackagename(pspecifier);
+  o.getasnode_module = (targetpath, start, opts) => {
+    const [ pname, pspecifier ] = o.gettargetnameandspecifier(targetpath);
+
+    if (isESMImportSubpathRe.test(pname))
+      return o.getasnode_module_from_subpath(targetpath, start, opts);
+
     const dirarr = o
       .getasnode_module_paths(start)
       .sort((a, b) => a.length > b.length);
 
-    return (function next (dirarr, x, len = x - 1) {
+    return (function next (dirs, x, len = x - 1) {
       return !x-- ? null :
-        o.getasesmsubpath(path.join(dirarr[len - x]), pname, pspecifier, opts)
-        || o.getasfileordir(path.join(dirarr[len - x], pspecifier), null, opts)
+        o.getasesmexportpath(path.join(dirs[len - x]), pname, pspecifier, opts)
+        || o.getasfileordir(path.join(dirs[len - x], targetpath), null, opts)
         || next(dirarr, x, len);
     }(dirarr, dirarr.length));
   };
@@ -334,6 +370,18 @@ export default (o => {
 
       return prev;
     }, [ [], [] ])[1].reverse();
+
+  o.getasfirst_parent_packagejson_path = start => {
+    const parentpath = start.split(path.sep).slice(1).reduce((prev, p, i) => {
+      // windows and linux paths split differently
+      // [ "D:", "a", "windows", "path" ] vs [ "", "linux", "path" ]
+      prev.push(path.resolve(path.join(i ? prev[i-1] : path.sep, p)));
+
+      return prev;
+    }, []).reverse().find(p => o.isfilesync(path.join(p, packagejson)));
+
+    return parentpath && path.join(parentpath, packagejson);
+  };
   
   o.getasdirname = p => 
     path.resolve(path.extname(p) ? path.dirname(p) : p);

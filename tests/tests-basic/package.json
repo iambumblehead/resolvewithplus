@@ -13,6 +13,7 @@
     "nodejsexample_05_exports": "file:nodejsexample_05_exports",
     "nodejsexample_06_exports": "file:nodejsexample_06_exports",
     "nodejsexample_07_exports": "file:nodejsexample_07_exports",
+    "nodejsexample_08_imports": "file:nodejsexample_08_imports",
     "resolvewithplus": "file:.."
   },
   "scripts": {
