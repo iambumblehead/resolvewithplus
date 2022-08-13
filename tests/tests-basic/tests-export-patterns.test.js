@@ -3,6 +3,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from 'resolvewithplus';
 
+// "Package entry points"
 // from: https://nodejs.org/api/packages.html#package-entry-points
 // {
 //   "name": "my-package",
@@ -58,6 +59,7 @@ test('should mock all exports from nodejsexample_01_exports', () => {
     noderesolvedpackagejson)
 });
 
+// "Package entry points"
 // from: https://nodejs.org/api/packages.html#package-entry-points
 // {
 //   "name": "my-package",
@@ -113,6 +115,7 @@ test('should mock all exports from nodejsexample_02_exports', () => {
     noderesolvedpackagejson)
 });
 
+// "Package entry points"
 // from: https://nodejs.org/api/packages.html#package-entry-points
 // {
 //   "name": "my-package",
@@ -137,6 +140,7 @@ test('should mock all exports from nodejsexample_03_exports', () => {
     noderesolvedfeatureindex);
 });
 
+// "Package entry points"
 // from: https://nodejs.org/api/packages.html#package-entry-points
 // {
 //   "name": "my-package",
@@ -151,6 +155,7 @@ test('should mock all exports from nodejsexample_04_exports', () => {
     noderesolvedlibindex);
 });
 
+// "Subpath exports"
 // from: https://nodejs.org/api/packages.html#package-entry-points
 // {
 //   "exports": {
@@ -173,6 +178,7 @@ test('should mock all exports from nodejsexample_05_exports, subpaths', () => {
     noderesolvedsubmodule);
 });
 
+// "Exports sugar"
 // from: https://nodejs.org/api/packages.html#package-entry-points
 // {
 //   "exports": {
@@ -188,6 +194,7 @@ test('should mock all exports from nodejsexample_06_exports, sugar "."', () => {
     noderesolvedmain);
 });
 
+// "Exports sugar"
 // from: https://nodejs.org/api/packages.html#package-entry-points
 // {
 //   "exports": "./index.js"
