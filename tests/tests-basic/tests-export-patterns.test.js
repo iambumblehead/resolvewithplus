@@ -172,3 +172,31 @@ test('should mock all exports from nodejsexample_05_exports, subpaths', () => {
     resolvewithplus('nodejsexample_05_exports/submodule.js'),
     noderesolvedsubmodule);
 });
+
+// from: https://nodejs.org/api/packages.html#package-entry-points
+// {
+//   "exports": {
+//     ".": "./index.js",
+//   }
+// }
+test('should mock all exports from nodejsexample_06_exports, sugar "."', () => {
+  const noderesolvedmain = path
+    .resolve('./nodejsexample_06_exports/main.js');
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_06_exports'),
+    noderesolvedmain);
+});
+
+// from: https://nodejs.org/api/packages.html#package-entry-points
+// {
+//   "exports": "./index.js"
+// }
+test('should mock all exports from nodejsexample_07_exports, sugar "."', () => {
+  const noderesolvedmain = path
+    .resolve('./nodejsexample_07_exports/main.js');
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_07_exports'),
+    noderesolvedmain);
+});
