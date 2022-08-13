@@ -15,6 +15,7 @@ const isWin32PathRe = /\\/g;
 const isWin32DriveRe = /^[a-zA-Z]:/;
 const isSupportedIndexRe = /index.[tj]sx?$/;
 const isResolveWithPathRe = /[\\/]resolvewithplus[\\/]/;
+const packageNameRe = /(^@[^/]*\/[^/]*|^[^/]*)/;
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 const node_modules = 'node_modules';
 const packagejson = 'package.json';
@@ -199,6 +200,69 @@ export default (o => {
     return o.getasfilesync(temppath, opts) || o.getasdirsync(temppath, opts);
   };
 
+  // https://nodejs.org/api/esm.html
+  //
+  // PACKAGE_RESOLVE(packageSpecifier, parentURL)
+  // (removed steps 1-3 package specifier empty or builtin)
+  // 4. If packageSpecifier does not start with "@", then
+  //   1. Set packageName to the substring of packageSpecifier until the
+  //      first "/" separator or the end of the string.
+  // 5. Otherwise,
+  //   1. If packageSpecifier does not contain a "/" separator, then
+  //      1. Throw an Invalid Module Specifier error.
+  //   2. Set packageName to the substring of packageSpecifier until the
+  //      second "/" separator or the end of the string.
+  // 6. If packageName starts with "." or contains "\" or "%", then
+  //   1. Throw an Invalid Module Specifier error.
+  // 7. Let packageSubpath be "." concatenated with the substring of
+  //    packageSpecifier from the position at the length of packageName.
+  // (removed steps 8-12 related to urls and error cases)
+  o.getaspackagename = pspecifier => (
+    String(pspecifier).match(packageNameRe) || [])[0];
+
+  o.getasesmsubpathfrompjson = (targetpath, pname, pspecifier, pjson) => {
+    // @package/name/subpath => ./subpath
+    const pspecifiersubpath = pspecifier.replace(pname, '.');
+    const pjsonexports = pjson && pjson.exports;
+    let firstmatch = null;
+
+    if (pjsonexports) {
+      // "exports": {
+      //   "./subpath": "./lib/subpath.js"
+      // }
+      if (typeof pjsonexports[pspecifiersubpath] === 'string') {
+        firstmatch = pjsonexports[pspecifiersubpath];
+      }
+
+      // "exports": {
+      //   ".": [{
+      //     "./subpath": "./lib/subpath.js"
+      //   }, "./index.cjs" ]
+      // }
+      if (pjsonexports['.']) {
+        if (Array.isArray(pjsonexports['.'])) {
+          firstmatch = pjsonexports['.'].reduce((prev, elem) => {
+            return (typeof elem === 'object' && elem[pspecifiersubpath])
+              ? elem[pspecifiersubpath]
+              : prev;
+          }, firstmatch);
+        }
+      }
+    }
+
+    return firstmatch
+      && path.join(targetpath, pname, firstmatch);
+  };
+
+  o.getasesmsubpath = (targetpath, pname, pspecifier, opts) => {
+    const pjsonpath = path.join(targetpath, pname, 'package.json');
+    const pjsonpathexists = o.isfilesync(pjsonpath);
+    const pjson = pjsonpathexists && require(pjsonpath);
+
+    return pjsonpathexists &&
+      o.getasesmsubpathfrompjson(targetpath, pname, pspecifier, pjson, opts);
+  };
+
   // https://nodejs.org/api/modules.html#modules_module_require_id
   //
   // LOAD_NODE_MODULES(X, START)
@@ -208,16 +272,17 @@ export default (o => {
   //    b. LOAD_AS_DIRECTORY(DIR/X)
   //
   // array sorting so that longer paths are tested first (closer to withpath)
-  o.getasnode_module = (n, start, opts) => {
+  o.getasnode_module = (pspecifier, start, opts) => {
+    const pname = o.getaspackagename(pspecifier);
     const dirarr = o
       .getasnode_module_paths(start)
       .sort((a, b) => a.length > b.length);
 
     return (function next (dirarr, x, len = x - 1) {
-      return !x--
-        ? null
-        : (o.getasfileordir(path.join(dirarr[len - x], n), null, opts)
-           || next(dirarr, x, len));
+      return !x-- ? null :
+        o.getasesmsubpath(path.join(dirarr[len - x]), pname, pspecifier, opts)
+        || o.getasfileordir(path.join(dirarr[len - x], pspecifier), null, opts)
+        || next(dirarr, x, len);
     }(dirarr, dirarr.length));
   };
 
