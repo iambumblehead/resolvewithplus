@@ -7,11 +7,11 @@
   },
   "imports": {
     "#dep": {
-      "node": "hello-world",
+      "node": "form-urlencoded",
       "default": "./dep-polyfill.js"
     }
   },
   "dependencies": {
-    "hello-world": "^0.0.1"
+    "form-urlencoded": "^6.1.0"
   }
 }
