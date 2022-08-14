@@ -290,9 +290,10 @@ export default (o => {
 
   o.getasnode_module_from_subpath = (pspecifier, start, opts) => {
     const packagejsonpath = o.getasfirst_parent_packagejson_path(start);
+    const parentURL = path.dirname(packagejsonpath);
 
     return packagejsonpath && o.getasesmimportpathfrompjson(
-      path.dirname(packagejsonpath), pspecifier, require(packagejsonpath));
+      parentURL, pspecifier, require(packagejsonpath), opts);
   };
 
   // https://nodejs.org/api/modules.html#modules_module_require_id
