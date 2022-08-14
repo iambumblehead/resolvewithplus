@@ -7,11 +7,11 @@
   },
   "imports": {
     "#dep": {
-      "node": "dep-node-native",
+      "node": "hello-world",
       "default": "./dep-polyfill.js"
     }
   },
   "dependencies": {
-    "dep-node-native": "^1.0.0"
+    "hello-world": "^0.0.1"
   }
 }
