@@ -17,14 +17,48 @@ import resolvewithplus from 'resolvewithplus';
 //   }
 // }
 test('should mock #subpath nodejsexample_08_imports, complex', () => {
+  const parentURL = path.resolve('./nodejsexample_08_imports');
   const noderesolvedsubpathimport = path
     .resolve('./nodejsexample_08_imports/dep-polyfill.js');
 
-  //assert.strictEqual(
-  //  resolvewithplus('#dep', path.resolve('./nodejsexample_01_exports')),
-  //  null);
+  assert.strictEqual(
+    resolvewithplus('#dep', path.resolve('./nodejsexample_01_exports')),
+    null);
 
   assert.strictEqual(
-    resolvewithplus('#dep', path.resolve('./nodejsexample_08_imports')),
+    resolvewithplus('#dep', parentURL),
     noderesolvedsubpathimport);
 });
+/*
+// "Subpath patterns"
+// https://nodejs.org/api/packages.html#subpath-patterns
+// {
+//   "exports": {
+//     "./features/*.js": "./src/features/*.js"
+//   },
+//   "imports": {
+//     "#internal/*.js": "./src/internal/*.js"
+//   }
+// }
+test('should mock #subpath nodejsexample_09_imports, globby', () => {
+  const parentURL = path.resolve('./nodejsexample_09_imports');
+  const noderesolvedfeaturesx = path
+    .resolve('./nodejsexample_09_imports/features/x.js');
+  const noderesolvedfeaturesy = path
+    .resolve('./nodejsexample_09_imports/features/y/y.js');
+  const noderesolvedinternalz = path
+    .resolve('./nodejsexample_09_imports/internalz.js');
+  
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_09_imports/features/x.js'),
+    noderesolvedfeaturesx);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_09_imports/features/y/y.js'),
+    noderesolvedfeaturesy);
+
+  assert.strictEqual(  
+    resolvewithplus('#internal/z.js', parentURL),
+    noderesolvedinternalz);
+});
+*/
