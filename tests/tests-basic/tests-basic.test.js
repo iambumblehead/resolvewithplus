@@ -12,6 +12,11 @@ test('should return a core module reference as require.resolve id', () => {
   assert.strictEqual(resolvewithplus('path'), 'path');
 });
 
+// eslint-disable-next-line max-len
+test('should return a core module prefixed with \'node:\' reference as require.resolve id', () => {
+  assert.strictEqual(resolvewithplus('node:path'), 'node:path');
+});
+
 test('should return a full path when given relative path to index file', () => {
   const fullpath = path.resolve('../testfiles/');
   const indexPath = path.resolve('../testfiles/path/to/indexfile/index.js')
