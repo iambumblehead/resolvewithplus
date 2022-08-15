@@ -1,5 +1,7 @@
 # changelog
 
+ * 0.8.7 _Aug.15.2022_
+   * support core modules [w/ node: prefix](https://github.com/iambumblehead/resolvewithplus/pull/27), credit @gmahomarf
  * 0.8.6 _Aug.01.2022_
    * begin dusting off this old package
    * move tests into subdirectory, prepare for multiple test packages
