@@ -8,7 +8,7 @@ const require = module.createRequire(import.meta.url);
 // which is also used by nodejs' internal resolver
 const realpath = fs.realpathSync.native;
 const isBuiltinRe = new RegExp(
-  '^('+module.builtinModules.join('|').replace('/', '\/')+')$');
+  '^(?:node:)?('+module.builtinModules.join('|').replace('/', '\/')+')$');
 const isDirPathRe = /^\.?\.?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
 const isSupportedIndexRe = /index.[tj]sx?$/;
