@@ -2,11 +2,28 @@
 // Timestamp: 2017.04.23-23:31:33 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
-import url from 'url';
+import url, { fileURLToPath } from 'url';
+import os from 'os';
 import path from 'path';
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from '../../resolvewithplus.js';
+
+test('should pass windows and posix system-specific module path', () => {
+  const modulePath = fileURLToPath(
+    new URL('../testfiles/testscript.js', import.meta.url))
+  const calleePath = import.meta.url;
+  const returnPath = resolvewithplus(modulePath, calleePath)
+
+  if (os.platform() === 'win32') {
+    assert.ok(returnPath.endsWith('/tests/testfiles/testscript.js'))
+  } else {
+    assert.ok(returnPath.endsWith('/tests/testfiles/testscript.js'))
+  }
+
+  console.log({ modulePath, calleePath, returnPath })
+  assert.ok(returnPath)
+});
 
 test('should return a core module reference as require.resolve id', () => {
   assert.strictEqual(resolvewithplus('path'), 'path');
