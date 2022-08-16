@@ -9,6 +9,14 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from '../../resolvewithplus.js';
 
+test('should convert win32 path to node-friendly posix path', () => {
+  const win32Path = 'D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js';
+  const posixPath = '/a/resolvewithplus/pathto/testfiles/testscript.js';
+  const returnPath = resolvewithplus.pathToPosix(win32Path);
+
+  assert.strictEqual(returnPath, posixPath);
+})
+
 test('should pass windows and posix system-specific module path', () => {
   const modulePath = fileURLToPath(
     new URL('../testfiles/testscript.js', import.meta.url))
@@ -16,11 +24,17 @@ test('should pass windows and posix system-specific module path', () => {
   const returnPath = resolvewithplus(modulePath, calleePath)
   console.log({ modulePath, calleePath, returnPath })
   // posix modulePath
-  //  /root/resolvewithplus/tests/testfiles/testscript.js
+  //  /root/pathto/testfiles/testscript.js
   // posix calleePath
-  //  file:///root/resolvewithplus/tests/tests-basic/tests-basic.test.js
+  //  file:///root/pathto/tests-basic/tests-basic.test.js
   // posix returnPath
-  //  /root/resolvewithplus/tests/testfiles/testscript.js
+  //  /root/pathto/testfiles/testscript.js
+  //
+  // win32 modulePath
+  //  D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
+  // win32 calleePath eslint-disable-next-line max-len
+  //  file:///D:/a/resolvewithplus/pathto/tests-basic/tests-basic.test.js
+  // returnPath: null  
   assert.ok(typeof returnPath === 'string')
   if (os.platform() === 'win32') {
     assert.ok(returnPath.endsWith('/tests/testfiles/testscript.js'))
