@@ -14,15 +14,19 @@ test('should pass windows and posix system-specific module path', () => {
     new URL('../testfiles/testscript.js', import.meta.url))
   const calleePath = import.meta.url;
   const returnPath = resolvewithplus(modulePath, calleePath)
-
+  console.log({ modulePath, calleePath, returnPath })
+  // posix modulePath
+  //  /root/resolvewithplus/tests/testfiles/testscript.js
+  // posix calleePath
+  //  file:///root/resolvewithplus/tests/tests-basic/tests-basic.test.js
+  // posix returnPath
+  //  /root/resolvewithplus/tests/testfiles/testscript.js
+  assert.ok(typeof returnPath === 'string')
   if (os.platform() === 'win32') {
     assert.ok(returnPath.endsWith('/tests/testfiles/testscript.js'))
   } else {
     assert.ok(returnPath.endsWith('/tests/testfiles/testscript.js'))
   }
-
-  console.log({ modulePath, calleePath, returnPath })
-  assert.ok(returnPath)
 });
 
 test('should return a core module reference as require.resolve id', () => {
