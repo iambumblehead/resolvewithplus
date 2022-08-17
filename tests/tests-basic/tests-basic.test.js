@@ -2,11 +2,45 @@
 // Timestamp: 2017.04.23-23:31:33 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
-import url from 'url';
+import url, { fileURLToPath } from 'url';
+import os from 'os';
 import path from 'path';
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from '../../resolvewithplus.js';
+
+test('should convert win32 path to node-friendly posix path', () => {
+  const win32Path = 'D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js';
+  const posixPath = '/a/resolvewithplus/pathto/testfiles/testscript.js';
+  const returnPath = resolvewithplus.pathToPosix(win32Path);
+
+  assert.strictEqual(returnPath, posixPath);
+})
+
+test('should pass windows and posix system-specific module path', () => {
+  const modulePath = fileURLToPath(
+    new URL('../testfiles/testscript.js', import.meta.url))
+  const calleePath = import.meta.url;
+  const returnPath = resolvewithplus(modulePath, calleePath)
+  // posix modulePath
+  //  /root/pathto/testfiles/testscript.js
+  // posix calleePath
+  //  file:///root/pathto/tests-basic/tests-basic.test.js
+  // posix returnPath
+  //  /root/pathto/testfiles/testscript.js
+  //
+  // win32 modulePath
+  //  D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
+  // win32 calleePath eslint-disable-next-line max-len
+  //  file:///D:/a/resolvewithplus/pathto/tests-basic/tests-basic.test.js
+  // returnPath
+  //  D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
+  assert.ok(typeof returnPath === 'string')
+  assert.ok(returnPath.endsWith(
+    os.platform() === 'win32'
+      ? '\\tests\\testfiles\\testscript.js'
+      : '/tests/testfiles/testscript.js'))
+});
 
 test('should return a core module reference as require.resolve id', () => {
   assert.strictEqual(resolvewithplus('path'), 'path');
