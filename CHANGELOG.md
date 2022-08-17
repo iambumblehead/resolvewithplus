@@ -1,5 +1,7 @@
 # changelog
 
+ * 0.8.8 _Aug.16.2022_
+   * support win32 [drive-style module-path](https://github.com/iambumblehead/resolvewithplus/pull/31)
  * 0.8.7 _Aug.15.2022_
    * support core modules [w/ node: prefix](https://github.com/iambumblehead/resolvewithplus/pull/27), credit @gmahomarf
  * 0.8.6 _Aug.01.2022_
