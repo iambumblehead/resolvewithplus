@@ -9,7 +9,7 @@ const require = module.createRequire(import.meta.url);
 const realpath = fs.realpathSync.native;
 const isBuiltinRe = new RegExp(
   '^(?:node:)?('+module.builtinModules.join('|').replace('/', '\/')+')$');
-const isDirPathRe = /^\.?\.?(\/|\\)/;
+const isDirPathRe = /^\.?\.?([a-zA-Z]:)?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
 const isWin32PathRe = /\\/g;
 const isWin32DriveRe = /^[a-zA-Z]:/;
