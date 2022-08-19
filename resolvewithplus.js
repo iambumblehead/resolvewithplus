@@ -183,7 +183,8 @@ export default (o => {
     let json = path.join(d, packagejson);
 
     if ((relpath = o.getpackagepath(json, opts))) {
-      filepath = o.getasfilesync(path.join(d, relpath));
+      filepath = o.getasfilesync(path.join(d, relpath))
+        || o.getasfilesync(path.join(d, path.join(relpath, 'index')));
     } else {
       supportedExtensions.some(f => (
         (f = path.join(d, `index${f}`)) && o.isfilesync(f) && (filepath = f)));
