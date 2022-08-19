@@ -143,10 +143,6 @@ export default (o => {
     return indexval;
   };
 
-  o.getpackagepath = (jsonfile, opts) => (
-    o.isfilesync(jsonfile) && (jsonfile = require(jsonfile)) &&
-      (o.gettargetindex(jsonfile, opts) || jsonfile.main));
-
   // https://nodejs.org/api/modules.html#modules_module_require_id
   //
   // LOAD_AS_FILE(X)
@@ -181,9 +177,12 @@ export default (o => {
     let filepath = null;
     let relpath;
     let json = path.join(d, packagejson);
-
-    if ((relpath = o.getpackagepath(json, opts))) {
-      filepath = o.getasfilesync(path.join(d, relpath));
+    let jsonobj = o.isfilesync(json) && require(json);
+    if ((relpath = o.gettargetindex(jsonobj, opts))) {
+      filepath = o.getasfilesync(path.join(d, relpath))
+    } else if ((relpath = jsonobj.main)) {
+      filepath = o.getasfilesync(path.join(d, relpath))
+        || o.getasfilesync(path.join(d, path.join(relpath, 'index')));
     } else {
       supportedExtensions.some(f => (
         (f = path.join(d, `index${f}`)) && o.isfilesync(f) && (filepath = f)));

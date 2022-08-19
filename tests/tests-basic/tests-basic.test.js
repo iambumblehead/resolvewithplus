@@ -2,7 +2,7 @@
 // Timestamp: 2017.04.23-23:31:33 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
-import url, { fileURLToPath } from 'url';
+import url from 'url';
 import os from 'os';
 import path from 'path';
 import test from 'node:test'
@@ -18,7 +18,7 @@ test('should convert win32 path to node-friendly posix path', () => {
 })
 
 test('should pass windows and posix system-specific module path', () => {
-  const modulePath = fileURLToPath(
+  const modulePath = url.fileURLToPath(
     new URL('../testfiles/testscript.js', import.meta.url))
   const calleePath = import.meta.url;
   const returnPath = resolvewithplus(modulePath, calleePath)
@@ -148,6 +148,14 @@ test('should handle package.json stringy "exports" field (got)', () => {
   assert.strictEqual(
     resolvewithplus('got', fullpath, { esm : true }),
     path.resolve('../node_modules/got/dist/source/index.js'));
+});
+
+test('should handle package.json "main": "./lib" field (pg)', () => {
+  const fullpath = path.resolve('../testfiles/');
+  
+  assert.strictEqual(
+    resolvewithplus('pg', fullpath),
+    path.resolve('../node_modules/pg/lib/index.js'));
 });
 
 test('should return values from cache', () => {

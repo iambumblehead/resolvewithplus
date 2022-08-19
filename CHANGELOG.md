@@ -1,5 +1,7 @@
 # changelog
 
+ * 0.8.9 _Aug.19.2022_
+   * resolve pg packages cjs ["main": "./lib"](https://github.com/iambumblehead/resolvewithplus/pull/32)
  * 0.8.8 _Aug.16.2022_
    * support win32 [drive-style module-path](https://github.com/iambumblehead/resolvewithplus/pull/31)
  * 0.8.7 _Aug.15.2022_
