@@ -9,6 +9,36 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from '../../resolvewithplus.js';
 
+test('should return matched export paths', () => {
+  const exports = {
+    '.' : './lib/index.test.js',
+    './lib' : './lib/index.test.js',
+    './lib/*' : './lib/*.js',
+    './lib/*.js' : './lib/*.js',
+    './submodule.js' : './src/submodule.js',
+    './package.json' : './package.json'
+  }
+
+  const getmatch = (o, key, path) => resolvewithplus
+    .getesmkeyvalmatch(key, o[key], path);
+
+  assert.strictEqual(
+    getmatch(exports, '.', './lib/index.test.js'),
+    './lib/index.test.js');
+
+  assert.strictEqual(
+    getmatch(exports, './lib', './lib/index.test.js'),
+    './lib/index.test.js');
+
+  assert.strictEqual(
+    getmatch(exports, './lib/*', './lib/index.test.js'),
+    './lib/index.test.js');
+
+  assert.strictEqual(
+    getmatch(exports, './submodule.js', './submodule.js'),
+    './src/submodule.js');
+})
+
 test('should convert win32 path to node-friendly posix path', () => {
   const win32Path = 'D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js';
   const posixPath = '/a/resolvewithplus/pathto/testfiles/testscript.js';
@@ -130,7 +160,7 @@ test('should handle package.json "exports" field', () => {
   const fullpath = path.resolve('../testfiles/');
   
   assert.strictEqual(
-    resolvewithplus('koa', fullpath, { esm : true }),
+    resolvewithplus('koa', fullpath),
     path.resolve('../node_modules/koa/dist/koa.mjs'));
 });
 
@@ -272,3 +302,4 @@ test('should handle mixed exports', () => {
     }
   }), './index.mjs');
 });
+

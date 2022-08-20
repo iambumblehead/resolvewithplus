@@ -6,7 +6,7 @@
     "url": "https://github.com/iambumblehead/resolvewithplus.git"
   },
   "exports": {
-    ".": "./index.js",
+    ".": "./index.test.js",
     "./submodule.js": "./src/submodule.js"
   }
 }

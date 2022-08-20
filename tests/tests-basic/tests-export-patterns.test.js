@@ -20,9 +20,9 @@ import resolvewithplus from 'resolvewithplus';
 // }
 test('should mock all exports from nodejsexample_01_exports', () => {
   const noderesolvedlibindex = path
-    .resolve('./nodejsexample_01_exports/lib/index.js');
+    .resolve('./nodejsexample_01_exports/lib/index.test.js');
   const noderesolvedfeatureindex = path
-    .resolve('./nodejsexample_01_exports/feature/index.js');
+    .resolve('./nodejsexample_01_exports/feature/index.test.js');
   const noderesolvedpackagejson = path
     .resolve('./nodejsexample_01_exports/package.json');
 
@@ -76,12 +76,12 @@ test('should mock all exports from nodejsexample_01_exports', () => {
 // }
 test('should mock all exports from nodejsexample_02_exports', () => {
   const noderesolvedlibindex = path
-    .resolve('./nodejsexample_02_exports/lib/index.js');
+    .resolve('./nodejsexample_02_exports/lib/index.test.js');
   const noderesolvedfeatureindex = path
-    .resolve('./nodejsexample_02_exports/feature/index.js');
+    .resolve('./nodejsexample_02_exports/feature/index.test.js');
   const noderesolvedpackagejson = path
     .resolve('./nodejsexample_02_exports/package.json');
-  
+
   assert.strictEqual(
     resolvewithplus('nodejsexample_02_exports'),
     noderesolvedlibindex);
@@ -125,18 +125,18 @@ test('should mock all exports from nodejsexample_02_exports', () => {
 //     "./feature/internal/*": null
 //   }
 // }
-test('should mock all exports from nodejsexample_03_exports', () => {
+test('should mock all exports from nodejsexample_03_exports', async () => {
   const noderesolvedlibindex = path
-    .resolve('./nodejsexample_03_exports/lib/index.js');
+    .resolve('./nodejsexample_03_exports/lib/index.test.js');
   const noderesolvedfeatureindex = path
-    .resolve('./nodejsexample_03_exports/feature/index.js');
+    .resolve('./nodejsexample_03_exports/feature/index.test.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_03_exports'),
     noderesolvedlibindex);
 
   assert.strictEqual(
-    resolvewithplus('nodejsexample_03_exports/feature'),
+    resolvewithplus('nodejsexample_03_exports/feature/index.test.js'),
     noderesolvedfeatureindex);
 });
 
@@ -148,7 +148,7 @@ test('should mock all exports from nodejsexample_03_exports', () => {
 // }
 test('should mock all exports from nodejsexample_04_exports', () => {
   const noderesolvedlibindex = path
-    .resolve('./nodejsexample_04_exports/lib/index.js');
+    .resolve('./nodejsexample_04_exports/lib/index.test.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_04_exports'),
@@ -156,7 +156,7 @@ test('should mock all exports from nodejsexample_04_exports', () => {
 });
 
 // "Subpath exports"
-// from: https://nodejs.org/api/packages.html#package-entry-points
+// from: https://nodejs.org/api/packages.html#subpath-exports
 // {
 //   "exports": {
 //     ".": "./index.js",
@@ -165,7 +165,7 @@ test('should mock all exports from nodejsexample_04_exports', () => {
 // }
 test('should mock all exports from nodejsexample_05_exports, subpaths', () => {
   const noderesolvedindex = path
-    .resolve('./nodejsexample_05_exports/index.js');
+    .resolve('./nodejsexample_05_exports/index.test.js');
   const noderesolvedsubmodule = path
     .resolve('./nodejsexample_05_exports/src/submodule.js');
 
@@ -175,11 +175,11 @@ test('should mock all exports from nodejsexample_05_exports, subpaths', () => {
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_05_exports/submodule.js'),
-    noderesolvedsubmodule);
+    noderesolvedsubmodule)
 });
 
 // "Exports sugar"
-// from: https://nodejs.org/api/packages.html#package-entry-points
+// from: https://nodejs.org/api/packages.html#exports-sugar
 // {
 //   "exports": {
 //     ".": "./index.js",
@@ -195,7 +195,7 @@ test('should mock all exports from nodejsexample_06_exports, sugar "."', () => {
 });
 
 // "Exports sugar"
-// from: https://nodejs.org/api/packages.html#package-entry-points
+// from: https://nodejs.org/api/packages.html#exports-sugar
 // {
 //   "exports": "./index.js"
 // }

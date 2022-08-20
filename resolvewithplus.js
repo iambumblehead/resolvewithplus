@@ -88,10 +88,38 @@ export default (o => {
   //  return [ '@scoped/package', 'file' ]
   //
   // target === 'package/specifier',
-  //  return [ '@packge/specifier', 'specifier' ]
+  //  return [ 'package', 'specifier' ]
   //
   o.gettargetnameandspecifier = target =>
     (String(target).match(packageNameRe) || []).slice(1);
+
+  o.ispathesmmatch = (pathesm, pathlocal) => {
+    const isesmkeymatchRe = new RegExp(
+      pathesm.replace(/([./])/g, '\\$1').replace(/(\*)/g, '.*'));
+
+    return isesmkeymatchRe.test(pathlocal);
+  };
+
+  // [...] the individual exports for a package can be determined by treating
+  // the right hand side target pattern as a ** glob against the list of files
+  // within the package.
+  //
+  // './lib/*' './lib/index' -> true
+  // './lib/feature', './lib/index' -> false
+  o.getesmkeyvalmatch = (esmkey, esmval, path, keyvalmatch = false) => {
+    if (o.ispathesmmatch(esmkey, path)) {
+      if (esmval.includes('*')) {
+        // if (o.ispathesmmatch(esmval, path.replace(/^\./, ''))) {
+        if (o.ispathesmmatch(esmval, path)) {
+          keyvalmatch = path
+        }
+      } else {
+        keyvalmatch = esmval
+      }
+    }
+
+    return keyvalmatch
+  };
 
   o.gettargetindex = (packagejson, opts) => {
     let moduleobj =  opts && opts.ismodule && packagejson.module;
@@ -272,6 +300,21 @@ export default (o => {
               : prev;
           }, firstmatch);
         }
+      }
+
+      // "exports": {
+      //   '.': './lib/index.test.js',
+      //   './lib': './lib/index.test.js',
+      //   './lib/*': './lib/*.js',
+      // }
+      if (!firstmatch) {
+        firstmatch = Object.keys(pjsonexports).reduce((match, key) => {
+          if (match) return match;
+
+          return isRelPathRe.test(key)
+            && typeof pjsonexports[key] === 'string'
+            && o.getesmkeyvalmatch(key, pjsonexports[key], `./${pspecifier}`)
+        }, null);
       }
     }
 

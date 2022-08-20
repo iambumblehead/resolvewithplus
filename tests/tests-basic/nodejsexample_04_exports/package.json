@@ -5,5 +5,5 @@
     "type": "git",
     "url": "https://github.com/iambumblehead/resolvewithplus.git"
   },
-  "exports": "./lib/index.js"
+  "exports": "./lib/index.test.js"
 }
