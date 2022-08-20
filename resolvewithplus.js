@@ -279,6 +279,18 @@ export default (o => {
           firstmatch = path.join(targetpath, pjsonimports[specifier].default);
         }
       }
+
+      if (!firstmatch) {
+        firstmatch = Object.keys(pjsonimports).reduce((match, key) => {
+          if (match) return match;
+
+          return isESMImportSubpathRe.test(key)
+            && typeof pjsonimports[key] === 'string'
+            && o.getesmkeyvalmatch(key, pjsonimports[key], specifier)
+        }, null);
+
+        firstmatch = firstmatch && path.join(targetpath, firstmatch);
+      }
     }
 
     return firstmatch;
