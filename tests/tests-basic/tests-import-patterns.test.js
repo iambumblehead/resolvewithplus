@@ -1,3 +1,4 @@
+import url from 'url';
 import path from 'path';
 import test from 'node:test'
 import assert from 'node:assert/strict'
@@ -49,7 +50,8 @@ test('should mock #subpath nodejsexample_09_imports, globby', async () => {
   const noderesolvedinternalz = path
     .resolve('./nodejsexample_09_imports/src/internal/z.js');
 
-  await import(resolvewithplus('nodejsexample_09_imports/features/x.js'))
+  assert.ok(await import(url.pathToFileURL(
+    resolvewithplus('nodejsexample_09_imports/features/x.js'))));
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_09_imports/features/x.js'),
