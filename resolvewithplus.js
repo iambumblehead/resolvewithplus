@@ -17,6 +17,8 @@ const isSupportedIndexRe = /index.[tj]sx?$/;
 const isResolveWithPathRe = /[\\/]resolvewithplus[\\/]/;
 const packageNameRe = /(^@[^/]*\/[^/]*|^[^/]*)\/?(.*)$/;
 const isESMImportSubpathRe = /^#/;
+const esmStrGlobRe = /(\*)/g;
+const esmStrPathCharRe = /([./])/g;
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 const node_modules = 'node_modules';
 const packagejson = 'package.json';
@@ -93,25 +95,50 @@ export default (o => {
   o.gettargetnameandspecifier = target =>
     (String(target).match(packageNameRe) || []).slice(1);
 
-  o.ispathesmmatch = (pathesm, pathlocal) => {
-    const isesmkeymatchRe = new RegExp(
-      pathesm.replace(/([./])/g, '\\$1').replace(/(\*)/g, '.*'));
-
-    return isesmkeymatchRe.test(pathlocal);
-  };
-
   // [...] the individual exports for a package can be determined by treating
   // the right hand side target pattern as a ** glob against the list of files
   // within the package.
   //
   // './lib/*' './lib/index' -> true
   // './lib/feature', './lib/index' -> false
+  o.ispathesmmatch = (pathesm, pathlocal) => {
+    const isesmkeymatchRe = new RegExp(
+      pathesm.replace(esmStrPathCharRe, '\\$1').replace(esmStrGlobRe, '.*'));
+
+    return isesmkeymatchRe.test(pathlocal);
+  };
+
+  // when,
+  //  key: './features/*.js'
+  //  val: './src/features/*.js'
+  //  pathlocal: './features/x.js'
+  //
+  // return './src/features/x.js'
+  o.getesemkeyvalglobreplaced = (esmkey, esmval, pathlocal) => {
+    const isesmkeymatchRe = new RegExp(
+      esmkey.replace(esmStrPathCharRe, '\\$1').replace(esmStrGlobRe, '(.*)'));
+
+    // eslint-disable-next-line prefer-destructuring
+    const globmatch = (pathlocal.match(isesmkeymatchRe) || [])[1];
+    return globmatch && esmval.replace('*', globmatch);
+  }
+
+  // esm patterns may have globby key AND path values as in this example,
+  //
+  //   "exports": { "./features/*.js": "./src/features/*.js" },
+  //
+  // from https://nodejs.org/api/packages.html#subpath-patterns,
+  // this vague description,
+  //
+  //   All instances of * on the right hand side will then be replaced
+  //   with this value, including if it contains any / separators.
   o.getesmkeyvalmatch = (esmkey, esmval, path, keyvalmatch = false) => {
     if (o.ispathesmmatch(esmkey, path)) {
       if (esmval.includes('*')) {
-        // if (o.ispathesmmatch(esmval, path.replace(/^\./, ''))) {
         if (o.ispathesmmatch(esmval, path)) {
           keyvalmatch = path
+        } else if (esmkey.includes('*') && esmkey !== esmval) {
+          keyvalmatch = o.getesemkeyvalglobreplaced(esmkey, esmval, path);
         }
       } else {
         keyvalmatch = esmval

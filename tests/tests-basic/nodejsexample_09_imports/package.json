@@ -5,12 +5,10 @@
     "type": "git",
     "url": "https://github.com/iambumblehead/resolvewithplus.git"
   },
+  "exports": {
+    "./features/*.js": "./src/features/*.js"
+  },
   "imports": {
-    "exports": {
-      "./features/*.js": "./src/features/*.js"
-    },
-    "imports": {
-      "#internal/*.js": "./src/internal/*.js"
-    }
+    "#internal/*.js": "./src/internal/*.js"
   }
 }

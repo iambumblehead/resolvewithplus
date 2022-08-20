@@ -29,7 +29,7 @@ test('should mock #subpath nodejsexample_08_imports, complex', () => {
     resolvewithplus('#dep', parentURL),
     noderesolvedsubpathimport);
 });
-/*
+
 // "Subpath patterns"
 // https://nodejs.org/api/packages.html#subpath-patterns
 // {
@@ -40,15 +40,17 @@ test('should mock #subpath nodejsexample_08_imports, complex', () => {
 //     "#internal/*.js": "./src/internal/*.js"
 //   }
 // }
-test('should mock #subpath nodejsexample_09_imports, globby', () => {
-  const parentURL = path.resolve('./nodejsexample_09_imports');
+test('should mock #subpath nodejsexample_09_imports, globby', async () => {
+  // const parentURL = path.resolve('./nodejsexample_09_imports');
   const noderesolvedfeaturesx = path
-    .resolve('./nodejsexample_09_imports/features/x.js');
+    .resolve('./nodejsexample_09_imports/src/features/x.js');
   const noderesolvedfeaturesy = path
-    .resolve('./nodejsexample_09_imports/features/y/y.js');
-  const noderesolvedinternalz = path
-    .resolve('./nodejsexample_09_imports/internalz.js');
-  
+    .resolve('./nodejsexample_09_imports/src/features/y/y.js');
+  //const noderesolvedinternalz = path
+  //   .resolve('./nodejsexample_09_imports/src/internal/z.js');
+
+  await import(resolvewithplus('nodejsexample_09_imports/features/x.js'))
+
   assert.strictEqual(
     resolvewithplus('nodejsexample_09_imports/features/x.js'),
     noderesolvedfeaturesx);
@@ -57,8 +59,7 @@ test('should mock #subpath nodejsexample_09_imports, globby', () => {
     resolvewithplus('nodejsexample_09_imports/features/y/y.js'),
     noderesolvedfeaturesy);
 
-  assert.strictEqual(  
-    resolvewithplus('#internal/z.js', parentURL),
-    noderesolvedinternalz);
+  // assert.strictEqual(
+  //   resolvewithplus('#internal/z.js', parentURL),
+  //   noderesolvedinternalz);
 });
-*/
