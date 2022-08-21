@@ -239,8 +239,14 @@ test('should mock exports from nodejsexample_10_exports, conditional', () => {
 test('should mock exports from nodejsexample_11_exports, conditional', () => {
   const noderesolvedindex = path
     .resolve('./nodejsexample_11_exports/index.test.js');
+  const noderesolvedfeaturenode = path
+    .resolve('./nodejsexample_11_exports/feature-node.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_11_exports'),
-    noderesolvedindex);  
+    noderesolvedindex);
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_11_exports/feature.js'),
+    noderesolvedfeaturenode);
 });

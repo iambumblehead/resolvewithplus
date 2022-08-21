@@ -20,7 +20,7 @@ import resolvewithplus from 'resolvewithplus';
 test('should mock #subpath nodejsexample_08_imports, complex', () => {
   const parentURL = path.resolve('./nodejsexample_08_imports');
   const noderesolvedsubpathimport = path
-    .resolve('./nodejsexample_08_imports/dep-polyfill.js');
+    .resolve('./node_modules/form-urlencoded/form-urlencoded.mjs');
 
   assert.strictEqual(
     resolvewithplus('#dep', path.resolve('./nodejsexample_01_exports')),
@@ -65,3 +65,4 @@ test('should mock #subpath nodejsexample_09_imports, globby', async () => {
     resolvewithplus('#internal/z.js', parentURL),
     noderesolvedinternalz);
 });
+

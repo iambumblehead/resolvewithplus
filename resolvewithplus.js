@@ -22,6 +22,7 @@ const esmStrPathCharRe = /([./])/g;
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 const node_modules = 'node_modules';
 const packagejson = 'package.json';
+const specruntime = 'node';
 const specdefault = 'default';
 const specimport = 'import';
 const specdot = '.';
@@ -193,7 +194,9 @@ export default (o => {
         // }
         indexval = spec[specifier];
       } else if (isobj(spec[specifier])) {
-        if (typeof spec[specifier][specdefault] === 'string') {
+        if (typeof spec[specifier][specruntime] === 'string') {
+          indexval = spec[specifier][specruntime];
+        } else if (typeof spec[specifier][specdefault] === 'string') {
           indexval = spec[specifier][specdefault];
         }
       }
@@ -307,11 +310,23 @@ export default (o => {
     return o.getasfilesync(temppath, opts) || o.getasdirsync(temppath, opts);
   };
 
+  // subpath patterns may resolve another dependency rather than file, eg
+  // {
+  //  "imports": {
+  //     "#dep": {
+  //       "node": "dep-node-native",
+  //       "default": "./dep-polyfill.js"
+  //     }
+  //   }
+  // }
   o.getasesmimportpathfrompjson = (targetpath, specifier, pjson) => {
     const pjsonimports = pjson && pjson.imports;
     const firstmatch = o.esmspecfind(pjsonimports, specifier);
 
-    return firstmatch && path.join(targetpath, firstmatch);
+    return firstmatch && (
+      isRelPathRe.test(firstmatch)
+        ? path.join(targetpath, firstmatch)
+        : o(firstmatch, targetpath))
   };
 
   // https://nodejs.org/api/esm.html
