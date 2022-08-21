@@ -1,0 +1,1 @@
+export default 'index-require.js'

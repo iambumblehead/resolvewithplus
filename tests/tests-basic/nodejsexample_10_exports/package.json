@@ -6,10 +6,7 @@
     "url": "https://github.com/iambumblehead/resolvewithplus.git"
   },
   "exports": {
-    ".": "./index.js",
-    "./feature.js": {
-      "node": "./feature-node.js",
-      "default": "./feature.js"
-    }
+    "import": "./index-module.js",
+    "require": "./index-require.cjs"
   }
 }

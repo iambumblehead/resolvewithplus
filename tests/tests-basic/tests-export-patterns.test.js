@@ -207,3 +207,9 @@ test('should mock all exports from nodejsexample_07_exports, sugar "."', () => {
     resolvewithplus('nodejsexample_07_exports'),
     noderesolvedmain);
 });
+
+// "Exports sugar"
+// from: https://nodejs.org/api/packages.html#exports-sugar
+// {
+//   "exports": "./index.js"
+// }
