@@ -28,7 +28,6 @@ const specimport = 'import';
 const specdot = '.';
 const isobj = o => o && typeof o === 'object';
 
-
 export default (o => {
   o = (requirepath, withpath, opts) => {
     let resolvedpath = o.cache[requirepath+withpath];
@@ -91,7 +90,7 @@ export default (o => {
   };
 
   // target === '@scoped/package/specifier',
-  //  return [ '@scoped/package', 'file' ]
+  //  return [ '@scoped/package', 'specifier' ]
   //
   // target === 'package/specifier',
   //  return [ 'package', 'specifier' ]
