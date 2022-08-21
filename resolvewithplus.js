@@ -183,6 +183,9 @@ export default (o => {
   o.esmspecfind = (spec, specifier) => {
     let indexval = false;
 
+    if (typeof spec === 'string')
+      return spec;
+
     if (specifier === specimport)
       indexval = o.esmspecfindsugar(spec, specifier);
 
@@ -200,11 +203,10 @@ export default (o => {
       //     "require": "./feature-node.cjs"
       //   }
       // }
-      if (spec[specruntime])
-        indexval = typeof spec[specruntime] === 'string'
-          ? spec[specruntime]
-          : o.esmspecfind(spec[specruntime], specifier);
-
+      if (!indexval && spec[specruntime])
+        indexval = o.esmspecfind(spec[specruntime], specifier);
+      if (!indexval && spec[specdefault])
+        indexval = o.esmspecfind(spec[specdefault], specifier);
       if (!indexval && spec[specifier])
         indexval = o.esmspecfind(spec[specifier], specifier)
 
@@ -351,7 +353,8 @@ export default (o => {
   //    packageSpecifier from the position at the length of packageName.
   // (removed steps 8-12 related to urls and error cases)
   o.getasesmexportpathfrompjson = (targetpath, pname, pspecifier, pjson) => {
-    const pspecifiersubpath = './' + pspecifier;
+    const pspecifiersubpath = pspecifier
+      ? './' + pspecifier : specimport;
     const firstmatch = o.esmspecfind(pjson && pjson.exports, pspecifiersubpath);
 
     return firstmatch && path.join(targetpath, pname, firstmatch);
