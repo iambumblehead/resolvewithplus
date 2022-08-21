@@ -156,18 +156,18 @@ export default (o => {
   // "exports": { "import": "./lib/index.js" },
   // "exports": { ".": "./lib/index.js" },
   // "exports": { ".": { "import": "./lib/index.js" } }
-  o.esmspecfindsugar = (spec, specifier, indexdefault = null) => {
+  o.esmparsesugar = (spec, specifier, indexdefault = null) => {
     if (typeof spec === 'string')
       indexdefault = spec;
     else if (isobj(spec))
       indexdefault = (
-        o.esmspecfindsugar(spec[specifier], specifier) ||
-          o.esmspecfindsugar(spec[specdot], specifier));
+        o.esmparsesugar(spec[specifier], specifier) ||
+          o.esmparsesugar(spec[specdot], specifier));
 
     return indexdefault;
   };
 
-  o.esmspecfindlist = (list, spec, specifier, key = list[0]) => {
+  o.esmparselist = (list, spec, specifier, key = list[0]) => {
     if (!list.length) return null;
 
     const isKeyValid = isESMImportSubpathRe.test(specifier)
@@ -177,17 +177,17 @@ export default (o => {
     return (isKeyValid
       && typeof spec[key] === 'string'
       && o.getesmkeyvalmatch(key, spec[key], specifier))
-      || o.esmspecfindlist(list.slice(1), spec, specifier)
+      || o.esmparselist(list.slice(1), spec, specifier)
   }
 
-  o.esmspecfind = (spec, specifier) => {
+  o.esmparse = (spec, specifier) => {
     let indexval = false;
 
     if (typeof spec === 'string')
       return spec;
 
     if (specifier === specimport)
-      indexval = o.esmspecfindsugar(spec, specifier);
+      indexval = o.esmparsesugar(spec, specifier);
 
     if (!indexval && isobj(spec)) {
       // "exports": {
@@ -204,11 +204,11 @@ export default (o => {
       //   }
       // }
       if (!indexval && spec[specruntime])
-        indexval = o.esmspecfind(spec[specruntime], specifier);
+        indexval = o.esmparse(spec[specruntime], specifier);
       if (!indexval && spec[specdefault])
-        indexval = o.esmspecfind(spec[specdefault], specifier);
+        indexval = o.esmparse(spec[specdefault], specifier);
       if (!indexval && spec[specifier])
-        indexval = o.esmspecfind(spec[specifier], specifier)
+        indexval = o.esmparse(spec[specifier], specifier)
 
       if (!indexval && spec[specdot]) {
         // "exports": {
@@ -219,7 +219,7 @@ export default (o => {
         // }
         if (Array.isArray(spec[specdot])) {
           indexval = spec[specdot].reduce((prev, elem) => {
-            return prev || o.esmspecfind(elem, specifier);
+            return prev || o.esmparse(elem, specifier);
           }, null);
         }
       }
@@ -230,7 +230,7 @@ export default (o => {
       //   './lib/*': './lib/*.js',
       // }
       if (!indexval)
-        indexval = o.esmspecfindlist(Object.keys(spec), spec, specifier);
+        indexval = o.esmparselist(Object.keys(spec), spec, specifier);
     }
 
     return indexval;
@@ -254,7 +254,7 @@ export default (o => {
     }
 
     if (esmexportsobj) {
-      indexval = o.esmspecfind(esmexportsobj, specimport);
+      indexval = o.esmparse(esmexportsobj, specimport);
     }
 
     return indexval;
@@ -325,9 +325,9 @@ export default (o => {
   //     }
   //   }
   // }
-  o.esmspecfindimport = (targetpath, specifier, pjson) => {
+  o.esmparseimport = (targetpath, specifier, pjson) => {
     const pjsonimports = pjson && pjson.imports;
-    const firstmatch = o.esmspecfind(pjsonimports, specifier);
+    const firstmatch = o.esmparse(pjsonimports, specifier);
 
     return firstmatch && (
       isRelPathRe.test(firstmatch)
@@ -352,28 +352,28 @@ export default (o => {
   // 7. Let packageSubpath be "." concatenated with the substring of
   //    packageSpecifier from the position at the length of packageName.
   // (removed steps 8-12 related to urls and error cases)
-  o.esmspecfindexport = (targetpath, pname, pspecifier, pjson) => {
-    const firstmatch = o.esmspecfind(
+  o.esmparseexport = (targetpath, pname, pspecifier, pjson) => {
+    const firstmatch = o.esmparse(
       pjson && pjson.exports,
       pspecifier ? './' + pspecifier : specimport);
 
     return firstmatch && path.join(targetpath, pname, firstmatch);
   };
 
-  o.getasesmexportpath = (targetpath, pname, pspecifier, opts) => {
-    const pjsonpath = path.join(targetpath, pname, 'package.json');
+  o.esmparseexportpkg = (targetpath, pname, pspecifier, opts) => {
+    const pjsonpath = path.join(targetpath, pname, packagejson);
     const pjsonpathexists = o.isfilesync(pjsonpath);
     const pjson = pjsonpathexists && require(pjsonpath);
 
     return pjsonpathexists &&
-      o.esmspecfindexport(targetpath, pname, pspecifier, pjson, opts);
+      o.esmparseexport(targetpath, pname, pspecifier, pjson, opts);
   };
 
-  o.getasnode_module_from_subpath = (pspecifier, start, opts) => {
+  o.esmparseimportpkg = (pspecifier, start, opts) => {
     const packagejsonpath = o.getasfirst_parent_packagejson_path(start);
     const parentURL = path.dirname(packagejsonpath);
 
-    return packagejsonpath && o.esmspecfindimport(
+    return packagejsonpath && o.esmparseimport(
       parentURL, pspecifier, require(packagejsonpath), opts);
   };
 
@@ -390,7 +390,7 @@ export default (o => {
     const [ pname, pspecifier ] = o.gettargetnameandspecifier(targetpath);
 
     if (isESMImportSubpathRe.test(pname))
-      return o.getasnode_module_from_subpath(targetpath, start, opts);
+      return o.esmparseimportpkg(targetpath, start, opts);
 
     const dirarr = o
       .getasnode_module_paths(start)
@@ -398,7 +398,7 @@ export default (o => {
 
     return (function next (dirs, x, len = x - 1) {
       return !x-- ? null :
-        o.getasesmexportpath(path.join(dirs[len - x]), pname, pspecifier, opts)
+        o.esmparseexportpkg(path.join(dirs[len - x]), pname, pspecifier, opts)
         || o.getasfileordir(path.join(dirs[len - x], targetpath), null, opts)
         || next(dirarr, x, len);
     }(dirarr, dirarr.length));
