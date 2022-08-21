@@ -250,3 +250,23 @@ test('should mock exports from nodejsexample_11_exports, conditional', () => {
     resolvewithplus('nodejsexample_11_exports/feature.js'),
     noderesolvedfeaturenode);
 });
+
+// "Nested conditions"
+// from: https://nodejs.org/api/packages.html#nested-conditions
+// {
+//   "exports": {
+//     "node": {
+//       "import": "./feature-node.mjs",
+//       "require": "./feature-node.cjs"
+//     },
+//     "default": "./feature.mjs"
+//   }
+// }
+test('should mock exports from nodejsexample_12_exports, nested cond', () => {
+  const noderesolvedfeaturenode = path
+    .resolve('./nodejsexample_12_exports/feature-node.mjs');
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_12_exports'),
+    noderesolvedfeaturenode);
+});

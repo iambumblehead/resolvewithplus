@@ -187,44 +187,48 @@ export default (o => {
       indexval = o.esmspecfindsugar(spec, specifier);
 
     if (!indexval && isobj(spec)) {
-      if (typeof spec[specifier] === 'string') {
-        // "exports": {
-        //   "import": "./index.mjs",
-        //   "./subpath": "./lib/subpath.js"
-        // }
+      // "exports": {
+      //   "import": "./index.mjs",
+      //   "./subpath": "./lib/subpath.js"
+      // }
+      if (typeof spec[specifier] === 'string')
         indexval = spec[specifier];
-      } else if (isobj(spec[specifier])) {
-        if (typeof spec[specifier][specruntime] === 'string') {
-          indexval = spec[specifier][specruntime];
-        } else if (typeof spec[specifier][specdefault] === 'string') {
-          indexval = spec[specifier][specdefault];
-        }
-      }
+
+      // "exports": {
+      //   "node": {
+      //     "import": "./feature-node.mjs",
+      //     "require": "./feature-node.cjs"
+      //   }
+      // }
+      if (spec[specruntime])
+        indexval = typeof spec[specruntime] === 'string'
+          ? spec[specruntime]
+          : o.esmspecfind(spec[specruntime], specifier);
+
+      if (!indexval && spec[specifier])
+        indexval = o.esmspecfind(spec[specifier], specifier)
 
       if (!indexval && spec[specdot]) {
+        // "exports": {
+        //   ".": [{
+        //     "import": "./index.mjs",
+        //     "require": "./index.cjs"
+        //   }, "./index.cjs" ]
+        // }
         if (Array.isArray(spec[specdot])) {
-          // this export pattern used by "yargs"
-          //
-          // "exports": {
-          //   ".": [{
-          //     "import": "./index.mjs",
-          //     "require": "./index.cjs"
-          //   }, "./index.cjs" ]
-          // }
           indexval = spec[specdot].reduce((prev, elem) => {
             return prev || o.esmspecfind(elem, specifier);
           }, null);
         }
       }
 
-      if (!indexval) {
-        // "exports": {
-        //   '.': './lib/index.test.js',
-        //   './lib': './lib/index.test.js',
-        //   './lib/*': './lib/*.js',
-        // }
+      // "exports": {
+      //   '.': './lib/index.test.js',
+      //   './lib': './lib/index.test.js',
+      //   './lib/*': './lib/*.js',
+      // }
+      if (!indexval)
         indexval = o.esmspecfindlist(Object.keys(spec), spec, specifier);
-      }
     }
 
     return indexval;
