@@ -22,6 +22,7 @@ const esmStrPathCharRe = /([./])/g;
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 const node_modules = 'node_modules';
 const packagejson = 'package.json';
+const specdefault = 'default';
 const specimport = 'import';
 const specdot = '.';
 const isobj = o => o && typeof o === 'object';
@@ -154,22 +155,35 @@ export default (o => {
   // "exports": { "import": "./lib/index.js" },
   // "exports": { ".": "./lib/index.js" },
   // "exports": { ".": { "import": "./lib/index.js" } }
-  o.esmspecfindimportsugar = (spec, specifier, indexdefault = null) => {
+  o.esmspecfindsugar = (spec, specifier, indexdefault = null) => {
     if (typeof spec === 'string')
       indexdefault = spec;
     else if (isobj(spec))
       indexdefault = (
-        o.esmspecfindimportsugar(spec[specifier], specifier) ||
-          o.esmspecfindimportsugar(spec[specdot], specifier));
+        o.esmspecfindsugar(spec[specifier], specifier) ||
+          o.esmspecfindsugar(spec[specdot], specifier));
 
     return indexdefault;
+  };
+
+  o.esmspecfindlist = (list, spec, specifier, key = list[0]) => {
+    if (!list.length) return null;
+
+    const isKeyValid = isESMImportSubpathRe.test(specifier)
+      ? isESMImportSubpathRe.test(key)
+      : isRelPathRe.test(key);
+
+    return (isKeyValid
+      && typeof spec[key] === 'string'
+      && o.getesmkeyvalmatch(key, spec[key], specifier))
+      || o.esmspecfindlist(list.slice(1), spec, specifier)
   }
 
   o.esmspecfind = (spec, specifier) => {
     let indexval = false;
 
     if (specifier === specimport)
-      indexval = o.esmspecfindimportsugar(spec, specifier);
+      indexval = o.esmspecfindsugar(spec, specifier);
 
     if (!indexval && isobj(spec)) {
       if (typeof spec[specifier] === 'string') {
@@ -178,7 +192,13 @@ export default (o => {
         //   "./subpath": "./lib/subpath.js"
         // }
         indexval = spec[specifier];
-      } else if (spec[specdot]) {
+      } else if (isobj(spec[specifier])) {
+        if (typeof spec[specifier][specdefault] === 'string') {
+          indexval = spec[specifier][specdefault];
+        }
+      }
+
+      if (!indexval && spec[specdot]) {
         if (Array.isArray(spec[specdot])) {
           // this export pattern used by "yargs"
           //
@@ -189,9 +209,7 @@ export default (o => {
           //   }, "./index.cjs" ]
           // }
           indexval = spec[specdot].reduce((prev, elem) => {
-            return (isobj(elem) && elem[specifier])
-              ? elem[specifier]
-              : prev;
+            return prev || o.esmspecfind(elem, specifier);
           }, null);
         }
       }
@@ -202,13 +220,7 @@ export default (o => {
         //   './lib': './lib/index.test.js',
         //   './lib/*': './lib/*.js',
         // }
-        indexval = Object.keys(spec).reduce((match, key) => {
-          if (match) return match;
-
-          return isRelPathRe.test(key)
-            && typeof spec[key] === 'string'
-            && o.getesmkeyvalmatch(key, spec[key], specifier)
-        }, null);
+        indexval = o.esmspecfindlist(Object.keys(spec), spec, specifier);
       }
     }
 
@@ -297,32 +309,9 @@ export default (o => {
 
   o.getasesmimportpathfrompjson = (targetpath, specifier, pjson) => {
     const pjsonimports = pjson && pjson.imports;
-    let firstmatch = null;
+    const firstmatch = o.esmspecfind(pjsonimports, specifier);
 
-    if (pjsonimports) {
-      if (typeof pjsonimports[specifier] === 'string') {
-        firstmatch = pjsonimports[specifier];
-      }
-      if (isobj(pjsonimports[specifier])) {
-        if (typeof pjsonimports[specifier].default === 'string') {
-          firstmatch = path.join(targetpath, pjsonimports[specifier].default);
-        }
-      }
-
-      if (!firstmatch) {
-        firstmatch = Object.keys(pjsonimports).reduce((match, key) => {
-          if (match) return match;
-
-          return isESMImportSubpathRe.test(key)
-            && typeof pjsonimports[key] === 'string'
-            && o.getesmkeyvalmatch(key, pjsonimports[key], specifier)
-        }, null);
-
-        firstmatch = firstmatch && path.join(targetpath, firstmatch);
-      }
-    }
-
-    return firstmatch;
+    return firstmatch && path.join(targetpath, firstmatch);
   };
 
   // https://nodejs.org/api/esm.html
@@ -344,12 +333,9 @@ export default (o => {
   // (removed steps 8-12 related to urls and error cases)
   o.getasesmexportpathfrompjson = (targetpath, pname, pspecifier, pjson) => {
     const pspecifiersubpath = './' + pspecifier;
-    const pjsonexports = pjson && pjson.exports;
-    const firstmatch = pjsonexports
-        && o.esmspecfind(pjsonexports, pspecifiersubpath);
+    const firstmatch = o.esmspecfind(pjson && pjson.exports, pspecifiersubpath);
 
-    return firstmatch
-      && path.join(targetpath, pname, firstmatch);
+    return firstmatch && path.join(targetpath, pname, firstmatch);
   };
 
   o.getasesmexportpath = (targetpath, pname, pspecifier, opts) => {

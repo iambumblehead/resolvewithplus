@@ -168,7 +168,7 @@ test('should handle package.json "exports" field, $.[0].import', () => {
   const fullpath = path.resolve('../testfiles/');
   
   assert.strictEqual(
-    resolvewithplus('yargs', fullpath, { esm : true }),
+    resolvewithplus('yargs', fullpath),
     path.resolve('../node_modules/yargs/index.mjs'));
 });
 
@@ -302,4 +302,3 @@ test('should handle mixed exports', () => {
     }
   }), './index.mjs');
 });
-

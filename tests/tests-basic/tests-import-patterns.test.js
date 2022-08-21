@@ -24,7 +24,7 @@ test('should mock #subpath nodejsexample_08_imports, complex', () => {
 
   assert.strictEqual(
     resolvewithplus('#dep', path.resolve('./nodejsexample_01_exports')),
-    null);
+    false);
 
   assert.strictEqual(
     resolvewithplus('#dep', parentURL),
