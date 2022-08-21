@@ -22,6 +22,8 @@ const esmStrPathCharRe = /([./])/g;
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 const node_modules = 'node_modules';
 const packagejson = 'package.json';
+const specimport = 'import';
+const specdot = '.';
 const isobj = o => o && typeof o === 'object';
 
 
@@ -148,6 +150,71 @@ export default (o => {
     return keyvalmatch
   };
 
+  // "exports": './lib/index.js',
+  // "exports": { "import": "./lib/index.js" },
+  // "exports": { ".": "./lib/index.js" },
+  // "exports": { ".": { "import": "./lib/index.js" } }
+  o.esmspecfindimportsugar = (spec, specifier, indexdefault = null) => {
+    if (typeof spec === 'string')
+      indexdefault = spec;
+    else if (isobj(spec))
+      indexdefault = (
+        o.esmspecfindimportsugar(spec[specifier], specifier) ||
+          o.esmspecfindimportsugar(spec[specdot], specifier));
+
+    return indexdefault;
+  }
+
+  o.esmspecfind = (spec, specifier) => {
+    let indexval = false;
+
+    if (specifier === specimport)
+      indexval = o.esmspecfindimportsugar(spec, specifier);
+
+    if (!indexval && isobj(spec)) {
+      if (typeof spec[specifier] === 'string') {
+        // "exports": {
+        //   "import": "./index.mjs",
+        //   "./subpath": "./lib/subpath.js"
+        // }
+        indexval = spec[specifier];
+      } else if (spec[specdot]) {
+        if (Array.isArray(spec[specdot])) {
+          // this export pattern used by "yargs"
+          //
+          // "exports": {
+          //   ".": [{
+          //     "import": "./index.mjs",
+          //     "require": "./index.cjs"
+          //   }, "./index.cjs" ]
+          // }
+          indexval = spec[specdot].reduce((prev, elem) => {
+            return (isobj(elem) && elem[specifier])
+              ? elem[specifier]
+              : prev;
+          }, null);
+        }
+      }
+
+      if (!indexval) {
+        // "exports": {
+        //   '.': './lib/index.test.js',
+        //   './lib': './lib/index.test.js',
+        //   './lib/*': './lib/*.js',
+        // }
+        indexval = Object.keys(spec).reduce((match, key) => {
+          if (match) return match;
+
+          return isRelPathRe.test(key)
+            && typeof spec[key] === 'string'
+            && o.getesmkeyvalmatch(key, spec[key], specifier)
+        }, null);
+      }
+    }
+
+    return indexval;
+  }
+
   o.gettargetindex = (packagejson, opts) => {
     let moduleobj =  opts && opts.ismodule && packagejson.module;
     let browserobj = moduleobj || opts && opts.browser && packagejson.browser;
@@ -166,45 +233,7 @@ export default (o => {
     }
 
     if (esmexportsobj) {
-      if (typeof esmexportsobj === 'string') {
-        indexval = esmexportsobj;
-      } else if (typeof esmexportsobj.import === 'string') {
-        // "exports": {
-        //   "import": "./index.mjs"
-        // }
-        indexval = esmexportsobj.import;
-      } else if (esmexportsobj['.']) {
-        // "exports": {
-        //   ".": "./lib/index.js"
-        // }
-        if (typeof esmexportsobj['.'] === 'string') {
-          indexval = esmexportsobj['.'];
-        }
-        // "exports": {
-        //   ".": {
-        //     "import": "./lib/index.js"
-        //   }
-        // }
-        if (typeof esmexportsobj['.'].import === 'string') {
-          indexval = esmexportsobj['.'].import;
-        }
-
-        // this export pattern used by "yargs"
-        //
-        // "exports": {
-        //   ".": [{
-        //     "import": "./index.mjs",
-        //     "require": "./index.cjs"
-        //   }, "./index.cjs" ]
-        // }
-        if (Array.isArray(esmexportsobj['.'])) {
-          indexval = esmexportsobj['.'].reduce((prev, elem) => {
-            return (isobj(elem) && elem.import)
-              ? elem.import
-              : prev;
-          }, null);
-        }
-      }
+      indexval = o.esmspecfind(esmexportsobj, specimport);
     }
 
     return indexval;
@@ -316,46 +345,8 @@ export default (o => {
   o.getasesmexportpathfrompjson = (targetpath, pname, pspecifier, pjson) => {
     const pspecifiersubpath = './' + pspecifier;
     const pjsonexports = pjson && pjson.exports;
-    let firstmatch = null;
-
-    if (pjsonexports) {
-      // "exports": {
-      //   "./subpath": "./lib/subpath.js"
-      // }
-      if (typeof pjsonexports[pspecifiersubpath] === 'string') {
-        firstmatch = pjsonexports[pspecifiersubpath];
-      }
-
-      // "exports": {
-      //   ".": [{
-      //     "./subpath": "./lib/subpath.js"
-      //   }, "./index.cjs" ]
-      // }
-      if (pjsonexports['.']) {
-        if (Array.isArray(pjsonexports['.'])) {
-          firstmatch = pjsonexports['.'].reduce((prev, elem) => {
-            return (isobj(elem) && elem[pspecifiersubpath])
-              ? elem[pspecifiersubpath]
-              : prev;
-          }, firstmatch);
-        }
-      }
-
-      // "exports": {
-      //   '.': './lib/index.test.js',
-      //   './lib': './lib/index.test.js',
-      //   './lib/*': './lib/*.js',
-      // }
-      if (!firstmatch) {
-        firstmatch = Object.keys(pjsonexports).reduce((match, key) => {
-          if (match) return match;
-
-          return isRelPathRe.test(key)
-            && typeof pjsonexports[key] === 'string'
-            && o.getesmkeyvalmatch(key, pjsonexports[key], `./${pspecifier}`)
-        }, null);
-      }
-    }
+    const firstmatch = pjsonexports
+        && o.esmspecfind(pjsonexports, pspecifiersubpath);
 
     return firstmatch
       && path.join(targetpath, pname, firstmatch);
