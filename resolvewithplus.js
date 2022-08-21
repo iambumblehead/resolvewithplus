@@ -325,7 +325,7 @@ export default (o => {
   //     }
   //   }
   // }
-  o.getasesmimportpathfrompjson = (targetpath, specifier, pjson) => {
+  o.esmspecfindimport = (targetpath, specifier, pjson) => {
     const pjsonimports = pjson && pjson.imports;
     const firstmatch = o.esmspecfind(pjsonimports, specifier);
 
@@ -352,10 +352,10 @@ export default (o => {
   // 7. Let packageSubpath be "." concatenated with the substring of
   //    packageSpecifier from the position at the length of packageName.
   // (removed steps 8-12 related to urls and error cases)
-  o.getasesmexportpathfrompjson = (targetpath, pname, pspecifier, pjson) => {
-    const pspecifiersubpath = pspecifier
-      ? './' + pspecifier : specimport;
-    const firstmatch = o.esmspecfind(pjson && pjson.exports, pspecifiersubpath);
+  o.esmspecfindexport = (targetpath, pname, pspecifier, pjson) => {
+    const firstmatch = o.esmspecfind(
+      pjson && pjson.exports,
+      pspecifier ? './' + pspecifier : specimport);
 
     return firstmatch && path.join(targetpath, pname, firstmatch);
   };
@@ -366,14 +366,14 @@ export default (o => {
     const pjson = pjsonpathexists && require(pjsonpath);
 
     return pjsonpathexists &&
-      o.getasesmexportpathfrompjson(targetpath, pname, pspecifier, pjson, opts);
+      o.esmspecfindexport(targetpath, pname, pspecifier, pjson, opts);
   };
 
   o.getasnode_module_from_subpath = (pspecifier, start, opts) => {
     const packagejsonpath = o.getasfirst_parent_packagejson_path(start);
     const parentURL = path.dirname(packagejsonpath);
 
-    return packagejsonpath && o.getasesmimportpathfrompjson(
+    return packagejsonpath && o.esmspecfindimport(
       parentURL, pspecifier, require(packagejsonpath), opts);
   };
 
