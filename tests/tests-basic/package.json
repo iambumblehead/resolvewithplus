@@ -10,9 +10,17 @@
     "nodejsexample_02_exports": "file:nodejsexample_02_exports",
     "nodejsexample_03_exports": "file:nodejsexample_03_exports",
     "nodejsexample_04_exports": "file:nodejsexample_04_exports",
+    "nodejsexample_05_exports": "file:nodejsexample_05_exports",
+    "nodejsexample_06_exports": "file:nodejsexample_06_exports",
+    "nodejsexample_07_exports": "file:nodejsexample_07_exports",
+    "nodejsexample_08_imports": "file:nodejsexample_08_imports",
+    "nodejsexample_09_imports": "file:nodejsexample_09_imports",
+    "nodejsexample_10_exports": "file:nodejsexample_10_exports",
+    "nodejsexample_11_exports": "file:nodejsexample_11_exports",
+    "nodejsexample_12_exports": "file:nodejsexample_12_exports",
     "resolvewithplus": "file:.."
   },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test tests-basic.test.js tests-export-patterns.test.js tests-import-patterns.test.js"
   }
 }

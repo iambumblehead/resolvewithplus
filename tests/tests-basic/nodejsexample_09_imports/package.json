@@ -1,13 +1,14 @@
 {
-  "name": "nodejsexample_03_exports",
+  "name": "nodejsexample_09_imports",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/iambumblehead/resolvewithplus.git"
   },
   "exports": {
-    ".": "./lib/index.test.js",
-    "./feature/*.js": "./feature/*.js",
-    "./feature/internal/*": null
+    "./features/*.js": "./src/features/*.js"
+  },
+  "imports": {
+    "#internal/*.js": "./src/internal/*.js"
   }
 }

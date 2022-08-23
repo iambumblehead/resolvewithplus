@@ -1,0 +1,15 @@
+{
+  "name": "nodejsexample_11_exports",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iambumblehead/resolvewithplus.git"
+  },
+  "exports": {
+    ".": "./index.test.js",
+    "./feature.js": {
+      "node": "./feature-node.js",
+      "default": "./feature.js"
+    }
+  }
+}

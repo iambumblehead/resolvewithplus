@@ -1,0 +1,17 @@
+{
+  "name": "nodejsexample_08_imports",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iambumblehead/resolvewithplus.git"
+  },
+  "imports": {
+    "#dep": {
+      "node": "form-urlencoded",
+      "default": "./dep-polyfill.js"
+    }
+  },
+  "dependencies": {
+    "form-urlencoded": "^6.1.0"
+  }
+}

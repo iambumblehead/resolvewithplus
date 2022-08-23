@@ -6,13 +6,13 @@
     "url": "https://github.com/iambumblehead/resolvewithplus.git"
   },
   "exports": {
-    ".": "./lib/index.js",
-    "./lib": "./lib/index.js",
-    "./lib/index": "./lib/index.js",
-    "./lib/index.js": "./lib/index.js",
-    "./feature": "./feature/index.js",
-    "./feature/index": "./feature/index.js",
-    "./feature/index.js": "./feature/index.js",
+    ".": "./lib/index.test.js",
+    "./lib": "./lib/index.test.js",
+    "./lib/index": "./lib/index.test.js",
+    "./lib/index.js": "./lib/index.test.js",
+    "./feature": "./feature/index.test.js",
+    "./feature/index": "./feature/index.test.js",
+    "./feature/index.js": "./feature/index.test.js",
     "./package.json": "./package.json"
   }
 }
