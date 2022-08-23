@@ -1,6 +1,6 @@
 # changelog
 
- * 0.9.0 _Aug.22.2022_
+ * 0.9.0 _Aug.23.2022_
    * add complete esm pattern parsing [(big improvement)](https://github.com/iambumblehead/resolvewithplus/pull/26)
  * 0.8.9 _Aug.19.2022_
    * resolve pg packages cjs ["main": "./lib"](https://github.com/iambumblehead/resolvewithplus/pull/32)
