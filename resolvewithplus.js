@@ -86,12 +86,11 @@ export default (o => {
 
   o.addprotocolnode = p => protocolNode.test(p) ? p : `node:${p}`;
 
-  // o.addprotocolfile = p =>
-  // p && (FILE_PROTOCOL + p.replace(rootDirSlashRe, ''));
+  o.addprotocolfile = p => p && (FILE_PROTOCOL + p.replace(rootDirSlashRe, ''));
 
-  o.posixpathasospath = p => process.platform === 'win32'
-    ? p.split(path.posix.sep).join(path.sep)
-    : p
+  // o.posixpathasospath = p => process.platform === 'win32'
+  //   ? p.split(path.posix.sep).join(path.sep)
+  //   : p
 
   o.iscoremodule = p => isBuiltinRe.test(p);
 
