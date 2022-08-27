@@ -2,6 +2,7 @@
 
  * 1.0.0 _Aug.28.2022_
    * return paths in fileurl format, like import.meta.resolve
+   * added tests around export sugar esm patterns
  * 0.9.0 _Aug.23.2022_
    * add complete esm pattern parsing [(big improvement)](https://github.com/iambumblehead/resolvewithplus/pull/26)
  * 0.8.9 _Aug.19.2022_
