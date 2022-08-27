@@ -12,7 +12,7 @@ const isBuiltinRe = new RegExp(
 const isDirPathRe = /^\.?\.?([a-zA-Z]:)?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
 const isWin32PathRe = /\\/g;
-const isWin32DriveRe = /^[a-zA-Z]:/;
+// const isWin32DriveRe = /^[a-zA-Z]:/;
 const isSupportedIndexRe = /index.[tj]sx?$/;
 const isResolveWithPathRe = /[\\/]resolvewithplus[\\/]/;
 const packageNameRe = /(^@[^/]*\/[^/]*|^[^/]*)\/?(.*)$/;
