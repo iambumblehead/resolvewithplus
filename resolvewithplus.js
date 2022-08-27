@@ -197,6 +197,17 @@ export default (o => {
     if (specifier === specimport)
       indexval = o.esmparsesugar(spec, specifier)
 
+    if (!indexval && Array.isArray(spec)) {
+      // "exports": {
+      //   ".": [{
+      //     "import": "./index.mjs",
+      //     "require": "./index.cjs"
+      //   }, "./index.cjs" ]
+      // }
+      indexval = spec
+        .reduce((p, elem) => p || o.esmparse(elem, specifier), null)
+    }
+    
     if (!indexval && isobj(spec)) {
       // "exports": {
       //   "import": "./index.mjs",
@@ -217,20 +228,8 @@ export default (o => {
         indexval = o.esmparse(spec[specdefault], specifier)
       if (!indexval && spec[specifier])
         indexval = o.esmparse(spec[specifier], specifier)
-
-      if (!indexval && spec[specdot]) {
-        // "exports": {
-        //   ".": [{
-        //     "import": "./index.mjs",
-        //     "require": "./index.cjs"
-        //   }, "./index.cjs" ]
-        // }
-        if (Array.isArray(spec[specdot])) {
-          indexval = spec[specdot].reduce((prev, elem) => {
-            return prev || o.esmparse(elem, specifier)
-          }, null)
-        }
-      }
+      if (!indexval && spec[specdot] && typeof spec[specdot] !== 'string')
+        indexval = o.esmparse(spec[specdot], specifier)
 
       // "exports": {
       //   '.': './lib/index.test.js',

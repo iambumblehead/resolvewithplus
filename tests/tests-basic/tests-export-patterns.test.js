@@ -274,3 +274,25 @@ test('should mock exports from nodejsexample_12_exports, nested cond', () => {
     resolvewithplus('nodejsexample_12_exports'),
     noderesolvedfeaturenode)
 })
+
+// "exports": './lib/index.js',
+// "exports": { "import": "./lib/index.js" },
+// "exports": { ".": "./lib/index.js" },
+// "exports": { ".": { "import": "./lib/index.js" } }
+test('should return exports sugar', () => {
+  assert.strictEqual(
+    resolvewithplus.esmparse('./lib/index.js', 'import'),
+    './lib/index.js')
+
+  assert.strictEqual(
+    resolvewithplus.esmparse({ import: './lib/index.js' }, 'import'),
+    './lib/index.js')
+
+  assert.strictEqual(
+    resolvewithplus.esmparse({ '.': './lib/index.js' }, 'import'),
+    './lib/index.js')
+
+  assert.strictEqual(
+    resolvewithplus.esmparse({ '.': { import: './lib/index.js' } }, 'import'),
+    './lib/index.js')
+})
