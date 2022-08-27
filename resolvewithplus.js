@@ -46,7 +46,9 @@ export default (o => {
   // ex, D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
   //  -> /a/resolvewithplus/pathto/testfiles/testscript.js
   o.pathToPosix = pathany => isWin32PathRe.test(pathany)
-    ? pathany.replace(isWin32DriveRe, '').replace(isWin32PathRe, path.posix.sep)
+  // ? pathany.replace(isWin32DriveRe, '')
+  // .replace(isWin32PathRe, path.posix.sep)
+    ? pathany.replace(isWin32PathRe, path.posix.sep)
     : pathany
   
   // https://nodejs.org/api/modules.html#modules_module_require_id
