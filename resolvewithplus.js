@@ -74,7 +74,10 @@ export default (o => {
         ? o.getasfileordir(o.pathToPosix(requirepath), withpath, opts)
         : o.getasnode_module(requirepath, withpath);
 
-      fullpath = fullpath && o.addprotocolfile(realpath(fullpath));
+      fullpath = fullpath && (
+        opts.isposixpath
+          ? realpath(fullpath)
+          : o.addprotocolfile(realpath(fullpath)));
     }
 
     return fullpath;
@@ -338,7 +341,7 @@ export default (o => {
     return firstmatch && (
       isRelPathRe.test(firstmatch)
         ? path.join(targetpath, firstmatch)
-        : o(firstmatch, targetpath))
+        : o(firstmatch, targetpath, { posixpath : true }))
   };
 
   // https://nodejs.org/api/esm.html
