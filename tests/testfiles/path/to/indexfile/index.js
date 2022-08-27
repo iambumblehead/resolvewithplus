@@ -1,1 +1,1 @@
-module.exports = 'hellow';
+module.exports = 'hellow'

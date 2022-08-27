@@ -1,1 +1,1 @@
-export default 'lib-index';
+export default 'lib-index'

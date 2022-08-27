@@ -1,7 +1,11 @@
 {
   "plugins": [],
+  "extends": [
+    "eslint:recommended"
+  ],  
   "env": {
-    "node": true
+    "node": true,
+    "jest": true
   },
   "parserOptions": {
     "sourceType": "module",
@@ -20,7 +24,7 @@
     "no-sequences": 0,
     "strict": [2, "never"],
     "one-var": [2, {
-      "let": "never",
+      "let": "always",
       "const": "never"
     }],
     "space-in-parens": [2, "never" ],
@@ -32,7 +36,7 @@
         "const": 3
       }
     }],
-    "camelcase": [2, {"properties": "never", "allow": ["node_modules"]}],
+    "camelcase": [2, {"properties": "never", "allow": ["node_modules"] }],
     "no-underscore-dangle": 0,
     "func-names": [2, "never"],
     "newline-per-chained-call": 0,
@@ -41,6 +45,7 @@
     "no-mixed-operators": 0,
     "no-plusplus": 0,
     "no-console": 0,
+    "semi": [2, "never"],
     "nonblock-statement-body-position": 0,
     "arrow-parens": [2, "as-needed"],
     "space-before-function-paren": [2, "always"],
@@ -52,7 +57,7 @@
     "curly": 0,
     "operator-linebreak": 0,
     "no-param-reassign": 0,
-    "key-spacing": [2, {"beforeColon": true}],
+    "key-spacing": [2],
     "implicit-arrow-linebreak": 0,
     "no-shadow": [0, "warn", {
         "allow": [ "err" ]

@@ -1,1 +1,1 @@
-export default 'src-features-x';
+export default 'src-features-x'
