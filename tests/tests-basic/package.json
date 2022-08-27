@@ -21,6 +21,6 @@
     "resolvewithplus": "file:.."
   },
   "scripts": {
-    "test": "node --test tests-basic.test.js tests-export-patterns.test.js tests-import-patterns.test.js"
+    "test": "node --experimental-import-meta-resolve --test tests-basic.test.js tests-export-patterns.test.js tests-import-patterns.test.js"
   }
 }

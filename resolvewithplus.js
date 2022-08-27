@@ -12,13 +12,15 @@ const isBuiltinRe = new RegExp(
 const isDirPathRe = /^\.?\.?([a-zA-Z]:)?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
 const isWin32PathRe = /\\/g;
-const isWin32DriveRe = /^[a-zA-Z]:/;
 const isSupportedIndexRe = /index.[tj]sx?$/;
 const isResolveWithPathRe = /[\\/]resolvewithplus[\\/]/;
 const packageNameRe = /(^@[^/]*\/[^/]*|^[^/]*)\/?(.*)$/;
 const isESMImportSubpathRe = /^#/;
 const esmStrGlobRe = /(\*)/g;
 const esmStrPathCharRe = /([./])/g;
+const rootDirSlashRe = /^\//;
+const protocolNode = /^node:/;
+const FILE_PROTOCOL = 'file:///';
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 const node_modules = 'node_modules';
 const packagejson = 'package.json';
@@ -41,9 +43,9 @@ export default (o => {
   o.cache = {};
 
   // ex, D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
-  //  -> /a/resolvewithplus/pathto/testfiles/testscript.js
+  //  -> D:/a/resolvewithplus/pathto/testfiles/testscript.js
   o.pathToPosix = pathany => isWin32PathRe.test(pathany)
-    ? pathany.replace(isWin32DriveRe, '').replace(isWin32PathRe, path.posix.sep)
+    ? pathany.replace(isWin32PathRe, path.posix.sep)
     : pathany
   
   // https://nodejs.org/api/modules.html#modules_module_require_id
@@ -65,17 +67,24 @@ export default (o => {
       : process.cwd();
 
     if (isBuiltinRe.test(requirepath)) {
-      fullpath = requirepath;
+      fullpath = o.addprotocolnode(requirepath)
     } else {
       fullpath = isDirPathRe.test(requirepath)
         ? o.getasfileordir(o.pathToPosix(requirepath), withpath, opts)
         : o.getasnode_module(requirepath, withpath);
 
-      fullpath = fullpath && realpath(fullpath);
+      fullpath = fullpath && (
+        opts.isposixpath
+          ? realpath(fullpath)
+          : o.addprotocolfile(o.pathToPosix(realpath(fullpath))));
     }
 
     return fullpath;
   };
+
+  o.addprotocolnode = p => protocolNode.test(p) ? p : `node:${p}`;
+
+  o.addprotocolfile = p => p && (FILE_PROTOCOL + p.replace(rootDirSlashRe, ''));
 
   o.iscoremodule = p => isBuiltinRe.test(p);
 
@@ -331,7 +340,7 @@ export default (o => {
     return firstmatch && (
       isRelPathRe.test(firstmatch)
         ? path.join(targetpath, firstmatch)
-        : o(firstmatch, targetpath))
+        : o(firstmatch, targetpath, { isposixpath : true }))
   };
 
   // https://nodejs.org/api/esm.html
