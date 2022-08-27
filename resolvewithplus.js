@@ -19,6 +19,9 @@ const packageNameRe = /(^@[^/]*\/[^/]*|^[^/]*)\/?(.*)$/;
 const isESMImportSubpathRe = /^#/;
 const esmStrGlobRe = /(\*)/g;
 const esmStrPathCharRe = /([./])/g;
+const rootDirSlashRe = /^\//;
+const protocolNode = /^node:/;
+const FILE_PROTOCOL = 'file:///';
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ];
 const node_modules = 'node_modules';
 const packagejson = 'package.json';
@@ -65,17 +68,21 @@ export default (o => {
       : process.cwd();
 
     if (isBuiltinRe.test(requirepath)) {
-      fullpath = requirepath;
+      fullpath = o.addprotocolnode(requirepath)
     } else {
       fullpath = isDirPathRe.test(requirepath)
         ? o.getasfileordir(o.pathToPosix(requirepath), withpath, opts)
         : o.getasnode_module(requirepath, withpath);
 
-      fullpath = fullpath && realpath(fullpath);
+      fullpath = fullpath && o.addprotocolfile(realpath(fullpath));
     }
 
     return fullpath;
   };
+
+  o.addprotocolnode = p => protocolNode.test(p) ? p : `node:${p}`;
+
+  o.addprotocolfile = p => p && (FILE_PROTOCOL + p.replace(rootDirSlashRe, ''));
 
   o.iscoremodule = p => isBuiltinRe.test(p);
 

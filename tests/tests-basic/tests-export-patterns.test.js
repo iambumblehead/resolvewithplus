@@ -1,7 +1,11 @@
+import url from 'url';
 import path from 'path';
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from 'resolvewithplus';
+
+const tofileurl = p => url.pathToFileURL(p).href;
+const toresolvefileurl = p => tofileurl(path.resolve(p));
 
 // "Package entry points"
 // from: https://nodejs.org/api/packages.html#package-entry-points
@@ -19,12 +23,12 @@ import resolvewithplus from 'resolvewithplus';
 //   }
 // }
 test('should mock all exports from nodejsexample_01_exports', () => {
-  const noderesolvedlibindex = path
-    .resolve('./nodejsexample_01_exports/lib/index.test.js');
-  const noderesolvedfeatureindex = path
-    .resolve('./nodejsexample_01_exports/feature/index.test.js');
-  const noderesolvedpackagejson = path
-    .resolve('./nodejsexample_01_exports/package.json');
+  const noderesolvedlibindex = toresolvefileurl(
+    './nodejsexample_01_exports/lib/index.test.js');
+  const noderesolvedfeatureindex = toresolvefileurl(
+    './nodejsexample_01_exports/feature/index.test.js');
+  const noderesolvedpackagejson = toresolvefileurl(
+    './nodejsexample_01_exports/package.json');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_01_exports'),
@@ -75,12 +79,12 @@ test('should mock all exports from nodejsexample_01_exports', () => {
 //   }
 // }
 test('should mock all exports from nodejsexample_02_exports', () => {
-  const noderesolvedlibindex = path
-    .resolve('./nodejsexample_02_exports/lib/index.test.js');
-  const noderesolvedfeatureindex = path
-    .resolve('./nodejsexample_02_exports/feature/index.test.js');
-  const noderesolvedpackagejson = path
-    .resolve('./nodejsexample_02_exports/package.json');
+  const noderesolvedlibindex = toresolvefileurl(
+    './nodejsexample_02_exports/lib/index.test.js');
+  const noderesolvedfeatureindex = toresolvefileurl(
+    './nodejsexample_02_exports/feature/index.test.js');
+  const noderesolvedpackagejson = toresolvefileurl(
+    './nodejsexample_02_exports/package.json');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_02_exports'),
@@ -125,11 +129,11 @@ test('should mock all exports from nodejsexample_02_exports', () => {
 //     "./feature/internal/*": null
 //   }
 // }
-test('should mock all exports from nodejsexample_03_exports', async () => {
-  const noderesolvedlibindex = path
-    .resolve('./nodejsexample_03_exports/lib/index.test.js');
-  const noderesolvedfeatureindex = path
-    .resolve('./nodejsexample_03_exports/feature/index.test.js');
+test('should mock all exports from nodejsexample_03_exports', () => {
+  const noderesolvedlibindex = toresolvefileurl(
+    './nodejsexample_03_exports/lib/index.test.js');
+  const noderesolvedfeatureindex = toresolvefileurl(
+    './nodejsexample_03_exports/feature/index.test.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_03_exports'),
@@ -147,8 +151,8 @@ test('should mock all exports from nodejsexample_03_exports', async () => {
 //   "exports": "./lib/index.js"
 // }
 test('should mock all exports from nodejsexample_04_exports', () => {
-  const noderesolvedlibindex = path
-    .resolve('./nodejsexample_04_exports/lib/index.test.js');
+  const noderesolvedlibindex = toresolvefileurl(
+    './nodejsexample_04_exports/lib/index.test.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_04_exports'),
@@ -164,10 +168,10 @@ test('should mock all exports from nodejsexample_04_exports', () => {
 //   }
 // }
 test('should mock all exports from nodejsexample_05_exports, subpaths', () => {
-  const noderesolvedindex = path
-    .resolve('./nodejsexample_05_exports/index.test.js');
-  const noderesolvedsubmodule = path
-    .resolve('./nodejsexample_05_exports/src/submodule.js');
+  const noderesolvedindex = toresolvefileurl(
+    './nodejsexample_05_exports/index.test.js');
+  const noderesolvedsubmodule = toresolvefileurl(
+    './nodejsexample_05_exports/src/submodule.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_05_exports'),
@@ -186,8 +190,8 @@ test('should mock all exports from nodejsexample_05_exports, subpaths', () => {
 //   }
 // }
 test('should mock all exports from nodejsexample_06_exports, sugar "."', () => {
-  const noderesolvedmain = path
-    .resolve('./nodejsexample_06_exports/main.js');
+  const noderesolvedmain = toresolvefileurl(
+    './nodejsexample_06_exports/main.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_06_exports'),
@@ -200,8 +204,8 @@ test('should mock all exports from nodejsexample_06_exports, sugar "."', () => {
 //   "exports": "./index.js"
 // }
 test('should mock all exports from nodejsexample_07_exports, sugar "."', () => {
-  const noderesolvedmain = path
-    .resolve('./nodejsexample_07_exports/main.js');
+  const noderesolvedmain = toresolvefileurl(
+    './nodejsexample_07_exports/main.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_07_exports'),
@@ -217,8 +221,8 @@ test('should mock all exports from nodejsexample_07_exports, sugar "."', () => {
 //   }
 // }
 test('should mock exports from nodejsexample_10_exports, conditional', () => {
-  const noderesolvedindexmodule = path
-    .resolve('./nodejsexample_10_exports/index-module.js');
+  const noderesolvedindexmodule = toresolvefileurl(
+    './nodejsexample_10_exports/index-module.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_10_exports'),
@@ -237,10 +241,10 @@ test('should mock exports from nodejsexample_10_exports, conditional', () => {
 //   }
 // }
 test('should mock exports from nodejsexample_11_exports, conditional', () => {
-  const noderesolvedindex = path
-    .resolve('./nodejsexample_11_exports/index.test.js');
-  const noderesolvedfeaturenode = path
-    .resolve('./nodejsexample_11_exports/feature-node.js');
+  const noderesolvedindex = toresolvefileurl(
+    './nodejsexample_11_exports/index.test.js');
+  const noderesolvedfeaturenode = toresolvefileurl(
+    './nodejsexample_11_exports/feature-node.js');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_11_exports'),
@@ -263,8 +267,8 @@ test('should mock exports from nodejsexample_11_exports, conditional', () => {
 //   }
 // }
 test('should mock exports from nodejsexample_12_exports, nested cond', () => {
-  const noderesolvedfeaturenode = path
-    .resolve('./nodejsexample_12_exports/feature-node.mjs');
+  const noderesolvedfeaturenode = toresolvefileurl(
+    './nodejsexample_12_exports/feature-node.mjs');
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_12_exports'),

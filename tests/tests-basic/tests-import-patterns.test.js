@@ -4,6 +4,9 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from 'resolvewithplus';
 
+const tofileurl = p => url.pathToFileURL(p).href;
+const toresolvefileurl = p => tofileurl(path.resolve(p));
+
 // "Subpath imports"
 // from: https://nodejs.org/api/packages.html#package-entry-points
 // {
@@ -19,8 +22,8 @@ import resolvewithplus from 'resolvewithplus';
 // }
 test('should mock #subpath nodejsexample_08_imports, complex', () => {
   const parentURL = path.resolve('./nodejsexample_08_imports');
-  const noderesolvedsubpathimport = path
-    .resolve('./node_modules/form-urlencoded/form-urlencoded.mjs');
+  const noderesolvedsubpathimport = toresolvefileurl(
+    './node_modules/form-urlencoded/form-urlencoded.mjs');
 
   assert.strictEqual(
     resolvewithplus('#dep', path.resolve('./nodejsexample_01_exports')),
@@ -43,15 +46,15 @@ test('should mock #subpath nodejsexample_08_imports, complex', () => {
 // }
 test('should mock #subpath nodejsexample_09_imports, globby', async () => {
   const parentURL = path.resolve('./nodejsexample_09_imports');
-  const noderesolvedfeaturesx = path
-    .resolve('./nodejsexample_09_imports/src/features/x.js');
-  const noderesolvedfeaturesy = path
-    .resolve('./nodejsexample_09_imports/src/features/y/y.js');
-  const noderesolvedinternalz = path
-    .resolve('./nodejsexample_09_imports/src/internal/z.js');
+  const noderesolvedfeaturesx = toresolvefileurl(
+    './nodejsexample_09_imports/src/features/x.js');
+  const noderesolvedfeaturesy = toresolvefileurl(
+    './nodejsexample_09_imports/src/features/y/y.js');
+  const noderesolvedinternalz = toresolvefileurl(
+    './nodejsexample_09_imports/src/internal/z.js');
 
-  assert.ok(await import(url.pathToFileURL(
-    resolvewithplus('nodejsexample_09_imports/features/x.js'))));
+  assert.ok(await import(
+    resolvewithplus('nodejsexample_09_imports/features/x.js')));
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_09_imports/features/x.js'),

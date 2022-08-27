@@ -9,6 +9,9 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import resolvewithplus from '../../resolvewithplus.js';
 
+const tofileurl = p => url.pathToFileURL(p).href;
+const toresolvefileurl = p => tofileurl(path.resolve(p));
+
 test('should return matched export paths', () => {
   const exports = {
     '.' : './lib/index.test.js',
@@ -73,7 +76,7 @@ test('should pass windows and posix system-specific module path', () => {
 });
 
 test('should return a core module reference as require.resolve id', () => {
-  assert.strictEqual(resolvewithplus('path'), 'path');
+  assert.strictEqual(resolvewithplus('path'), 'node:path');
 });
 
 // eslint-disable-next-line max-len
@@ -81,9 +84,47 @@ test('should return a core module prefixed with \'node:\' reference as require.r
   assert.strictEqual(resolvewithplus('node:path'), 'node:path');
 });
 
+test('should return fileurl paths, as import.meta.resolve', async () => {
+  const fullpath = path.resolve('../testfiles') + '/';
+  const fullpathfileurl = tofileurl(fullpath);
+  const relpathtoindex = '../testfiles/path/to/indexfile/index.js';
+
+  assert.strictEqual(
+    await import.meta.resolve('path', fullpathfileurl),
+    resolvewithplus('path', fullpath));
+
+  assert.strictEqual(
+    await import.meta.resolve('node:path', fullpathfileurl),
+    resolvewithplus('node:path', fullpath));
+
+  assert.strictEqual(
+    await import.meta.resolve('yargs', fullpathfileurl),
+    resolvewithplus('yargs', fullpath));
+
+  assert.strictEqual(
+    await import.meta.resolve('got', fullpathfileurl),
+    resolvewithplus('got', fullpath));
+
+  assert.strictEqual(
+    await import.meta.resolve('pg', fullpathfileurl),
+    resolvewithplus('pg', fullpath));
+  
+  assert.strictEqual(
+    await import.meta.resolve('koa', fullpathfileurl),
+    resolvewithplus('koa', fullpath));
+  
+  assert.strictEqual( // module id
+    await import.meta.resolve('optfn', fullpathfileurl),
+    resolvewithplus('optfn', fullpath));
+
+  assert.strictEqual( // relpath
+    await import.meta.resolve(relpathtoindex, fullpathfileurl),
+    resolvewithplus(relpathtoindex, fullpath))
+});
+
 test('should return a full path when given relative path to index file', () => {
   const fullpath = path.resolve('../testfiles/');
-  const indexPath = path.resolve('../testfiles/path/to/indexfile/index.js')
+  const indexPath = toresolvefileurl('../testfiles/path/to/indexfile/index.js');
 
   assert.strictEqual(
     resolvewithplus('./path/to/indexfile', fullpath),
@@ -104,10 +145,9 @@ test('should return a full path when given relative path to index file', () => {
 
 test('should use process path as a default "with" path, second param', () => {
   assert.strictEqual(resolvewithplus('./path/to/indexfile'), null);
-
   assert.strictEqual(
     resolvewithplus('../testfiles/path/to/indexfile'),
-    path.resolve('../testfiles/path/to/indexfile/index.js'));        
+    toresolvefileurl('../testfiles/path/to/indexfile/index.js'))
 });
 
 test('should return null if a path does not exist', () => {
@@ -115,17 +155,17 @@ test('should return null if a path does not exist', () => {
 });
 
 test('should return a full path when given the id to a module', () => {
-  const fullpath = path.resolve('../testfiles/');
+  const fullpath = path.resolve('../testfiles') + '/';
 
   assert.strictEqual(
     resolvewithplus('optfn', fullpath),
-    path.resolve('../node_modules/optfn/optfn.js'));
+    toresolvefileurl('../node_modules/optfn/optfn.js'));
 });
 
 test('should return null when given id to withpath inaccessible module', () => {
   const fullpath = path.resolve('../testfiles/');
   const fullpathindexfile = path.join(fullpath + '/path/to/indexfile');
-  
+
   assert.strictEqual(
     resolvewithplus('notamodulename', fullpathindexfile), null);
 });
@@ -137,10 +177,10 @@ test('should follow the behaviour of require.resolve', () => {
   // needed in case, resolvewith is cloned to a different directory name
   const resolvewithrootdirname = path.basename(dirnameroot);
   const resolvewithresolved = path
-    .resolve(`../../../${resolvewithrootdirname}/`);
-
+    .resolve(`../../../${resolvewithrootdirname}`) + '/';
+  
   assert.strictEqual(
-    path.resolve('../../resolvewithplus.js'),
+    toresolvefileurl('../../resolvewithplus.js'),
     resolvewithplus(`../${resolvewithrootdirname}`, resolvewithresolved));
 
   const resolvewithedpath = resolvewithplus(
@@ -148,11 +188,11 @@ test('should follow the behaviour of require.resolve', () => {
     path.resolve(resolvewithresolved));
 
   assert.strictEqual(
-    path.resolve('../testfiles/testscript.js'),
+    toresolvefileurl('../testfiles/testscript.js'),
     resolvewithedpath);
 
   assert.strictEqual(
-    'path',
+    'node:path',
     resolvewithplus('path', path.resolve('../../../resolvewithplus/')));
 });
 
@@ -161,7 +201,7 @@ test('should handle package.json "exports" field', () => {
   
   assert.strictEqual(
     resolvewithplus('koa', fullpath),
-    path.resolve('../node_modules/koa/dist/koa.mjs'));
+    toresolvefileurl('../node_modules/koa/dist/koa.mjs'));
 });
 
 test('should handle package.json "exports" field, $.[0].import', () => {
@@ -169,15 +209,15 @@ test('should handle package.json "exports" field, $.[0].import', () => {
   
   assert.strictEqual(
     resolvewithplus('yargs', fullpath),
-    path.resolve('../node_modules/yargs/index.mjs'));
+    toresolvefileurl('../node_modules/yargs/index.mjs'));
 });
 
 test('should handle package.json stringy "exports" field (got)', () => {
   const fullpath = path.resolve('../testfiles/');
   
   assert.strictEqual(
-    resolvewithplus('got', fullpath, { esm : true }),
-    path.resolve('../node_modules/got/dist/source/index.js'));
+    resolvewithplus('got', fullpath),
+    toresolvefileurl('../node_modules/got/dist/source/index.js'));
 });
 
 test('should handle package.json "main": "./lib" field (pg)', () => {
@@ -185,7 +225,7 @@ test('should handle package.json "main": "./lib" field (pg)', () => {
   
   assert.strictEqual(
     resolvewithplus('pg', fullpath),
-    path.resolve('../node_modules/pg/lib/index.js'));
+    toresolvefileurl('../node_modules/pg/lib/index.js'));
 });
 
 test('should return values from cache', () => {
