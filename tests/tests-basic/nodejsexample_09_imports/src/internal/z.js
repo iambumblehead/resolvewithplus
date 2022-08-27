@@ -1,1 +1,1 @@
-export default 'src-intrnal-z';
+export default 'src-intrnal-z'

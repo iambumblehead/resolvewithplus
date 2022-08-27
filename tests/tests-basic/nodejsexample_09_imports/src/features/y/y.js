@@ -1,1 +1,1 @@
-export default 'src-features-y-y';
+export default 'src-features-y-y'

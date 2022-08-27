@@ -1,1 +1,1 @@
-export {default} from '../resolvewithplus.js';
+export {default} from '../resolvewithplus.js'

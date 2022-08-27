@@ -1,1 +1,1 @@
-export default 'feature-index';
+export default 'feature-index'

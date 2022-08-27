@@ -1,1 +1,1 @@
-export default 'feature';
+export default 'feature'

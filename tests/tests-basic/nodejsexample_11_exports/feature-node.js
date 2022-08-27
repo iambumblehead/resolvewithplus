@@ -1,1 +1,1 @@
-export default 'feature-node';
+export default 'feature-node'
