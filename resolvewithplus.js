@@ -341,7 +341,7 @@ export default (o => {
     return firstmatch && (
       isRelPathRe.test(firstmatch)
         ? path.join(targetpath, firstmatch)
-        : o(firstmatch, targetpath, { posixpath : true }))
+        : o(firstmatch, targetpath, { isposixpath : true }))
   };
 
   // https://nodejs.org/api/esm.html
