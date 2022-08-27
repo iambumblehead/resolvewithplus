@@ -160,21 +160,6 @@ export default (o => {
     return keyvalmatch
   }
 
-  // "exports": './lib/index.js',
-  // "exports": { "import": "./lib/index.js" },
-  // "exports": { ".": "./lib/index.js" },
-  // "exports": { ".": { "import": "./lib/index.js" } }
-  o.esmparsesugar = (spec, specifier, indexdefault = null) => {
-    if (typeof spec === 'string')
-      indexdefault = spec
-    else if (isobj(spec))
-      indexdefault = (
-        o.esmparsesugar(spec[specifier], specifier) ||
-          o.esmparsesugar(spec[specdot], specifier))
-
-    return indexdefault
-  }
-
   o.esmparselist = (list, spec, specifier, key = list[0]) => {
     if (!list.length) return null
 
@@ -193,9 +178,6 @@ export default (o => {
 
     if (typeof spec === 'string')
       return spec
-
-    if (specifier === specimport)
-      indexval = o.esmparsesugar(spec, specifier)
 
     if (!indexval && Array.isArray(spec)) {
       // "exports": {
@@ -228,8 +210,15 @@ export default (o => {
         indexval = o.esmparse(spec[specdefault], specifier)
       if (!indexval && spec[specifier])
         indexval = o.esmparse(spec[specifier], specifier)
-      if (!indexval && spec[specdot] && typeof spec[specdot] !== 'string')
-        indexval = o.esmparse(spec[specdot], specifier)
+
+      // "exports": './lib/index.js',
+      // "exports": { "import": "./lib/index.js" },
+      // "exports": { ".": "./lib/index.js" },
+      // "exports": { ".": { "import": "./lib/index.js" } }
+      if (!indexval && spec[specdot])
+        indexval = typeof spec[specdot] === 'string'
+          ? specifier === specimport && o.esmparse(spec[specdot], specifier)
+          : o.esmparse(spec[specdot], specifier)
 
       // "exports": {
       //   '.': './lib/index.test.js',
