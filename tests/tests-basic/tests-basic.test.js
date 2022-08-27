@@ -61,37 +61,38 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
   const fullpath = path.resolve('../testfiles') + '/';
   const fullpathfileurl = tofileurl(fullpath);
   const relpathtoindex = '../testfiles/path/to/indexfile/index.js';
+  const metaresolve = import.meta.resolve;
 
   assert.strictEqual(
-    await import.meta.resolve('path', fullpathfileurl),
+    await metaresolve('path', fullpathfileurl),
     resolvewithplus('path', fullpath));
 
   assert.strictEqual(
-    await import.meta.resolve('node:path', fullpathfileurl),
+    await metaresolve('node:path', fullpathfileurl),
     resolvewithplus('node:path', fullpath));
 
   assert.strictEqual(
-    await import.meta.resolve('yargs', fullpathfileurl),
+    await metaresolve('yargs', fullpathfileurl),
     resolvewithplus('yargs', fullpath));
 
   assert.strictEqual(
-    await import.meta.resolve('got', fullpathfileurl),
+    await metaresolve('got', fullpathfileurl),
     resolvewithplus('got', fullpath));
 
   assert.strictEqual(
-    await import.meta.resolve('pg', fullpathfileurl),
+    await metaresolve('pg', fullpathfileurl),
     resolvewithplus('pg', fullpath));
   
   assert.strictEqual(
-    await import.meta.resolve('koa', fullpathfileurl),
+    await metaresolve('koa', fullpathfileurl),
     resolvewithplus('koa', fullpath));
   
   assert.strictEqual( // module id
-    await import.meta.resolve('optfn', fullpathfileurl),
+    await metaresolve('optfn', fullpathfileurl),
     resolvewithplus('optfn', fullpath));
 
   assert.strictEqual( // relpath
-    await import.meta.resolve(relpathtoindex, fullpathfileurl),
+    await metaresolve(relpathtoindex, fullpathfileurl),
     resolvewithplus(relpathtoindex, fullpath))
 });
 
