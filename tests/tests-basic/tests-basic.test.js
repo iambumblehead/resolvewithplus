@@ -3,7 +3,6 @@
 // Author(s): bumblehead <chris@bumblehead.com>
 
 import url from 'url';
-import os from 'os';
 import path from 'path';
 import test from 'node:test'
 import assert from 'node:assert/strict'
