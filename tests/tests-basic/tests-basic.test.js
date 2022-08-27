@@ -44,7 +44,7 @@ test('should return matched export paths', () => {
 
 test('should convert win32 path to node-friendly posix path', () => {
   const win32Path = 'D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js';
-  const posixPath = '/a/resolvewithplus/pathto/testfiles/testscript.js';
+  const posixPath = 'D:/a/resolvewithplus/pathto/testfiles/testscript.js';
   const returnPath = resolvewithplus.pathToPosix(win32Path);
 
   assert.strictEqual(returnPath, posixPath);
