@@ -12,7 +12,6 @@ const isBuiltinRe = new RegExp(
 const isDirPathRe = /^\.?\.?([a-zA-Z]:)?(\/|\\)/;
 const isRelPathRe = /^.\.?(?=\/|\\)/;
 const isWin32PathRe = /\\/g;
-// const isWin32DriveRe = /^[a-zA-Z]:/;
 const isSupportedIndexRe = /index.[tj]sx?$/;
 const isResolveWithPathRe = /[\\/]resolvewithplus[\\/]/;
 const packageNameRe = /(^@[^/]*\/[^/]*|^[^/]*)\/?(.*)$/;
@@ -44,10 +43,8 @@ export default (o => {
   o.cache = {};
 
   // ex, D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
-  //  -> /a/resolvewithplus/pathto/testfiles/testscript.js
+  //  -> D:/a/resolvewithplus/pathto/testfiles/testscript.js
   o.pathToPosix = pathany => isWin32PathRe.test(pathany)
-  // ? pathany.replace(isWin32DriveRe, '')
-  // .replace(isWin32PathRe, path.posix.sep)
     ? pathany.replace(isWin32PathRe, path.posix.sep)
     : pathany
   
@@ -80,7 +77,6 @@ export default (o => {
         opts.isposixpath
           ? realpath(fullpath)
           : o.addprotocolfile(o.pathToPosix(realpath(fullpath))));
-      //: o.addprotocolfile(o.posixpathasospath(realpath(fullpath))));
     }
 
     return fullpath;
@@ -89,10 +85,6 @@ export default (o => {
   o.addprotocolnode = p => protocolNode.test(p) ? p : `node:${p}`;
 
   o.addprotocolfile = p => p && (FILE_PROTOCOL + p.replace(rootDirSlashRe, ''));
-
-  // o.posixpathasospath = p => process.platform === 'win32'
-  //   ? p.split(path.posix.sep).join(path.sep)
-  //   : p
 
   o.iscoremodule = p => isBuiltinRe.test(p);
 

@@ -50,37 +50,11 @@ test('should convert win32 path to node-friendly posix path', () => {
   assert.strictEqual(returnPath, posixPath);
 })
 
-test('should pass windows and posix system-specific module path', () => {
-  const modulePath = url.fileURLToPath(
-    new URL('../testfiles/testscript.js', import.meta.url))
-  const calleePath = import.meta.url;
-  const returnPath = resolvewithplus(modulePath, calleePath)
-  // posix modulePath
-  //  /root/pathto/testfiles/testscript.js
-  // posix calleePath
-  //  file:///root/pathto/tests-basic/tests-basic.test.js
-  // posix returnPath
-  //  /root/pathto/testfiles/testscript.js
-  //
-  // win32 modulePath
-  //  D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
-  // win32 calleePath eslint-disable-next-line max-len
-  //  file:///D:/a/resolvewithplus/pathto/tests-basic/tests-basic.test.js
-  // returnPath
-  //  D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
-  assert.ok(typeof returnPath === 'string')
-  assert.ok(returnPath.endsWith(
-    os.platform() === 'win32'
-      ? '\\tests\\testfiles\\testscript.js'
-      : '/tests/testfiles/testscript.js'))
-});
-
 test('should return a core module reference as require.resolve id', () => {
   assert.strictEqual(resolvewithplus('path'), 'node:path');
 });
 
-// eslint-disable-next-line max-len
-test('should return a core module prefixed with \'node:\' reference as require.resolve id', () => {
+test('should return "node:" prefixed core module id', () => {
   assert.strictEqual(resolvewithplus('node:path'), 'node:path');
 });
 
