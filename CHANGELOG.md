@@ -1,5 +1,7 @@
 # changelog
 
+ * 1.0.1 _Sep.15.2022_
+   * reduce size of minified resolvewithplus.js file [by 50%](https://github.com/iambumblehead/resolvewithplus/pull/38)
  * 1.0.0 _Aug.28.2022_
    * return paths in fileurl format, like import.meta.resolve
    * added tests around export sugar esm patterns
