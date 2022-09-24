@@ -35,8 +35,9 @@ const cache = {}
 const addprotocolnode = p => protocolNode.test(p) ? p : `node:${p}`
 const addprotocolfile = p => p && ('file:///' + p.replace(rootDirSlashRe, ''))
 const iscoremodule = p => isBuiltinRe.test(p)
-const getasdirname = p => path.resolve(path.extname(p) ? path.dirname(p) : p) + '/'
 const getaspath = p => protocolFile.test(p) ? url.fileURLToPath(p) : p
+const getasdirname = p =>
+  path.resolve(path.extname(p) ? path.dirname(p) : p) + '/'
 
 // ex, D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
 //  -> D:/a/resolvewithplus/pathto/testfiles/testscript.js
