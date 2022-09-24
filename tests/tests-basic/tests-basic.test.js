@@ -94,6 +94,10 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
   assert.strictEqual( // relpath
     await metaresolve(relpathtoindex, fullpathfileurl),
     resolvewithplus(relpathtoindex, fullpath))
+
+  assert.strictEqual(
+    await metaresolve(relpathtoindex, import.meta.url),
+    resolvewithplus(relpathtoindex, import.meta.url))
 })
 
 test('should return a full path when given relative path to index file', () => {

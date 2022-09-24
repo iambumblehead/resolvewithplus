@@ -1,4 +1,5 @@
 import fs from 'fs'
+import url from 'url'
 import path from 'path'
 import module from 'module'
 
@@ -20,6 +21,7 @@ const esmStrGlobRe = /(\*)/g
 const esmStrPathCharRe = /([./])/g
 const rootDirSlashRe = /^\//
 const protocolNode = /^node:/
+const protocolFile = /^file:/
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ]
 const node_modules = 'node_modules'
 const packagejson = 'package.json'
@@ -33,7 +35,8 @@ const cache = {}
 const addprotocolnode = p => protocolNode.test(p) ? p : `node:${p}`
 const addprotocolfile = p => p && ('file:///' + p.replace(rootDirSlashRe, ''))
 const iscoremodule = p => isBuiltinRe.test(p)
-const getasdirname = p => path.resolve(path.extname(p) ? path.dirname(p) : p)
+const getasdirname = p => path.resolve(path.extname(p) ? path.dirname(p) : p) + '/'
+const getaspath = p => protocolFile.test(p) ? url.fileURLToPath(p) : p
 
 // ex, D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
 //  -> D:/a/resolvewithplus/pathto/testfiles/testscript.js
@@ -409,7 +412,7 @@ const begin = (requirepath, withpath, opts) => {
   var fullpath = null
 
   withpath = typeof withpath === 'string'
-    ? getasdirname(decodeURI(withpath))
+    ? getasdirname(getaspath(decodeURI(withpath)))
     : process.cwd()
 
   if (isBuiltinRe.test(requirepath)) {
