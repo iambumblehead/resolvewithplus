@@ -1,5 +1,7 @@
 # changelog
 
+ * 1.0.2 _Sep.24.2022_
+   * add test and changes to [support import.meta.resolve](https://github.com/iambumblehead/resolvewithplus/pull/39)
  * 1.0.1 _Sep.15.2022_
    * reduce size of minified resolvewithplus.js file [by 50%](https://github.com/iambumblehead/resolvewithplus/pull/38)
  * 1.0.0 _Aug.28.2022_
