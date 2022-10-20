@@ -1,5 +1,5 @@
 import fs from 'fs'
-import url from 'node:url'
+import url from 'url'
 import path from 'path'
 import module from 'module'
 

@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.0.0 _Oct.19.2022_
+  * return encoded url [same as import.meta.resolve](https://github.com/iambumblehead/resolvewithplus/pull/40) 
  * 1.0.2 _Sep.24.2022_
    * add test and changes to [support import.meta.resolve](https://github.com/iambumblehead/resolvewithplus/pull/39)
  * 1.0.1 _Sep.15.2022_
