@@ -61,7 +61,7 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
   const fullpath = path.resolve('../testfiles') + '/'
   const fullpathfileurl = tofileurl(fullpath)
   const relpathtoindex = '../testfiles/path/to/indexfile/index.js'
-  const relpathtonamewithspaces = '../testfiles/path/to/indexfile/file name with spaces.js'
+  const relpathspace = '../testfiles/path/to/indexfile/file name with spaces.js'
   const metaresolve = import.meta.resolve
 
   assert.strictEqual(
@@ -101,8 +101,8 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
     resolvewithplus(relpathtoindex, import.meta.url))
 
   assert.strictEqual(
-    await metaresolve(relpathtonamewithspaces, import.meta.url),
-    resolvewithplus(relpathtonamewithspaces, import.meta.url))
+    await metaresolve(relpathspace, import.meta.url),
+    resolvewithplus(relpathspace, import.meta.url))
 })
 
 test('should return a full path when given relative path to index file', () => {
