@@ -65,6 +65,14 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
   const metaresolve = import.meta.resolve
 
   assert.strictEqual(
+    await metaresolve('shelljs', fullpathfileurl),
+    resolvewithplus('shelljs', fullpath))
+
+  assert.strictEqual(
+    await metaresolve('execa', fullpathfileurl),
+    resolvewithplus('execa', fullpath))  
+  
+  assert.strictEqual(
     await metaresolve('path', fullpathfileurl),
     resolvewithplus('path', fullpath))
 

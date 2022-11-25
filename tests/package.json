@@ -14,7 +14,9 @@
     "eslint": "^8.0.1",
     "koa": "^2.13.4",
     "optfn": "~0.0.x",
-    "yargs": "^17.3.1"
+    "yargs": "^17.3.1",
+    "execa": "^6.1.0",
+    "shelljs": "^0.8.5"
   },
   "scripts": {
     "mini": "cd .. && npx esbuild resolvewithplus.js --minify --allow-overwrite --outfile=resolvewithplus.js",
