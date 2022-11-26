@@ -36,7 +36,7 @@ const addprotocolfile = p => p && url.pathToFileURL(p).href
 const iscoremodule = p => isBuiltinRe.test(p)
 const getaspath = p => protocolFile.test(p) ? url.fileURLToPath(p) : p
 const getasdirname = p =>
-  path.resolve(path.extname(p) ? path.dirname(p) : p) + '/'
+  path.resolve(path.extname(p) ? path.dirname(p) : p) + path.sep;
 
 // ex, D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
 //  -> D:/a/resolvewithplus/pathto/testfiles/testscript.js
@@ -66,7 +66,7 @@ const isfilesync = (file, stat) => {
 //    b. DIRS = DIRS + DIR
 //    c. let I = I - 1
 // 5. return DIRS
-const getasnode_module_paths = start => start.split(path.sep).slice(1)
+const getasnode_module_paths = start => start.split(path.sep)
   .reduce((prev, p, i) => {
     // the second condition allow resolvewithplus unit-tests to pass,
     // when resolvewithplus is inside another package's node_modules
@@ -75,10 +75,10 @@ const getasnode_module_paths = start => start.split(path.sep).slice(1)
 
     // windows and linux paths split differently
     // [ "D:", "a", "windows", "path" ] vs [ "", "linux", "path" ]
-    p = path.resolve(path.join(i ? prev[0][i-1] : path.sep, p))
-    
+    p = i ? path.join(prev[0][i-1], p) : p || path.sep
+
     prev[0].push(p)
-    prev[1].push(path.join(p, node_modules))
+    prev[1].push(path.resolve(path.join(p, node_modules)))
 
     return prev
   }, [ [], [] ])[1].reverse()

@@ -231,41 +231,16 @@ test('getasdirsync, should return path with index, if found', () => {
     resolvewithplus.getasdirsync(fullpath), fullpathindexjs)
 })
 
-test('getasnode_module_paths, should return list of paths (posix)', () => {
-  const fullpath = path.resolve('../testfiles/path/to/indexfile')
-  const { sep } = path
-  const paths = fullpath.split(sep).slice(1).reduce((prev, p, i) => {
-    if (p === 'node_modules' && !/[\\/]resolvewithplus[\\/]/.test(fullpath))
-      return prev
+test('getasnode_module_paths, should return paths to node_modules', () => {
+  const { relative, resolve } = path
+  const fullpath = resolve('../testfiles/path/to/indexfile')
+  const pathsToLook = resolvewithplus.getasnode_module_paths(fullpath)
+  const relativePaths = pathsToLook.map(pathToLook =>
+    relative(fullpath, pathToLook))
 
-    p = path.resolve(path.join(i ? prev[0][i-1] : sep, p))
-    
-    prev[0].push(p)
-    prev[1].push(path.join(p, 'node_modules'))
-
-    return prev
-  }, [ [], [] ])[1].reverse()
-
-  // [
-  //   '/home/bumble/resolvewithplus/testfiles/path/to/indexfile/node_modules',
-  //   '/home/bumble/resolvewithplus/testfiles/path/to/node_modules',
-  //   '/home/bumble/resolvewithplus/testfiles/path/node_modules',
-  //   '/home/bumble/resolvewithplus/testfiles/node_modules',
-  //   '/home/bumble/resolvewithplus/node_modules',
-  //   '/home/bumble/node_modules',
-  //   '/home/node_modules'
-  // ]
-  //
-  // [
-  //   'D:\\a\\resolvewithplus\\testfiles\\path\\to\\indexfile\\node_modules',
-  //   'D:\\a\\resolvewithplus\\testfiles\\path\\to\\node_modules',
-  //   'D:\\a\\resolvewithplus\\testfiles\\path\\node_modules',
-  //   'D:\\a\\resolvewithplus\\testfiles\\node_modules',
-  //   'D:\\a\\resolvewithplus\\node_modules',
-  //   'D:\\a\\node_modules'
-  // ]
-  assert.deepEqual(
-    resolvewithplus.getasnode_module_paths(fullpath), paths)
+  for (const relativePath of relativePaths) {
+    assert.match(relativePath, /^(\.\.[/\\])*node_modules/)
+  }
 })
 
 test('should handle exports.import path definition', () => {
