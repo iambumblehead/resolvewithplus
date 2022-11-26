@@ -36,7 +36,7 @@ const addprotocolfile = p => p && url.pathToFileURL(p).href
 const iscoremodule = p => isBuiltinRe.test(p)
 const getaspath = p => protocolFile.test(p) ? url.fileURLToPath(p) : p
 const getasdirname = p =>
-  path.resolve(path.extname(p) ? path.dirname(p) : p) + path.sep;
+  path.resolve(path.extname(p) ? path.dirname(p) : p) + path.sep
 
 // ex, D:\\a\\resolvewithplus\\pathto\\testfiles\\testscript.js
 //  -> D:/a/resolvewithplus/pathto/testfiles/testscript.js
