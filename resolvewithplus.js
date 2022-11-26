@@ -208,7 +208,7 @@ const esmparse = (spec, specifier) => {
     if (!indexval && spec[specifier])
       indexval = esmparse(spec[specifier], specifier)
 
-    // "exports": './lib/index.js',
+    // "exports": "./lib/index.js",
     // "exports": { "import": "./lib/index.js" },
     // "exports": { ".": "./lib/index.js" },
     // "exports": { ".": { "import": "./lib/index.js" } }
@@ -218,9 +218,9 @@ const esmparse = (spec, specifier) => {
         : esmparse(spec[specdot], specifier)
 
     // "exports": {
-    //   '.': './lib/index.test.js',
-    //   './lib': './lib/index.test.js',
-    //   './lib/*': './lib/*.js',
+    //   ".": "./lib/index.test.js",
+    //   "./lib": "./lib/index.test.js",
+    //   "./lib/*": "./lib/*.js"
     // }
     if (!indexval)
       indexval = esmparselist(Object.keys(spec), spec, specifier)
@@ -311,7 +311,7 @@ const getasfileordir = (requirepath, withpath, opts) => {
 
 // subpath patterns may resolve another dependency rather than file, eg
 // {
-//  "imports": {
+//   "imports": {
 //     "#dep": {
 //       "node": "dep-node-native",
 //       "default": "./dep-polyfill.js"
