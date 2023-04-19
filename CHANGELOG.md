@@ -1,5 +1,8 @@
 # changelog
 
+ * 2.0.2 _Mar.18.2023_
+  * increment dependencies,
+  * use node 20 at ci
  * 2.0.1 _Nov.26.2022_
   * resolve windows modules with correct drive letter [using patch](https://github.com/iambumblehead/resolvewithplus/pull/42) from @mshima
  * 2.0.0 _Oct.19.2022_
