@@ -1,23 +1,23 @@
 {
   "name": "resolvewithplus",
   "version": "2.0.2",
+  "description": "resolvewith with extra power",
+  "readmeFilename": "README.md",
+  "license": "ISC",
+  "type": "module",
   "engines" : { 
     "node": ">=12.16.0"
   },
-  "license": "ISC",
   "main": "resolvewithplus.js",
   "exports": {
     "import": "./resolvewithplus.js"
   },
-  "readmeFilename": "README.md",
-  "description": "resolvewith with extra power",
-  "type": "module",
   "files": [
     "resolvewithplus.js"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/iambumblehead/resolvewithplus.git"
+    "url": "git+https://github.com/iambumblehead/resolvewithplus.git"
   },
   "keywords": [
     "dependency",
@@ -30,9 +30,9 @@
     "file"
   ],
   "devDependencies": {
-    "c8": "^7.13.0",
-    "eslint": "^8.38.0",
-    "eslint-plugin-markdown": "^3.0.0"
+    "c8": "^8.0.1",
+    "eslint": "^8.49.0",
+    "eslint-plugin-markdown": "^3.0.1"
   },
   "scripts": {
     "test:install": "cd tests && npm run install:all",
