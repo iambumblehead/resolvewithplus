@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.0.3 _Sep.09.2023_
+  * pin node 20.4 at unit-test pipeline, last version of node before import.meta.resolve was reduced
  * 2.0.2 _Mar.18.2023_
   * increment dependencies,
   * use node 20 at ci
