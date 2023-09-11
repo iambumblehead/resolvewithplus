@@ -20,7 +20,9 @@
     "nodejsexample_12_exports": "file:nodejsexample_12_exports",
     "resolvewithplus": "file:.."
   },
+  "workspaces": ["workspaces/*"],
   "scripts": {
+    "test-workspace": "npm --prefix workspaces/b test",
     "test": "node --experimental-import-meta-resolve --test tests-basic.test.js tests-export-patterns.test.js tests-import-patterns.test.js"
   }
 }

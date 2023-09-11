@@ -1,0 +1,11 @@
+{
+  "name": "b",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-import-meta-resolve --test"
+  },
+  "dependencies": {
+    "a": "^0.0.0"
+  }
+}
