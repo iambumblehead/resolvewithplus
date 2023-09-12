@@ -20,9 +20,15 @@
     "nodejsexample_12_exports": "file:nodejsexample_12_exports",
     "resolvewithplus": "file:.."
   },
-  "workspaces": ["workspaces/*"],
+  "workspaces": [
+    "workspaces-js/*",
+    "workspaces-ts/*"
+  ],
   "scripts": {
-    "test-workspace": "npm --prefix workspaces/b test",
-    "test": "node --experimental-import-meta-resolve --test tests-basic.test.js tests-export-patterns.test.js tests-import-patterns.test.js"
+    "test-workspaces-js": "npm --prefix workspaces-js/js-b test",
+    "test-workspaces-ts": "npm --prefix workspaces-ts/ts-b test",
+    "test-workspaces": "npm run test-workspaces-js && npm run test-workspaces-ts",
+    "test-vanilla": "node --experimental-import-meta-resolve --test tests-basic.test.js tests-export-patterns.test.js tests-import-patterns.test.js",
+    "test": "npm run test-workspaces && npm run test-vanilla"
   }
 }
