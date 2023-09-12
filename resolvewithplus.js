@@ -15,6 +15,8 @@ const isRelPathRe = /^.\.?(?=\/|\\)/
 const isWin32PathRe = /\\/g
 const isSupportedIndexRe = /index.[tj]sx?$/
 const isResolveWithPathRe = /[\\/]resolvewithplus[\\/]/
+const isJsExtnRe = /\.js$/
+const isTsExtnRe = /\.ts$/
 const packageNameRe = /(^@[^/]*\/[^/]*|^[^/]*)\/?(.*)$/
 const isESMImportSubpathRe = /^#/
 const esmStrGlobRe = /(\*)/g
@@ -291,8 +293,14 @@ const getasdirsync = (d, opts) => {
   if ((relpath = gettargetindex(jsonobj, opts))) {
     filepath = getasfilesync(path.join(d, relpath))
   } else if ((relpath = jsonobj.main)) {
-    filepath = getasfilesync(path.join(d, relpath))
-      || getasfilesync(path.join(d, path.join(relpath, 'index')))
+    if (opts.isTypescript && isJsExtnRe.test(relpath)) {
+      filepath = getasfilesync(path.join(d, relpath.replace(isJsExtnRe, '.ts')))
+        || getasfilesync(path.join(d, relpath))
+        || getasfilesync(path.join(d, path.join(relpath, 'index')))
+    } else {
+      filepath = getasfilesync(path.join(d, relpath))
+        || getasfilesync(path.join(d, path.join(relpath, 'index')))
+    }
   } else {
     supportedExtensions.some(f => (
       (f = path.join(d, `index${f}`)) && isfilesync(f) && (filepath = f)))
@@ -420,7 +428,7 @@ const begin = (requirepath, withpath, opts) => {
   } else {
     fullpath = isDirPathRe.test(requirepath)
       ? getasfileordir(pathToPosix(requirepath), withpath, opts)
-      : getasnode_module(requirepath, withpath)
+      : getasnode_module(requirepath, withpath, opts)
 
     fullpath = fullpath && (
       opts.isposixpath
@@ -431,11 +439,20 @@ const begin = (requirepath, withpath, opts) => {
   return fullpath
 }
 
+const createopts = (moduleId, parent, opts) => {
+  opts = opts || {}
+  opts.isTypescript = typeof opts.isTypescript === 'boolean'
+    ? opts.isTypescript : isTsExtnRe.test(parent)
+
+  return opts
+}
+
 const resolvewith = (requirepath, withpath, opts) => {
   let resolvedpath = cache[requirepath+withpath]
   if (resolvedpath) return resolvedpath
 
-  resolvedpath = begin(requirepath, withpath, opts || {})
+  opts = createopts(requirepath, withpath, opts)
+  resolvedpath = begin(requirepath, withpath, opts)
 
   return cache[requirepath+withpath] = resolvedpath
 }
