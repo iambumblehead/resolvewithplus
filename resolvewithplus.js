@@ -262,10 +262,14 @@ const gettargetindex = (packagejson, opts) => {
 // 2. If X.js is a file, load X.js as JavaScript text.  STOP
 // 3. If X.json is a file, parse X.json to a JavaScript Object.  STOP
 // 4. If X.node is a file, load X.node as binary addon.  STOP
-const getasfilesync = f => {
+const getasfilesync = (f, opts = {}) => {
   var filepath = null
+  var filepathts = opts.isTypescript
+      && isJsExtnRe.test(f) && f.replace(isJsExtnRe, '.ts')
 
-  if (isfilesync(f)) {
+  if (isfilesync(filepathts)) {
+    filepath = filepathts
+  } else if (isfilesync(f)) {
     filepath = f
   } else {
     supportedExtensions
@@ -293,14 +297,8 @@ const getasdirsync = (d, opts) => {
   if ((relpath = gettargetindex(jsonobj, opts))) {
     filepath = getasfilesync(path.join(d, relpath))
   } else if ((relpath = jsonobj.main)) {
-    if (opts.isTypescript && isJsExtnRe.test(relpath)) {
-      filepath = getasfilesync(path.join(d, relpath.replace(isJsExtnRe, '.ts')))
-        || getasfilesync(path.join(d, relpath))
-        || getasfilesync(path.join(d, path.join(relpath, 'index')))
-    } else {
-      filepath = getasfilesync(path.join(d, relpath))
-        || getasfilesync(path.join(d, path.join(relpath, 'index')))
-    }
+    filepath = getasfilesync(path.join(d, relpath), opts)
+      || getasfilesync(path.join(d, path.join(relpath, 'index')))
   } else {
     supportedExtensions.some(f => (
       (f = path.join(d, `index${f}`)) && isfilesync(f) && (filepath = f)))

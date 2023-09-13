@@ -1,6 +1,8 @@
 # changelog
 
- * 2.0.3 _Sep.09.2023_
+ * 2.0.4 _Sep.12.2023_
+  * [improve resolution](https://github.com/iambumblehead/resolvewithplus/pull/48) of typescript moduleIds
+ * 2.0.3 _Sep.12.2023_
   * pin node 20.4 at unit-test pipeline, last version of node before import.meta.resolve was reduced
   * [add workspaces unit-tests](https://github.com/iambumblehead/resolvewithplus/pull/46)
   * [add detection of ".ts"](https://github.com/iambumblehead/resolvewithplus/pull/47) parent extension for applying typescript conditions
