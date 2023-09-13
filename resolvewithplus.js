@@ -309,10 +309,10 @@ const getasdirsync = (d, opts) => {
   return filepath
 }
 
-const getasfileordir = (requirepath, withpath, opts) => {
-  const temppath = isRelPathRe.test(requirepath)
-    ? path.join(withpath, requirepath)
-    : requirepath
+const getasfileordir = (moduleId, parent, opts) => {
+  const temppath = isRelPathRe.test(moduleId)
+    ? path.join(parent, moduleId)
+    : moduleId
 
   return getasfilesync(temppath, opts) || getasdirsync(temppath, opts)
 }
@@ -416,19 +416,19 @@ const getasnode_module = (targetpath, start, opts) => {
 // 3. LOAD_NODE_MODULES(X, dirname(Y))
 // 4. THROW "not found"
 //
-const begin = (requirepath, withpath, opts) => {
+const begin = (moduleId, parent, opts) => {
   var fullpath = null
 
-  withpath = typeof withpath === 'string'
-    ? getasdirname(getaspath(decodeURI(withpath)))
+  parent = typeof parent === 'string'
+    ? getasdirname(getaspath(decodeURI(parent)))
     : process.cwd()
 
-  if (isBuiltinRe.test(requirepath)) {
-    fullpath = addprotocolnode(requirepath)
+  if (isBuiltinRe.test(moduleId)) {
+    fullpath = addprotocolnode(moduleId)
   } else {
-    fullpath = isDirPathRe.test(requirepath)
-      ? getasfileordir(pathToPosix(requirepath), withpath, opts)
-      : getasnode_module(requirepath, withpath, opts)
+    fullpath = isDirPathRe.test(moduleId)
+      ? getasfileordir(pathToPosix(moduleId), parent, opts)
+      : getasnode_module(moduleId, parent, opts)
 
     fullpath = fullpath && (
       opts.isposixpath
@@ -447,14 +447,14 @@ const createopts = (moduleId, parent, opts) => {
   return opts
 }
 
-const resolvewith = (requirepath, withpath, opts) => {
-  let resolvedpath = cache[requirepath+withpath]
+const resolvewith = (moduleId, parent, opts) => {
+  let resolvedpath = cache[moduleId+parent]
   if (resolvedpath) return resolvedpath
 
-  opts = createopts(requirepath, withpath, opts)
-  resolvedpath = begin(requirepath, withpath, opts)
+  opts = createopts(moduleId, parent, opts)
+  resolvedpath = begin(moduleId, parent, opts)
 
-  return cache[requirepath+withpath] = resolvedpath
+  return cache[moduleId+parent] = resolvedpath
 }
 
 export default Object.assign(resolvewith, {
