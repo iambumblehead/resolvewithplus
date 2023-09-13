@@ -2,6 +2,9 @@
 
  * 2.0.3 _Sep.09.2023_
   * pin node 20.4 at unit-test pipeline, last version of node before import.meta.resolve was reduced
+  * [add workspaces unit-tests](https://github.com/iambumblehead/resolvewithplus/pull/46)
+  * [add detection of ".ts"](https://github.com/iambumblehead/resolvewithplus/pull/47) parent extension for applying typescript conditions
+  * [use moduleId and parent as internal names,](https://github.com/iambumblehead/resolvewithplus/pull/48) following nodejs conventions
  * 2.0.2 _Mar.18.2023_
   * increment dependencies,
   * use node 20 at ci
