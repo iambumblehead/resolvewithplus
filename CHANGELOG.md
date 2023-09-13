@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.0.5 _Sep.13.2023_
+  * [improve performance](https://github.com/iambumblehead/resolvewithplus/pull/49) slightly
  * 2.0.4 _Sep.12.2023_
   * [improve resolution](https://github.com/iambumblehead/resolvewithplus/pull/48) of typescript moduleIds
  * 2.0.3 _Sep.12.2023_

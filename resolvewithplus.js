@@ -24,6 +24,7 @@ const esmStrPathCharRe = /([./])/g
 const protocolNode = /^node:/
 const protocolFile = /^file:/
 const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ]
+const supportedIndexNames = supportedExtensions.map(extn => `index${extn}`)
 const node_modules = 'node_modules'
 const packagejson = 'package.json'
 const specruntime = 'node'
@@ -54,6 +55,20 @@ const isfilesync = (file, stat) => {
   }
 
   return stat && (stat.isFile() || stat.isFIFO())
+}
+
+const firstSyncFileExtn = (file, extnlist) => {
+  const fileextn = extnlist
+    .find(ext => isfilesync(file + ext)) || null
+
+  return fileextn && file + fileextn
+}
+
+const firstSyncFilePath = (dir, fileslist) => {
+  const filename = fileslist
+    .find(file => isfilesync(path.join(dir, file))) || null
+
+  return filename && path.join(dir, filename)
 }
 
 // https://nodejs.org/api/modules.html#modules_module_require_id
@@ -272,8 +287,7 @@ const getasfilesync = (f, opts = {}) => {
   } else if (isfilesync(f)) {
     filepath = f
   } else {
-    supportedExtensions
-      .some(ext => isfilesync(f + ext) && (filepath = f + ext))
+    filepath = firstSyncFileExtn(f, supportedExtensions)
   }
 
   return filepath
@@ -300,8 +314,7 @@ const getasdirsync = (d, opts) => {
     filepath = getasfilesync(path.join(d, relpath), opts)
       || getasfilesync(path.join(d, path.join(relpath, 'index')))
   } else {
-    supportedExtensions.some(f => (
-      (f = path.join(d, `index${f}`)) && isfilesync(f) && (filepath = f)))
+    filepath = firstSyncFilePath(d, supportedIndexNames)
   }
 
   return filepath
