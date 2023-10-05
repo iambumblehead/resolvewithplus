@@ -2,6 +2,7 @@
 
  * 2.0.6 _Oct.10.2023_
   * [update README image link](https://github.com/iambumblehead/resolvewithplus/pull/52) to use "main" repo path
+  * [replace reducer function](https://github.com/iambumblehead/resolvewithplus/pull/53) w/ simple recursion
  * 2.0.5 _Sep.13.2023_
   * [improve performance](https://github.com/iambumblehead/resolvewithplus/pull/49) slightly
   * [use main branch](https://github.com/iambumblehead/resolvewithplus/pull/50) rather than master
