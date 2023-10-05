@@ -38,7 +38,8 @@
     }],
     "camelcase": [2, {"properties": "never", "allow": [
       "node_module",
-      "first_parent"
+      "first_parent",
+      "next_module"
     ] }],
     "no-underscore-dangle": 0,
     "func-names": [2, "never"],
@@ -73,7 +74,7 @@
     "no-use-before-define": [2, "nofunc"],
     "no-nested-ternary": 0,
     "array-bracket-spacing": [2, "always"],
-    "prefer-destructuring": 2,
+    "prefer-destructuring": 0,
     "class-methods-use-this": 0,
     "no-confusing-arrow": 0
   }

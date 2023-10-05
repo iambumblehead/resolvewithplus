@@ -83,22 +83,30 @@ const firstSyncFilePath = (dir, fileslist) => {
 //    b. DIRS = DIRS + DIR
 //    c. let I = I - 1
 // 5. return DIRS
-const getasnode_module_paths = start => start.split(path.sep)
-  .reduce((prev, p, i) => {
+const getasnode_module_paths = (start, parts = start.split(path.sep)) => {
+  const next_module_paths = (parts, tuple = [ [], [] ]) => {
+    if (!parts.length)
+      return tuple[1].reverse()
+
     // the second condition allow resolvewithplus unit-tests to pass,
     // when resolvewithplus is inside another package's node_modules
-    if (p === node_modules && !isResolveWithPathRe.test(start))
-      return prev
+    if (parts[0] === node_modules && !isResolveWithPathRe.test(start))
+      return next_module_paths(parts.slice(1), tuple)
 
     // windows and linux paths split differently
     // [ "D:", "a", "windows", "path" ] vs [ "", "linux", "path" ]
-    p = i ? path.join(prev[0][i-1], p) : p || path.sep
+    const part = parts[0].length
+      ? path.join(tuple[0].slice(-1)[0], parts[0])
+      : parts[0] || path.sep
 
-    prev[0].push(p)
-    prev[1].push(path.resolve(path.join(p, node_modules)))
+    tuple[0].push(part)
+    tuple[1].push(path.resolve(path.join(part, node_modules)))
 
-    return prev
-  }, [ [], [] ])[1].reverse()
+    return next_module_paths(parts.slice(1), tuple)
+  }
+
+  return next_module_paths(parts)
+}
 
 const getasfirst_parent_packagejson_path = start => {
   const parentpath = start.split(path.sep).slice(1).reduce((prev, p, i) => {
