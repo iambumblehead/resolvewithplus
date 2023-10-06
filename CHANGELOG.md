@@ -1,25 +1,25 @@
 # changelog
 
  * 2.0.6 _Oct.10.2023_
-  * [update README image link](https://github.com/iambumblehead/resolvewithplus/pull/52) to use "main" repo path
-  * [replace reducer function](https://github.com/iambumblehead/resolvewithplus/pull/53) w/ simple recursion
+   * [update README image link](https://github.com/iambumblehead/resolvewithplus/pull/52) to use "main" repo path
+   * [replace reducer function](https://github.com/iambumblehead/resolvewithplus/pull/53) w/ simple recursion
  * 2.0.5 _Sep.13.2023_
-  * [improve performance](https://github.com/iambumblehead/resolvewithplus/pull/49) slightly
-  * [use main branch](https://github.com/iambumblehead/resolvewithplus/pull/50) rather than master
+   * [improve performance](https://github.com/iambumblehead/resolvewithplus/pull/49) slightly
+   * [use main branch](https://github.com/iambumblehead/resolvewithplus/pull/50) rather than master
  * 2.0.4 _Sep.12.2023_
-  * [improve resolution](https://github.com/iambumblehead/resolvewithplus/pull/48) of typescript moduleIds
+   * [improve resolution](https://github.com/iambumblehead/resolvewithplus/pull/48) of typescript moduleIds
  * 2.0.3 _Sep.12.2023_
-  * pin node 20.4 at unit-test pipeline, last version of node before import.meta.resolve was reduced
-  * [add workspaces unit-tests](https://github.com/iambumblehead/resolvewithplus/pull/46)
-  * [add detection of ".ts"](https://github.com/iambumblehead/resolvewithplus/pull/47) parent extension for applying typescript conditions
-  * [use moduleId and parent as internal names,](https://github.com/iambumblehead/resolvewithplus/pull/48) following nodejs conventions
+   * pin node 20.4 at unit-test pipeline, last version of node before import.meta.resolve was reduced
+   * [add workspaces unit-tests](https://github.com/iambumblehead/resolvewithplus/pull/46)
+   * [add detection of ".ts"](https://github.com/iambumblehead/resolvewithplus/pull/47) parent extension for applying typescript conditions
+   * [use moduleId and parent as internal names,](https://github.com/iambumblehead/resolvewithplus/pull/48) following nodejs conventions
  * 2.0.2 _Mar.18.2023_
-  * increment dependencies,
-  * use node 20 at ci
+   * increment dependencies,
+   * use node 20 at ci
  * 2.0.1 _Nov.26.2022_
-  * resolve windows modules with correct drive letter [using patch](https://github.com/iambumblehead/resolvewithplus/pull/42) from @mshima
+   * resolve windows modules with correct drive letter [using patch](https://github.com/iambumblehead/resolvewithplus/pull/42) from @mshima
  * 2.0.0 _Oct.19.2022_
-  * return encoded url [same as import.meta.resolve](https://github.com/iambumblehead/resolvewithplus/pull/40) 
+   * return encoded url [same as import.meta.resolve](https://github.com/iambumblehead/resolvewithplus/pull/40) 
  * 1.0.2 _Sep.24.2022_
    * add test and changes to [support import.meta.resolve](https://github.com/iambumblehead/resolvewithplus/pull/39)
  * 1.0.1 _Sep.15.2022_
