@@ -95,7 +95,7 @@ const getasnode_module_paths = (start, parts = start.split(path.sep)) => {
 
     // windows and linux paths split differently
     // [ "D:", "a", "windows", "path" ] vs [ "", "linux", "path" ]
-    const part = parts[0].length
+    const part = tuple[0].length
       ? path.join(tuple[0].slice(-1)[0], parts[0])
       : parts[0] || path.sep
 
