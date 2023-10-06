@@ -29,6 +29,7 @@ const node_modules = 'node_modules'
 const packagejson = 'package.json'
 const specruntime = 'node'
 const specdefault = 'default'
+const specbrowser = 'browser'
 const specimport = 'import'
 const specdot = '.'
 const isobj = o => o && typeof o === 'object'
@@ -195,7 +196,7 @@ const esmparselist = (list, spec, specifier, key = list[0]) => {
     || esmparselist(list.slice(1), spec, specifier)
 }
 
-const esmparse = (spec, specifier) => {
+const esmparse = (spec, specifier, opts = {}) => {
   let indexval = false
 
   if (typeof spec === 'string')
@@ -209,7 +210,7 @@ const esmparse = (spec, specifier) => {
     //   }, "./index.cjs" ]
     // }
     indexval = spec
-      .reduce((p, elem) => p || esmparse(elem, specifier), null)
+      .reduce((p, elem) => p || esmparse(elem, specifier, opts), null)
   }
 
   if (!indexval && isobj(spec)) {
@@ -226,12 +227,14 @@ const esmparse = (spec, specifier) => {
     //     "require": "./feature-node.cjs"
     //   }
     // }
+    if (!indexval && opts.isbrowser && spec[specbrowser])
+      indexval = esmparse(spec[specbrowser], specifier, opts)
     if (!indexval && spec[specruntime])
-      indexval = esmparse(spec[specruntime], specifier)
+      indexval = esmparse(spec[specruntime], specifier, opts)
     if (!indexval && spec[specdefault])
-      indexval = esmparse(spec[specdefault], specifier)
+      indexval = esmparse(spec[specdefault], specifier, opts)
     if (!indexval && spec[specifier])
-      indexval = esmparse(spec[specifier], specifier)
+      indexval = esmparse(spec[specifier], specifier, opts)
 
     // "exports": "./lib/index.js",
     // "exports": { "import": "./lib/index.js" },
@@ -239,8 +242,8 @@ const esmparse = (spec, specifier) => {
     // "exports": { ".": { "import": "./lib/index.js" } }
     if (!indexval && spec[specdot])
       indexval = typeof spec[specdot] === 'string'
-        ? specifier === specimport && esmparse(spec[specdot], specifier)
-        : esmparse(spec[specdot], specifier)
+        ? specifier === specimport && esmparse(spec[specdot], specifier, opts)
+        : esmparse(spec[specdot], specifier, opts)
 
     // "exports": {
     //   ".": "./lib/index.test.js",
@@ -256,7 +259,7 @@ const esmparse = (spec, specifier) => {
 
 const gettargetindex = (packagejson, opts) => {
   let moduleobj =  opts && opts.ismodule && packagejson.module,
-      browserobj = moduleobj || opts && opts.browser && packagejson.browser,
+      browserobj = moduleobj || opts && opts.isbrowser && packagejson.browser,
       esmexportsobj = packagejson.exports,
       indexprop,
       indexval
@@ -272,7 +275,7 @@ const gettargetindex = (packagejson, opts) => {
   }
 
   if (esmexportsobj) {
-    indexval = esmparse(esmexportsobj, specimport)
+    indexval = esmparse(esmexportsobj, specimport, opts)
   }
 
   return indexval
@@ -345,9 +348,9 @@ const getasfileordir = (moduleId, parent, opts) => {
 //     }
 //   }
 // }
-const esmparseimport = (targetpath, specifier, pjson) => {
+const esmparseimport = (targetpath, specifier, pjson, opts) => {
   const pjsonimports = pjson && pjson.imports
-  const firstmatch = esmparse(pjsonimports, specifier)
+  const firstmatch = esmparse(pjsonimports, specifier, opts)
 
   return firstmatch && (
     isRelPathRe.test(firstmatch)
@@ -373,10 +376,11 @@ const esmparseimport = (targetpath, specifier, pjson) => {
 // 7. Let packageSubpath be "." concatenated with the substring of
 //    packageSpecifier from the position at the length of packageName.
 // (removed steps 8-12 related to urls and error cases)
-const esmparseexport = (targetpath, pname, pspecifier, pjson) => {
+const esmparseexport = (targetpath, pname, pspecifier, pjson, opts) => {
   const firstmatch = esmparse(
     pjson && pjson.exports,
-    pspecifier ? './' + pspecifier : specimport)
+    pspecifier ? './' + pspecifier : specimport,
+    opts)
 
   return firstmatch && path.join(targetpath, pname, firstmatch)
 }
@@ -459,10 +463,13 @@ const begin = (moduleId, parent, opts) => {
 }
 
 const createopts = (moduleId, parent, opts) => {
-  opts = opts || {}
-  opts.isTypescript = typeof opts.isTypescript === 'boolean'
-    ? opts.isTypescript : isTsExtnRe.test(parent)
+  const boolOr = (v, def) => typeof v === 'boolean' ? v : def
 
+  opts = opts || {}
+  opts.isTypescript = boolOr(opts.isTypescript, isTsExtnRe.test(parent))
+  opts.isbrowser = boolOr(opts.isbrowser, false)
+  opts.ismodule = boolOr(opts.ismodule, true)
+  
   return opts
 }
 
