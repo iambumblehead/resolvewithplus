@@ -1,6 +1,7 @@
 # changelog
 
  * 2.0.6 _Oct.10.2023_
+   * [explicitly prioritize "browser"](https://github.com/iambumblehead/resolvewithplus/pull/54) then "import" then "default", when browser and import both true
    * [update README image link](https://github.com/iambumblehead/resolvewithplus/pull/52) to use "main" repo path
    * [replace reducer function](https://github.com/iambumblehead/resolvewithplus/pull/53) w/ simple recursion
  * 2.0.5 _Sep.13.2023_
