@@ -227,12 +227,20 @@ const esmparse = (spec, specifier, opts = {}) => {
     //     "require": "./feature-node.cjs"
     //   }
     // }
+    if (!indexval)
+      indexval = (opts.specprioritylist || [
+        specruntime, specdefault
+      ]).reduce((prev, specname) => (
+        prev || esmparse(spec[specname], specifier, opts)
+      ), false)
+/*    
     if (!indexval && opts.isbrowser && spec[specbrowser])
       indexval = esmparse(spec[specbrowser], specifier, opts)
     if (!indexval && spec[specruntime])
       indexval = esmparse(spec[specruntime], specifier, opts)
     if (!indexval && spec[specdefault])
       indexval = esmparse(spec[specdefault], specifier, opts)
+*/    
     if (!indexval && spec[specifier])
       indexval = esmparse(spec[specifier], specifier, opts)
 
@@ -258,7 +266,7 @@ const esmparse = (spec, specifier, opts = {}) => {
 }
 
 const gettargetindex = (packagejson, opts) => {
-  let moduleobj =  opts && opts.ismodule && packagejson.module,
+  let moduleobj =  opts && opts.isimport && packagejson.module,
       browserobj = moduleobj || opts && opts.isbrowser && packagejson.browser,
       esmexportsobj = packagejson.exports,
       indexprop,
@@ -468,8 +476,15 @@ const createopts = (moduleId, parent, opts) => {
   opts = opts || {}
   opts.isTypescript = boolOr(opts.isTypescript, isTsExtnRe.test(parent))
   opts.isbrowser = boolOr(opts.isbrowser, false)
-  opts.ismodule = boolOr(opts.ismodule, true)
-  
+  opts.isimport = boolOr(opts.isimport, true)
+
+  opts.specprioritylist = []
+
+  if (opts.isbrowser) opts.specprioritylist.push(specbrowser)
+  if (opts.isimport) opts.specprioritylist.push(specimport)
+  opts.specprioritylist.push(specruntime)
+  opts.specprioritylist.push(specdefault)
+
   return opts
 }
 

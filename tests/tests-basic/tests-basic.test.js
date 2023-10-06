@@ -307,7 +307,7 @@ test('should return esm by default', () => {
     name: 'test',
     main: './index.js',
     module: './index.esm.js'
-  }, { ismodule: true }), './index.esm.js')
+  }, { isimport: true }), './index.esm.js')
 
   // used by '@apollo/server@4.9.4'
   assert.strictEqual(resolvewithplus.gettargetindex({
@@ -318,7 +318,7 @@ test('should return esm by default', () => {
         require: './dist/cjs/index.js'
       }
     }
-  }, { ismodule: true }), './dist/esm/index.js')
+  }), './dist/esm/index.js')
 
   // similar patter used by 'react-dom@18.2.0'
   assert.strictEqual(resolvewithplus.gettargetindex({
@@ -332,7 +332,7 @@ test('should return esm by default', () => {
         default: './server.default.js'
       }
     }
-  }, { ismodule: true }), './server.import.js')
+  }), './server.import.js')
 
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
@@ -344,7 +344,7 @@ test('should return esm by default', () => {
         default: './server.node.default.js'
       }
     }
-  }, { ismodule: true }), './server.node.default.js')
+  }), './server.node.default.js')
 })
 
 test('should return browser over import when both true', () => {
@@ -358,7 +358,9 @@ test('should return browser over import when both true', () => {
         default: './server.default.js'
       }
     }
-  }, { ismodule: true, isbrowser: true }), './server.browser.js')
+  }, {
+    specprioritylist: [ 'import', 'browser', 'default' ]
+  }), './server.browser.js')
 
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
@@ -370,5 +372,7 @@ test('should return browser over import when both true', () => {
         default: './server.default.js'
       }
     }
-  }, { ismodule: true }), './server.default.js')
+  }, {
+    specprioritylist: [ 'default' ]
+  }), './server.default.js')
 })
