@@ -300,3 +300,79 @@ test('should handle mixed exports', () => {
     }
   }), './index.mjs')
 })
+
+test('should return esm by default', () => {
+  // used by 'inferno@8.2.2'
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    main: './index.js',
+    module: './index.esm.js'
+  }, { isimport: true }), './index.esm.js')
+
+  // used by '@apollo/server@4.9.4'
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    exports: {
+      '.': {
+        import: './dist/esm/index.js',
+        require: './dist/cjs/index.js'
+      }
+    }
+  }), './dist/esm/index.js')
+
+  // similar patter used by 'react-dom@18.2.0'
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    exports: {
+      '.': {
+        deno: './server.deno.js',
+        worker: './server.worker.js',
+        browser: './server.browser.js',
+        import: './server.import.js',
+        default: './server.default.js'
+      }
+    }
+  }), './server.import.js')
+
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    exports: {
+      '.': {
+        deno: './server.deno.js',
+        worker: './server.worker.js',
+        browser: './server.browser.js',
+        default: './server.node.default.js'
+      }
+    }
+  }), './server.node.default.js')
+})
+
+test('should return browser over import when both true', () => {
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    exports: {
+      '.': {
+        deno: './server.deno.js',
+        worker: './server.worker.js',
+        browser: './server.browser.js',
+        default: './server.default.js'
+      }
+    }
+  }, {
+    specprioritylist: [ 'import', 'browser', 'default' ]
+  }), './server.browser.js')
+
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    exports: {
+      '.': {
+        deno: './server.deno.js',
+        worker: './server.worker.js',
+        browser: './server.browser.js',
+        default: './server.default.js'
+      }
+    }
+  }, {
+    specprioritylist: [ 'default' ]
+  }), './server.default.js')
+})
