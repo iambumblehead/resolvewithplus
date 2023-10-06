@@ -228,19 +228,11 @@ const esmparse = (spec, specifier, opts = {}) => {
     //   }
     // }
     if (!indexval)
-      indexval = (opts.specprioritylist || [
-        specruntime, specdefault
-      ]).reduce((prev, specname) => (
-        prev || esmparse(spec[specname], specifier, opts)
-      ), false)
-/*    
-    if (!indexval && opts.isbrowser && spec[specbrowser])
-      indexval = esmparse(spec[specbrowser], specifier, opts)
-    if (!indexval && spec[specruntime])
-      indexval = esmparse(spec[specruntime], specifier, opts)
-    if (!indexval && spec[specdefault])
-      indexval = esmparse(spec[specdefault], specifier, opts)
-*/    
+      indexval = (opts.specprioritylist || [ specruntime, specdefault ])
+        .reduce((prev, specname) => (
+          prev || esmparse(spec[specname], specifier, opts)
+        ), false)
+
     if (!indexval && spec[specifier])
       indexval = esmparse(spec[specifier], specifier, opts)
 
