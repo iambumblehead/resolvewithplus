@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.0.7 _Oct.06.2023_
+   * [use package type](https://github.com/iambumblehead/resolvewithplus/pull/55) to determine lookup: 'import' or 'require' etc
  * 2.0.6 _Oct.06.2023_
    * [add support for 'priority'](https://github.com/iambumblehead/resolvewithplus/pull/54) configuration option
    * [explicitly prioritize "browser"](https://github.com/iambumblehead/resolvewithplus/pull/54) then "import" then "default", when browser and import both true
