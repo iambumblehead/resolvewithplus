@@ -1,11 +1,11 @@
 {
   "name": "resolvewithplus",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "resolvewith with extra power",
   "readmeFilename": "README.md",
   "license": "ISC",
   "type": "module",
-  "engines" : { 
+  "engines": { 
     "node": ">=12.16.0"
   },
   "main": "resolvewithplus.js",

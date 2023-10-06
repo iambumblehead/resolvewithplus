@@ -31,9 +31,19 @@ const specruntime = 'node'
 const specdefault = 'default'
 const specbrowser = 'browser'
 const specimport = 'import'
+const spectype = ':spectype'
+const spectypemodule = 'module'
+const spectypemoduleimport = 'import'
+const spectypecommonjs = 'commonjs'
+const spectypecommonjsrequire = 'require'
 const specdot = '.'
 const isobj = o => o && typeof o === 'object'
 const cache = {}
+
+const getspectypenamedexportdefault = spectype => ({
+  [spectypemodule]: spectypemoduleimport,
+  [spectypecommonjs]: spectypecommonjsrequire
+})[spectype] || null
 
 const addprotocolnode = p => protocolNode.test(p) ? p : `node:${p}`
 const addprotocolfile = p => p && url.pathToFileURL(p).href
@@ -230,9 +240,17 @@ const esmparse = (spec, specifier, opts = {}) => {
     if (!indexval)
       indexval = (opts.priority || [ specruntime, specdefault ])
         .reduce((prev, specname) => (
-          prev || esmparse(spec[specname], specifier, opts)
+          prev || (
+            // if dynamic 'spectype', lookup 'commonjs' or 'module'
+            // according to package.json
+            specname = specname === spectype
+              ? getspectypenamedexportdefault(opts.packagejsontype)
+              : specname,
+            esmparse(spec[specname], specifier, opts))
         ), false)
 
+    if (!indexval && spec[specdefault])
+      indexval = esmparse(spec[specdefault], specifier)
     if (!indexval && spec[specifier])
       indexval = esmparse(spec[specifier], specifier, opts)
 
@@ -252,30 +270,6 @@ const esmparse = (spec, specifier, opts = {}) => {
     // }
     if (!indexval)
       indexval = esmparselist(Object.keys(spec), spec, specifier)
-  }
-
-  return indexval
-}
-
-const gettargetindex = (packagejson, opts) => {
-  let moduleobj =  opts && opts.isimport && packagejson.module,
-      browserobj = moduleobj || opts && opts.isbrowser && packagejson.browser,
-      esmexportsobj = packagejson.exports,
-      indexprop,
-      indexval
-
-  if (browserobj) {
-    if (typeof browserobj === 'string') {
-      indexval = browserobj
-    } else if (isobj(browserobj)) {
-      [ indexprop ] = Object.keys(browserobj)
-        .filter(prop => isSupportedIndexRe.test(prop))
-      indexval = indexprop in browserobj && browserobj[indexprop]
-    }
-  }
-
-  if (esmexportsobj) {
-    indexval = esmparse(esmexportsobj, specimport, opts)
   }
 
   return indexval
@@ -304,6 +298,53 @@ const getasfilesync = (f, opts = {}) => {
   return filepath
 }
 
+const getpackagejsontype = packagejson => (
+  packagejson.type || spectypecommonjs)
+
+const gettargetindextopmain = (main, opts = {}, dir = '') => {
+  const indexpath = dir ? path.join(dir, main) : main
+
+  return getasfilesync(indexpath, opts) || (
+    // if 'main' has supported extension, assume it references real path
+    // else do not assume real path, find index in directory
+    !isSupportedIndexRe.test(main) &&
+      getasfilesync(path.join(indexpath, 'index')))
+}
+
+// these fields at the 'top' of the package.json namespace
+// may include names like "main" not found in exports namespace
+//
+// top properties should only resolve when exports is not defined
+//
+// > If both "exports" and "main" are defined, the "exports" field
+// > takes precedence over "main" in supported versions of Node.js.
+const gettargetindextop = (packagejson, opts = {}, dir = '', index = false) => {
+  const packagejsontype = opts.packagejsontype
+
+  if (opts.isspectype !== false)
+    index = packagejson[packagejsontype]
+      || packagejson[getspectypenamedexportdefault(packagejsontype)]
+
+  if (!index && packagejson.main)
+    index = gettargetindextopmain(packagejson.main, opts, dir)
+
+  return index || null
+}
+
+const gettargetindex = (packagejson, opts = {}, dir = '', indexval) => {
+  const packagejsontype = getpackagejsontype(packagejson)
+  const parseopts = Object.assign({ packagejsontype }, opts)
+
+  if (opts.isbrowser && packagejson.browser)
+    indexval = esmparse(packagejson.browser, specimport, parseopts)
+  if (!indexval && packagejson.exports)
+    indexval = esmparse(packagejson.exports, packagejsontype, parseopts)
+  if (!indexval)
+    indexval = gettargetindextop(packagejson, parseopts, dir)
+
+  return indexval
+}
+
 // https://nodejs.org/api/modules.html#modules_module_require_id
 //
 // LOAD_AS_DIRECTORY(X)
@@ -315,20 +356,13 @@ const getasfilesync = (f, opts = {}) => {
 // 3. If X/index.json is file, parse X/index.json to a JavaScript object. STOP
 // 4. If X/index.node is file, load X/index.node as binary addon.  STOP
 const getasdirsync = (d, opts) => {
-  let filepath = null,
-      relpath,
-      json = path.join(d, packagejson),
-      jsonobj = isfilesync(json) && require(json)
-  if ((relpath = gettargetindex(jsonobj, opts))) {
-    filepath = getasfilesync(path.join(d, relpath))
-  } else if ((relpath = jsonobj.main)) {
-    filepath = getasfilesync(path.join(d, relpath), opts)
-      || getasfilesync(path.join(d, path.join(relpath, 'index')))
-  } else {
-    filepath = firstSyncFilePath(d, supportedIndexNames)
-  }
+  const json = path.join(d, packagejson)
+  const jsonobj = isfilesync(json) && require(json)
+  const relpath = jsonobj ? gettargetindex(jsonobj, opts, d) : false
 
-  return filepath
+  return relpath
+    ? relpath
+    : firstSyncFilePath(d, supportedIndexNames)
 }
 
 const getasfileordir = (moduleId, parent, opts) => {
@@ -468,13 +502,10 @@ const createopts = (moduleId, parent, opts) => {
   opts = opts || {}
   opts.istypescript = boolOr(opts.istypescript, isTsExtnRe.test(parent))
   opts.isbrowser = boolOr(opts.isbrowser, false)
-  opts.isimport = boolOr(opts.isimport, true)
-
+  opts.isspectype = boolOr(opts.isspectype, true)
   if (!Array.isArray(opts.priority)) {
-    opts.priority = []
-
-    if (opts.isbrowser) opts.priority.push(specbrowser)
-    if (opts.isimport) opts.priority.push(specimport)
+    opts.priority = opts.isbrowser ? [ specbrowser ] : []
+    opts.priority.push(spectype)
     opts.priority.push(specruntime)
     opts.priority.push(specdefault)
   }
@@ -500,6 +531,7 @@ export default Object.assign(resolvewith, {
   getasdirsync,
   gettargetindex,
   iscoremodule,
+  createopts,
   esmparse,
   cache
 })

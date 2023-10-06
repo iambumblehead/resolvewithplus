@@ -10,6 +10,7 @@ import resolvewithplus from '../../resolvewithplus.js'
 
 const tofileurl = p => url.pathToFileURL(p).href
 const toresolvefileurl = p => tofileurl(path.resolve(p))
+const optsdefault = resolvewithplus.createopts()
 
 test('should return matched export paths', () => {
   const exports = {
@@ -83,7 +84,7 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
   assert.strictEqual(
     await metaresolve('pg', fullpathfileurl),
     resolvewithplus('pg', fullpath))
-  
+
   assert.strictEqual(
     await metaresolve('koa', fullpathfileurl),
     resolvewithplus('koa', fullpath))
@@ -103,6 +104,7 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
   assert.strictEqual(
     await metaresolve(relpathspace, import.meta.url),
     resolvewithplus(relpathspace, import.meta.url))
+
 })
 
 test('should return a full path when given relative path to index file', () => {
@@ -161,10 +163,10 @@ test('should follow the behaviour of require.resolve', () => {
   const resolvewithrootdirname = path.basename(dirnameroot)
   const resolvewithresolved = path
     .resolve(`../../../${resolvewithrootdirname}`) + '/'
-  
+
   assert.strictEqual(
     toresolvefileurl('../../resolvewithplus.js'),
-    resolvewithplus(`../${resolvewithrootdirname}`, resolvewithresolved))
+    resolvewithplus(`./${resolvewithrootdirname}`, resolvewithresolved))
 
   const resolvewithedpath = resolvewithplus(
     './tests/testfiles/testscript.js',
@@ -246,6 +248,7 @@ test('getasnode_module_paths, should return paths to node_modules', () => {
 test('should handle exports.import path definition', () => {
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
+    type: 'import',
     exports: {
       types: './index.d.ts',
       require: './index.js',
@@ -254,17 +257,29 @@ test('should handle exports.import path definition', () => {
   }), './index.mjs')
 })
 
-test('should handle exports["."].import path definition', () => {
+test('should handle exports["."].import path definition', () => {  
   // used by 'koa@2.13.4'
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
+    type: 'module',
     exports: {
       '.': {
         require: './index.js',
         import: './index.mjs'
       }
     }
-  }), './index.mjs')
+  }, optsdefault), './index.mjs')
+
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    type: 'commonjs',
+    exports: {
+      '.': {
+        require: './index.js',
+        import: './index.mjs'
+      }
+    }
+  }, optsdefault), './index.js')
 })
 
 test('should handle exports stringy path definition', () => {
@@ -277,6 +292,30 @@ test('should handle exports stringy path definition', () => {
 
 test('should handle mixed exports', () => {
   // used by 'yargs@17.5.1'
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    type: 'module',
+    exports: {
+      './package.json': './package.json',
+      '.': [ {
+        import: './index.mjs',
+        require: './index.cjs'
+      }, './index.cjs' ],
+      './helpers': {
+        import: './helpers/helpers.mjs',
+        require: './helpers/index.js'
+      },
+      './browser': {
+        import: './browser.mjs',
+        types: './browser.d.ts'
+      },
+      './yargs': [ {
+        import: './yargs.mjs',
+        require: './yargs'
+      }, './yargs' ]
+    }
+  }, optsdefault), './index.mjs')
+
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
     exports: {
@@ -298,29 +337,57 @@ test('should handle mixed exports', () => {
         require: './yargs'
       }, './yargs' ]
     }
-  }), './index.mjs')
+  }, optsdefault), './index.cjs')
 })
 
-test('should return esm by default', () => {
+test('resolve import or commonjs according to package type', () => {
+
+  // NOTE for tests, file must exist
+  // resolving cjs definitions like { main: 'dir/path' }
+  // requires resolver to find path at filesystem
+  const resolvingfile = './tests-basic.test.js'
+
   // used by 'inferno@8.2.2'
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
+    type: 'module',
     main: './index.js',
+    module: resolvingfile
+  }, optsdefault), resolvingfile)
+  
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    main: resolvingfile,
     module: './index.esm.js'
-  }, { isimport: true }), './index.esm.js')
+  }, optsdefault), resolvingfile)
 
   // used by '@apollo/server@4.9.4'
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
+    type: 'module',
     exports: {
       '.': {
         import: './dist/esm/index.js',
         require: './dist/cjs/index.js'
       }
     }
-  }), './dist/esm/index.js')
+  }, optsdefault), './dist/esm/index.js')
 
   // similar patter used by 'react-dom@18.2.0'
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    type: 'module',
+    exports: {
+      '.': {
+        deno: './server.deno.js',
+        worker: './server.worker.js',
+        browser: './server.browser.js',
+        import: './server.import.js',
+        default: './server.default.js'
+      }
+    }
+  }, optsdefault), './server.import.js')
+
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
     exports: {
@@ -332,19 +399,7 @@ test('should return esm by default', () => {
         default: './server.default.js'
       }
     }
-  }), './server.import.js')
-
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    exports: {
-      '.': {
-        deno: './server.deno.js',
-        worker: './server.worker.js',
-        browser: './server.browser.js',
-        default: './server.node.default.js'
-      }
-    }
-  }), './server.node.default.js')
+  }, optsdefault), './server.default.js')
 })
 
 test('should return browser over import when both true', () => {
@@ -375,4 +430,58 @@ test('should return browser over import when both true', () => {
   }, {
     priority: [ 'default' ]
   }), './server.default.js')
+})
+
+test('should detect module type from package.json', () => {
+  // pattern seen at @aws-sdk/client-s3@3.425.0
+  // the module is not type 'module', but defines esm exports
+  // the commonjs module should be returned
+  //
+  // NOTE for tests, file must exist
+  // resolving cjs definitions like { main: 'dir/path' }
+  // requires resolver to find path at filesystem
+  const resolvingfile = './tests-basic.test.js'
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    main: resolvingfile,// './dist-cjs/index.js',
+    types: './dist-types/index.d.ts',
+    module: './dist-es/index.js'
+  }), resolvingfile)
+
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    type: 'module',
+    main: './dist-cjs/index.js',
+    types: './dist-types/index.d.ts',
+    module: resolvingfile
+  }), resolvingfile)
+
+  // prioritize exports over main, per spec
+  // https://nodejs.org/api/packages.html#package-entry-points
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    main: './dest-cjs',
+    exports: {
+      '.': {
+        deno: './server.deno.js',
+        worker: './server.worker.js',
+        browser: './server.browser.js',
+        default: resolvingfile
+      }
+    }
+  }), resolvingfile)
+
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    main: './dest-cjs',
+    type: 'module',
+    exports: {
+      '.': {
+        deno: './server.deno.js',
+        worker: './server.worker.js',
+        browser: './server.browser.js',
+        default: resolvingfile
+      }
+    }
+  }), resolvingfile)
 })
