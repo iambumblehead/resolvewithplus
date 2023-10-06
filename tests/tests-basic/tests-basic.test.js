@@ -359,7 +359,7 @@ test('should return browser over import when both true', () => {
       }
     }
   }, {
-    specprioritylist: [ 'import', 'browser', 'default' ]
+    priority: [ 'import', 'browser', 'default' ]
   }), './server.browser.js')
 
   assert.strictEqual(resolvewithplus.gettargetindex({
@@ -373,6 +373,6 @@ test('should return browser over import when both true', () => {
       }
     }
   }, {
-    specprioritylist: [ 'default' ]
+    priority: [ 'default' ]
   }), './server.default.js')
 })
