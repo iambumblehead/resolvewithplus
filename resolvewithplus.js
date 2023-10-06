@@ -228,7 +228,7 @@ const esmparse = (spec, specifier, opts = {}) => {
     //   }
     // }
     if (!indexval)
-      indexval = (opts.specprioritylist || [ specruntime, specdefault ])
+      indexval = (opts.priority || [ specruntime, specdefault ])
         .reduce((prev, specname) => (
           prev || esmparse(spec[specname], specifier, opts)
         ), false)
@@ -290,7 +290,7 @@ const gettargetindex = (packagejson, opts) => {
 // 4. If X.node is a file, load X.node as binary addon.  STOP
 const getasfilesync = (f, opts = {}) => {
   var filepath = null
-  var filepathts = opts.isTypescript
+  var filepathts = opts.istypescript
       && isJsExtnRe.test(f) && f.replace(isJsExtnRe, '.ts')
 
   if (isfilesync(filepathts)) {
@@ -466,16 +466,18 @@ const createopts = (moduleId, parent, opts) => {
   const boolOr = (v, def) => typeof v === 'boolean' ? v : def
 
   opts = opts || {}
-  opts.isTypescript = boolOr(opts.isTypescript, isTsExtnRe.test(parent))
+  opts.istypescript = boolOr(opts.istypescript, isTsExtnRe.test(parent))
   opts.isbrowser = boolOr(opts.isbrowser, false)
   opts.isimport = boolOr(opts.isimport, true)
 
-  opts.specprioritylist = []
+  if (!Array.isArray(opts.priority)) {
+    opts.priority = []
 
-  if (opts.isbrowser) opts.specprioritylist.push(specbrowser)
-  if (opts.isimport) opts.specprioritylist.push(specimport)
-  opts.specprioritylist.push(specruntime)
-  opts.specprioritylist.push(specdefault)
+    if (opts.isbrowser) opts.priority.push(specbrowser)
+    if (opts.isimport) opts.priority.push(specimport)
+    opts.priority.push(specruntime)
+    opts.priority.push(specdefault)
+  }
 
   return opts
 }
