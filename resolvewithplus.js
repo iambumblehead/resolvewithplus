@@ -97,7 +97,7 @@ const firstSyncFilePath = (dir, fileslist) => {
 const getasnode_module_paths = (start, parts = start.split(path.sep)) => {
   const next_module_paths = (parts, tuple = [ [], [] ]) => {
     if (!parts.length)
-      return tuple[1].reverse()
+      return tuple[1]
 
     // the second condition allow resolvewithplus unit-tests to pass,
     // when resolvewithplus is inside another package's node_modules
@@ -444,21 +444,21 @@ const esmparseimportpkg = (pspecifier, start, opts) => {
 //    a. LOAD_AS_FILE(DIR/X)
 //    b. LOAD_AS_DIRECTORY(DIR/X)
 //
-// array sorting so that longer paths are tested first (closer to withpath)
 const getasnode_module = (targetpath, start, opts) => {
   const [ pname, pspecifier ] = gettargetnameandspecifier(targetpath)
 
   if (isESMImportSubpathRe.test(pname))
     return esmparseimportpkg(targetpath, start, opts)
 
+  // anticipate longer paths at end of list to be processed first
+  // longer paths are closer to withpath
   const dirarr = getasnode_module_paths(start)
-    .sort((a, b) => a.length > b.length)
 
-  return (function next (dirs, x, len = x - 1) {
+  return (function next (dirs, x) {
     return !x-- ? null :
-      esmparseexportpkg(path.join(dirs[len - x]), pname, pspecifier, opts)
-      || getasfileordir(path.join(dirs[len - x], targetpath), null, opts)
-      || next(dirarr, x, len)
+      esmparseexportpkg(path.join(dirs[x]), pname, pspecifier, opts)
+      || getasfileordir(path.join(dirs[x], targetpath), null, opts)
+      || next(dirarr, x)
   }(dirarr, dirarr.length))
 }
 
