@@ -454,11 +454,11 @@ const getasnode_module = (targetpath, start, opts) => {
   // longer paths are closer to withpath
   const dirarr = getasnode_module_paths(start)
 
-  return (function next (dirs, x, len = x - 1) {
+  return (function next (dirs, x) {
     return !x-- ? null :
-      esmparseexportpkg(path.join(dirs[len - x]), pname, pspecifier, opts)
-      || getasfileordir(path.join(dirs[len - x], targetpath), null, opts)
-      || next(dirarr, x, len)
+      esmparseexportpkg(path.join(dirs[x]), pname, pspecifier, opts)
+      || getasfileordir(path.join(dirs[x], targetpath), null, opts)
+      || next(dirarr, x)
   }(dirarr, dirarr.length))
 }
 

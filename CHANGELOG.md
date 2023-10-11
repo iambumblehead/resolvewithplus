@@ -1,7 +1,7 @@
 # changelog
 
  * 2.0.8 _Oct.06.2023_
-   * [remove un-necessary sorting](https://github.com/iambumblehead/resolvewithplus/pull/59)
+   * [remove un-necessary sorting](https://github.com/iambumblehead/resolvewithplus/pull/59) should result in faster lookups
  * 2.0.7 _Oct.06.2023_
    * [use package type](https://github.com/iambumblehead/resolvewithplus/pull/55) to determine lookup: 'import' or 'require' etc
  * 2.0.6 _Oct.06.2023_
