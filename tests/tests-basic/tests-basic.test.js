@@ -245,6 +245,15 @@ test('getasnode_module_paths, should return paths to node_modules', () => {
   }
 })
 
+test('getasnode_module_paths, no missed path isresolvewithpath test', () => {
+  const fullpath = '/root/node_modules/gani/src/'
+  const pathsToLook = resolvewithplus.getasnode_module_paths(fullpath)
+  const returnedPath = '/root/node_modules/gani/node_modules'
+    .replace(/\//g, path.sep)
+
+  assert.ok(pathsToLook.some(path => path === returnedPath))
+})
+
 test('should handle exports.import path definition', () => {
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
