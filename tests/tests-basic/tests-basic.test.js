@@ -469,6 +469,15 @@ test('should detect module type from package.json', () => {
     module: resolvingfile
   }), resolvingfile)
 
+  assert.strictEqual(resolvewithplus.gettargetindex({
+    name: 'test',
+    main: './dist-cjs/index.js',
+    types: './dist-types/index.d.ts',
+    module: resolvingfile
+  }, {
+    priority: [ 'import', 'browser', 'default' ]
+  }), resolvingfile)
+
   // prioritize exports over main, per spec
   // https://nodejs.org/api/packages.html#package-entry-points
   assert.strictEqual(resolvewithplus.gettargetindex({
