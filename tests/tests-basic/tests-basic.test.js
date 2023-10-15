@@ -247,11 +247,15 @@ test('getasnode_module_paths, should return paths to node_modules', () => {
 
 test('getasnode_module_paths, no missed path isresolvewithpath test', () => {
   const fullpath = '/root/node_modules/gani/src/'
-  const pathsToLook = resolvewithplus.getasnode_module_paths(fullpath)
-  const returnedPath = '/root/node_modules/gani/node_modules'
-    .replace(/\//g, path.sep)
+  const fullpathOS = fullpath.replace(/\//g, path.sep)
+  const expectedPath = '/root/node_modules/gani/node_modules'
+  const expectedPathOS = expectedPath.replace(/\//g, path.sep)
 
-  assert.ok(pathsToLook.some(path => path.includes(returnedPath)))
+  const pathsToLook = resolvewithplus.getasnode_module_paths(fullpathOS)
+
+  // windows paths may start "C:\\root\node_modules"
+  // so use String.includes rather than strict equality comparison
+  assert.ok(pathsToLook.some(path => path.includes(expectedPathOS)))
 })
 
 test('should handle exports.import path definition', () => {
