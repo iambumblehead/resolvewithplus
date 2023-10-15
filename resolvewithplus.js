@@ -101,7 +101,7 @@ const getasnode_module_paths = (start, parts = start.split(path.sep)) => {
 
     // the second condition allow resolvewithplus unit-tests to pass,
     // when resolvewithplus is inside another package's node_modules
-    if (parts[0] === node_modules && !isResolveWithPathRe.test(start))
+    if (parts[0] === node_modules && isResolveWithPathRe.test(start))
       return next_module_paths(parts.slice(1), tuple)
 
     // windows and linux paths split differently

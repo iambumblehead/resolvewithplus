@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.0.9 _Oct.15.2023_
+   * [resolve error preventing](https://github.com/iambumblehead/resolvewithplus/pull/60) module resolution. There is a condition that alters lookup paths for the situation when resolvewithplus is being developed and tested from inside another package's node_modules. The condition caused lookup errors. The condition was changed and a unit-test added
  * 2.0.8 _Oct.06.2023_
    * [remove un-necessary sorting](https://github.com/iambumblehead/resolvewithplus/pull/59) should result in faster lookups
  * 2.0.7 _Oct.06.2023_
