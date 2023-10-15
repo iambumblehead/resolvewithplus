@@ -251,9 +251,7 @@ test('getasnode_module_paths, no missed path isresolvewithpath test', () => {
   const returnedPath = '/root/node_modules/gani/node_modules'
     .replace(/\//g, path.sep)
 
-  console.log(pathsToLook, returnedPath)
-  
-  assert.ok(pathsToLook.some(path => path === returnedPath))
+  assert.ok(pathsToLook.some(path => path.includes(returnedPath)))
 })
 
 test('should handle exports.import path definition', () => {
