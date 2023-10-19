@@ -10,7 +10,15 @@ import resolvewithplus from '../../resolvewithplus.js'
 
 const tofileurl = p => url.pathToFileURL(p).href
 const toresolvefileurl = p => tofileurl(path.resolve(p))
-const optsdefault = resolvewithplus.createopts()
+
+const resolvingpackagejsonpath = path
+  .resolve('../node_modules/test/package.json')
+const resolvingpackagejsonmodulerelpathother =
+  '../../tests-basic/tests-export-patterns.test.js'
+const resolvingpackagejsonmodulerelpath =
+  '../../tests-basic/tests-basic.test.js'
+const resolvingpackagejsonmoduleurlpath =
+  toresolvefileurl('./tests-basic.test.js')
 
 test('should return matched export paths', () => {
   const exports = {
@@ -229,7 +237,7 @@ test('getasdirsync, should return path with index, if found', () => {
   const fullpathindexjs = path.join(fullpath, 'index.js')
 
   assert.strictEqual(
-    resolvewithplus.getasdirsync(fullpath), fullpathindexjs)
+    resolvewithplus.getasdirsync(fullpath, {}), fullpathindexjs)
 })
 
 test('getasnode_module_paths, should return paths to node_modules', () => {
@@ -258,192 +266,288 @@ test('getasnode_module_paths, no missed path isresolvewithpath test', () => {
 })
 
 test('should handle exports.import path definition', () => {
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'import',
-    exports: {
-      types: './index.d.ts',
-      require: './index.js',
-      import: './index.mjs'
+  const resolved = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'module',
+        exports: {
+          types: resolvingpackagejsonmodulerelpathother,
+          require: resolvingpackagejsonmodulerelpathother,
+          import: resolvingpackagejsonmodulerelpath
+        }
+      }
     }
-  }), './index.mjs')
+  })
+  
+  assert.strictEqual(resolved, resolvingpackagejsonmoduleurlpath)
 })
 
-test('should handle exports["."].import path definition', () => {  
+test('should handle exports["."].import path definition, import', () => {
   // used by 'koa@2.13.4'
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'module',
-    exports: {
-      '.': {
-        require: './index.js',
-        import: './index.mjs'
+  const resolved = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'module',
+        exports: {
+          '.': {
+            require: resolvingpackagejsonmodulerelpathother,
+            import: resolvingpackagejsonmodulerelpath
+          }
+        }
       }
     }
-  }, optsdefault), './index.mjs')
+  })
 
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'commonjs',
-    exports: {
-      '.': {
-        require: './index.js',
-        import: './index.mjs'
+  assert.strictEqual(resolved, resolvingpackagejsonmoduleurlpath)
+})
+
+test('should handle exports["."].import path definition, cjs', () => {
+  const resolved = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'commonjs',
+        exports: {
+          '.': {
+            import: resolvingpackagejsonmodulerelpathother,
+            require: resolvingpackagejsonmodulerelpath
+          }
+        }
       }
     }
-  }, optsdefault), './index.js')
+  })
+
+  assert.strictEqual(resolved, resolvingpackagejsonmoduleurlpath)
 })
+
 
 test('should handle exports stringy path definition', () => {
   // used by 'got'
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    exports: './index.mjs'
-  }), './index.mjs')
+  const resolved = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'module',
+        exports: resolvingpackagejsonmodulerelpath
+      }
+    }
+  })
+
+  assert.strictEqual(resolved, resolvingpackagejsonmoduleurlpath)
 })
 
-test('should handle mixed exports', () => {
+test('should handle mixed exports, import', () => {
   // used by 'yargs@17.5.1'
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'module',
-    exports: {
-      './package.json': './package.json',
-      '.': [ {
-        import: './index.mjs',
-        require: './index.cjs'
-      }, './index.cjs' ],
-      './helpers': {
-        import: './helpers/helpers.mjs',
-        require: './helpers/index.js'
-      },
-      './browser': {
-        import: './browser.mjs',
-        types: './browser.d.ts'
-      },
-      './yargs': [ {
-        import: './yargs.mjs',
-        require: './yargs'
-      }, './yargs' ]
+  const resolved = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'module',
+        exports: {
+          './package.json': './package.json',
+          '.': [ {
+            import: resolvingpackagejsonmodulerelpath,
+            require: resolvingpackagejsonmodulerelpathother
+          }, './index.cjs' ],
+          './helpers': {
+            import: resolvingpackagejsonmodulerelpathother,
+            require: resolvingpackagejsonmodulerelpathother
+          },
+          './browser': {
+            import: resolvingpackagejsonmodulerelpathother,
+            types: resolvingpackagejsonmodulerelpathother
+          },
+          './yargs': [ {
+            import: resolvingpackagejsonmodulerelpathother,
+            require: resolvingpackagejsonmodulerelpathother
+          }, './yargs' ]
+        }
+      }
     }
-  }, optsdefault), './index.mjs')
+  })
 
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'commonjs',
-    exports: {
-      './package.json': './package.json',
-      '.': [ {
-        import: './index.mjs',
-        require: './index.cjs'
-      }, './index.cjs' ],
-      './helpers': {
-        import: './helpers/helpers.mjs',
-        require: './helpers/index.js'
-      },
-      './browser': {
-        import: './browser.mjs',
-        types: './browser.d.ts'
-      },
-      './yargs': [ {
-        import: './yargs.mjs',
-        require: './yargs'
-      }, './yargs' ]
+  assert.strictEqual(resolved, resolvingpackagejsonmoduleurlpath)
+})  
+
+test('should handle mixed exports, commonjs', () => {
+  // used by 'yargs@17.5.1'
+  const resolved = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'commonjs',
+        exports: {
+          './package.json': './package.json',
+          '.': [ {
+            import: resolvingpackagejsonmodulerelpathother,
+            require: resolvingpackagejsonmodulerelpath
+          }, resolvingpackagejsonmodulerelpathother ],
+          './helpers': {
+            import: resolvingpackagejsonmodulerelpathother,
+            require: resolvingpackagejsonmodulerelpathother
+          },
+          './browser': {
+            import: resolvingpackagejsonmodulerelpathother,
+            types: './browser.d.ts'
+          },
+          './yargs': [ {
+            import: resolvingpackagejsonmodulerelpathother,
+            require: resolvingpackagejsonmodulerelpathother
+          }, resolvingpackagejsonmodulerelpathother ]
+        }
+      }
     }
-  }, optsdefault), './index.cjs')
+  })
+
+  assert.strictEqual(resolved, resolvingpackagejsonmoduleurlpath)
 })
 
 test('resolve import or commonjs according to package type', () => {
-
   // NOTE for tests, file must exist
   // resolving cjs definitions like { main: 'dir/path' }
   // requires resolver to find path at filesystem
-  const resolvingfile = './tests-basic.test.js'
-
   // used by 'inferno@8.2.2'
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'module',
-    main: './index.js',
-    module: resolvingfile
-  }, optsdefault), resolvingfile)
+  const resolvedmodule = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'module',
+        main: resolvingpackagejsonmodulerelpathother,
+        module: resolvingpackagejsonmodulerelpath
+      }
+    }
+  })
+
+  assert.strictEqual(resolvedmodule, resolvingpackagejsonmoduleurlpath)
   
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    main: resolvingfile,
-    module: './index.esm.js'
-  }, optsdefault), resolvingfile)
+  const resolvedmain = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        main: resolvingpackagejsonmodulerelpath,
+        module: resolvingpackagejsonmodulerelpathother
+      }
+    }
+  })
+
+  assert.strictEqual(resolvedmain, resolvingpackagejsonmoduleurlpath)
 
   // used by '@apollo/server@4.9.4'
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'module',
-    exports: {
-      '.': {
-        import: './dist/esm/index.js',
-        require: './dist/cjs/index.js'
+  const resolveddotimport = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'module',
+        exports: {
+          '.': {
+            import: resolvingpackagejsonmodulerelpath,
+            require: resolvingpackagejsonmodulerelpathother
+          }
+        }
       }
     }
-  }, optsdefault), './dist/esm/index.js')
+  })
+
+  assert.strictEqual(resolveddotimport, resolvingpackagejsonmoduleurlpath)
 
   // similar patter used by 'react-dom@18.2.0'
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'module',
-    exports: {
-      '.': {
-        deno: './server.deno.js',
-        worker: './server.worker.js',
-        browser: './server.browser.js',
-        import: './server.import.js',
-        default: './server.default.js'
+  const resolveddotimport2 = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'module',
+        exports: {
+          '.': {
+            deno: resolvingpackagejsonmodulerelpathother,
+            worker: resolvingpackagejsonmodulerelpathother,
+            browser: resolvingpackagejsonmodulerelpathother,
+            import: resolvingpackagejsonmodulerelpath,
+            default: resolvingpackagejsonmodulerelpathother
+          }
+        }
       }
     }
-  }, optsdefault), './server.import.js')
+  })
 
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'commonjs',
-    exports: {
-      '.': {
-        deno: './server.deno.js',
-        worker: './server.worker.js',
-        browser: './server.browser.js',
-        import: './server.import.js',
-        default: './server.default.js'
+  assert.strictEqual(resolveddotimport2, resolvingpackagejsonmoduleurlpath)
+
+
+  const resolveddotdefault = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'commonjs',
+        exports: {
+          '.': {
+            deno: resolvingpackagejsonmodulerelpathother,
+            worker: resolvingpackagejsonmodulerelpathother,
+            browser: resolvingpackagejsonmodulerelpathother,
+            import: resolvingpackagejsonmodulerelpathother,
+            default: resolvingpackagejsonmodulerelpath
+          }
+        }
       }
     }
-  }, optsdefault), './server.default.js')
+  })
+
+  assert.strictEqual(resolveddotdefault, resolvingpackagejsonmoduleurlpath)
 })
 
-test('should return browser over import when both true', () => {
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    exports: {
-      '.': {
-        deno: './server.deno.js',
-        worker: './server.worker.js',
-        browser: './server.browser.js',
-        default: './server.default.js'
+test('resolve full path for older main, browser and export fields', () => {
+  const resolvedmain = resolvewithplus('test', import.meta.url, {
+    isbrowser: true,
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        browser: resolvingpackagejsonmodulerelpath,
+        module: resolvingpackagejsonmodulerelpathother
       }
     }
-  }, {
-    priority: [ 'import', 'browser', 'default' ]
-  }), './server.browser.js')
+  })
 
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    exports: {
-      '.': {
-        deno: './server.deno.js',
-        worker: './server.worker.js',
-        browser: './server.browser.js',
-        default: './server.default.js'
+  assert.strictEqual(resolvedmain, resolvingpackagejsonmoduleurlpath)
+})
+
+test('should return browser or import whichiver first', () => {
+  const resolvedbrowser = resolvewithplus('test', import.meta.url, {
+    priority: [ 'browser', 'import', 'default' ],
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        exports: {
+          '.': {
+            deno: resolvingpackagejsonmodulerelpathother,
+            worker: resolvingpackagejsonmodulerelpathother,
+            browser: resolvingpackagejsonmodulerelpath,
+            default: resolvingpackagejsonmodulerelpathother
+          }
+        }
       }
     }
-  }, {
-    priority: [ 'default' ]
-  }), './server.default.js')
+  })
+
+  assert.strictEqual(resolvedbrowser, resolvingpackagejsonmoduleurlpath)
+
+  const resolveddefault = resolvewithplus('test', import.meta.url, {
+    priority: [ 'default', 'browser', 'import' ],
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        exports: {
+          '.': {
+            deno: resolvingpackagejsonmodulerelpathother,
+            worker: resolvingpackagejsonmodulerelpathother,
+            browser: resolvingpackagejsonmodulerelpathother,
+            default: resolvingpackagejsonmodulerelpath
+          }
+        }
+      }
+    }
+  })
+
+  assert.strictEqual(resolveddefault, resolvingpackagejsonmoduleurlpath)
 })
 
 test('should detect module type from package.json', () => {
@@ -454,57 +558,87 @@ test('should detect module type from package.json', () => {
   // NOTE for tests, file must exist
   // resolving cjs definitions like { main: 'dir/path' }
   // requires resolver to find path at filesystem
-  const resolvingfile = './tests-basic.test.js'
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    main: resolvingfile,// './dist-cjs/index.js',
-    types: './dist-types/index.d.ts',
-    module: './dist-es/index.js'
-  }), resolvingfile)
+  const resolvedmain = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        main: resolvingpackagejsonmodulerelpath,
+        types: './dist-types/index.d.ts',
+        module: resolvingpackagejsonmodulerelpathother
+      }
+    }
+  })
 
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    type: 'module',
-    main: './dist-cjs/index.js',
-    types: './dist-types/index.d.ts',
-    module: resolvingfile
-  }), resolvingfile)
+  assert.strictEqual(resolvedmain, resolvingpackagejsonmoduleurlpath)
 
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    main: './dist-cjs/index.js',
-    types: './dist-types/index.d.ts',
-    module: resolvingfile
-  }, {
-    priority: [ 'import', 'browser', 'default' ]
-  }), resolvingfile)
+  const resolvedmodule = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'module',
+        main: resolvingpackagejsonmodulerelpathother,
+        types: './dist-types/index.d.ts',
+        module: resolvingpackagejsonmodulerelpath
+      }
+    }
+  })
+
+  assert.strictEqual(resolvedmodule, resolvingpackagejsonmoduleurlpath)
+
+  const resolvedmodule2 = resolvewithplus('test', import.meta.url, {
+    priority: [ 'import', 'browser', 'default' ],
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        main: resolvingpackagejsonmodulerelpathother,
+        types: './dist-types/index.d.ts',
+        module: resolvingpackagejsonmodulerelpath
+      }
+    }
+  })
+
+  assert.strictEqual(resolvedmodule2, resolvingpackagejsonmoduleurlpath)
 
   // prioritize exports over main, per spec
   // https://nodejs.org/api/packages.html#package-entry-points
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    main: './dest-cjs',
-    exports: {
-      '.': {
-        deno: './server.deno.js',
-        worker: './server.worker.js',
-        browser: './server.browser.js',
-        default: resolvingfile
+  const resolvedexportsdefault = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        main: resolvingpackagejsonmodulerelpathother,
+        exports: {
+          '.': {
+            deno: resolvingpackagejsonmodulerelpathother,
+            worker: resolvingpackagejsonmodulerelpathother,
+            browser: resolvingpackagejsonmodulerelpathother,
+            default: resolvingpackagejsonmodulerelpath
+          }
+        }
       }
     }
-  }), resolvingfile)
+  })
 
-  assert.strictEqual(resolvewithplus.gettargetindex({
-    name: 'test',
-    main: './dest-cjs',
-    type: 'module',
-    exports: {
-      '.': {
-        deno: './server.deno.js',
-        worker: './server.worker.js',
-        browser: './server.browser.js',
-        default: resolvingfile
+  assert.strictEqual(resolvedexportsdefault, resolvingpackagejsonmoduleurlpath)
+
+
+  const resolvedmoduleexportsdef = resolvewithplus('test', import.meta.url, {
+    packagejsonmap: {
+      [resolvingpackagejsonpath]: {
+        name: 'test',
+        type: 'module',
+        main: './dist-cjs/index.js',
+        exports: {
+          '.': {
+            deno: resolvingpackagejsonmodulerelpathother,
+            worker: resolvingpackagejsonmodulerelpathother,
+            browser: resolvingpackagejsonmodulerelpathother,
+            default: resolvingpackagejsonmodulerelpath
+          }
+        }
       }
     }
-  }), resolvingfile)
+  })
+
+  assert.strictEqual(
+    resolvedmoduleexportsdef, resolvingpackagejsonmoduleurlpath)
 })

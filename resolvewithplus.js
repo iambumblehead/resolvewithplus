@@ -68,6 +68,12 @@ const isfilesync = (file, stat) => {
   return stat && (stat.isFile() || stat.isFIFO())
 }
 
+const packagejsonread = (packagejsonpath, opts) => {
+  return opts.packagejsonmap && opts.packagejsonmap[packagejsonpath] || (
+    isfilesync(packagejsonpath)
+      && require(packagejsonpath))
+}
+
 const firstSyncFileExtn = (file, extnlist) => {
   const fileextn = extnlist
     .find(ext => isfilesync(file + ext)) || null
@@ -354,13 +360,12 @@ const gettargetindex = (packagejson, opts = {}, dir = '', indexval) => {
 
   if (opts.isbrowser && packagejson.browser) {
     // 'browser' and 'main' can define 'script.js' rather than './script.js'
-    // if no path found, attach full path here
+    // if no path found, attach full path ahere
     indexval = esmparse(packagejson.browser, specimport, parseopts)
     indexval = (indexval && !isDirPathRe.test(indexval))
       ? path.join(dir, indexval) : indexval
   }
-  if (!indexval && packagejson.exports)
-    indexval = esmparse(packagejson.exports, packagejsontype, parseopts)
+
   if (!indexval)
     indexval = gettargetindextop(packagejson, parseopts, dir)
 
@@ -379,7 +384,7 @@ const gettargetindex = (packagejson, opts = {}, dir = '', indexval) => {
 // 4. If X/index.node is file, load X/index.node as binary addon.  STOP
 const getasdirsync = (d, opts) => {
   const json = path.join(d, packagejson)
-  const jsonobj = isfilesync(json) && require(json)
+  const jsonobj = packagejsonread(json, opts)
   const relpath = jsonobj ? gettargetindex(jsonobj, opts, d) : false
 
   return relpath
@@ -443,11 +448,10 @@ const esmparseexport = (targetpath, pname, pspecifier, pjson, opts) => {
 
 const esmparseexportpkg = (targetpath, pname, pspecifier, opts) => {
   const pjsonpath = path.join(targetpath, pname, packagejson)
-  const pjsonpathexists = isfilesync(pjsonpath)
-  const pjson = pjsonpathexists && require(pjsonpath)
+  const pjson = packagejsonread(pjsonpath, opts)
   const packagejsontype = pjson && getpackagejsontype(pjson)
 
-  return pjsonpathexists &&
+  return pjson &&
     esmparseexport(targetpath, pname, pspecifier, pjson, Object.assign({
       packagejsontype
     }, opts))
@@ -528,6 +532,9 @@ const createopts = (moduleId, parent, opts) => {
   opts.istypescript = boolOr(opts.istypescript, isTsExtnRe.test(parent))
   opts.isbrowser = boolOr(opts.isbrowser, false)
   opts.isspectype = boolOr(opts.isspectype, true)
+
+  // packagejson mock to more easily test different patternsn
+  opts.packagejsonmap = opts.packagejsonmap || null
   if (!Array.isArray(opts.priority)) {
     opts.priority = opts.isbrowser ? [ specbrowser ] : []
     opts.priority.push(spectype)
