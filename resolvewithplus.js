@@ -341,7 +341,7 @@ const gettargetindextop = (packagejson, opts = {}, dir = '', index = false) => {
       && packagejson.module) {
     index = gettargetindextopmain(packagejson.module, opts, dir)
   }
-  
+
   if (!index && packagejson.main)
     index = gettargetindextopmain(packagejson.main, opts, dir)
 
@@ -352,8 +352,13 @@ const gettargetindex = (packagejson, opts = {}, dir = '', indexval) => {
   const packagejsontype = getpackagejsontype(packagejson)
   const parseopts = Object.assign({ packagejsontype }, opts)
 
-  if (opts.isbrowser && packagejson.browser)
+  if (opts.isbrowser && packagejson.browser) {
+    // 'browser' and 'main' can define 'script.js' rather than './script.js'
+    // if no path found, attach full path here
     indexval = esmparse(packagejson.browser, specimport, parseopts)
+    indexval = (indexval && !isDirPathRe.test(indexval))
+      ? path.join(dir, indexval) : indexval
+  }
   if (!indexval && packagejson.exports)
     indexval = esmparse(packagejson.exports, packagejsontype, parseopts)
   if (!indexval)
