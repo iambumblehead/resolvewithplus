@@ -207,6 +207,7 @@ const esmparselist = (list, spec, specifier, key = list[0]) => {
 }
 
 const esmparse = (spec, specifier, opts = {}) => {
+  const priority = opts.priority || [ specruntime, specdefault ]
   let indexval = false
 
   if (typeof spec === 'string')
@@ -238,36 +239,20 @@ const esmparse = (spec, specifier, opts = {}) => {
     //   }
     // }
     if (!indexval)
-      indexval = (opts.priority || [ specruntime, specdefault ])
-        .reduce((prev, specname) => (
-          prev || (
-            // if dynamic 'spectype', lookup 'commonjs' or 'module'
-            // according to package.json
-            specname = specname === spectype
-              ? getspectypenamedexportdefault(opts.packagejsontype)
-              : specname,
-            esmparse(spec[specname], specifier, opts))
-        ), false)
+      indexval = priority.reduce((prev, specname) => (
+        prev || (
+          // if dynamic 'spectype', lookup 'commonjs' or 'module'
+          // according to package.json
+          specname = specname === spectype
+            ? getspectypenamedexportdefault(opts.packagejsontype)
+            : specname,
+          esmparse(spec[specname], specifier, opts))
+      ), false)
 
     if (!indexval && spec[specdefault])
       indexval = esmparse(spec[specdefault], specifier)
     if (!indexval && spec[specifier])
       indexval = esmparse(spec[specifier], specifier, opts)
-
-    // "exports": "./lib/index.js",
-    // "exports": { "import": "./lib/index.js" },
-    // "exports": { ".": "./lib/index.js" },
-    // "exports": { ".": { "import": "./lib/index.js" } }
-    if (!indexval && spec[specdot]) {
-      indexval = (opts.priority || [ specruntime, specdefault ])
-        .reduce((prev, specname) => (
-          prev || (
-            specname = specname === spectype
-              ? getspectypenamedexportdefault(opts.packagejsontype)
-              : specname,
-            esmparse(spec[specdot], specname, opts)
-          )), false)
-    }
 
     // "exports": {
     //   ".": "./lib/index.test.js",
@@ -276,6 +261,24 @@ const esmparse = (spec, specifier, opts = {}) => {
     // }
     if (!indexval)
       indexval = esmparselist(Object.keys(spec), spec, specifier)
+
+    // "exports": "./lib/index.js",
+    // "exports": { "import": "./lib/index.js" },
+    // "exports": { ".": "./lib/index.js" },
+    // "exports": { ".": { "import": "./lib/index.js" } }
+    if (!indexval && spec[specdot]) {
+      if (priority.includes(specifier)) {
+        indexval = priority.reduce((prev, specname) => (
+          prev || (
+            specname = specname === spectype
+              ? getspectypenamedexportdefault(opts.packagejsontype)
+              : specname,
+            esmparse(spec[specdot], specname, opts)
+          )), false)
+      } else {
+        indexval = esmparse(spec[specdot], specifier, opts)
+      }
+    }
   }
 
   return indexval
@@ -305,7 +308,9 @@ const getasfilesync = (f, opts = {}) => {
 }
 
 const getpackagejsontype = packagejson => (
-  packagejson.type || spectypecommonjs)
+  packagejson.type
+    || ('exports' in packagejson && spectypemodule)
+    || spectypecommonjs)
 
 const gettargetindextopmain = (main, opts = {}, dir = '') => {
   const indexpath = dir ? path.join(dir, main) : main
@@ -435,9 +440,12 @@ const esmparseexportpkg = (targetpath, pname, pspecifier, opts) => {
   const pjsonpath = path.join(targetpath, pname, packagejson)
   const pjsonpathexists = isfilesync(pjsonpath)
   const pjson = pjsonpathexists && require(pjsonpath)
+  const packagejsontype = pjson && getpackagejsontype(pjson)
 
   return pjsonpathexists &&
-    esmparseexport(targetpath, pname, pspecifier, pjson, opts)
+    esmparseexport(targetpath, pname, pspecifier, pjson, Object.assign({
+      packagejsontype
+    }, opts))
 }
 
 const esmparseimportpkg = (pspecifier, start, opts) => {

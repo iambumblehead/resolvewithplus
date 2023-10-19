@@ -88,7 +88,7 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
   assert.strictEqual(
     await metaresolve('koa', fullpathfileurl),
     resolvewithplus('koa', fullpath))
-  
+
   assert.strictEqual( // module id
     await metaresolve('optfn', fullpathfileurl),
     resolvewithplus('optfn', fullpath))
@@ -104,7 +104,6 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
   assert.strictEqual(
     await metaresolve(relpathspace, import.meta.url),
     resolvewithplus(relpathspace, import.meta.url))
-
 })
 
 test('should return a full path when given relative path to index file', () => {
@@ -183,7 +182,7 @@ test('should follow the behaviour of require.resolve', () => {
 
 test('should handle package.json "exports" field', () => {
   const fullpath = path.resolve('../testfiles/')
-  
+
   assert.strictEqual(
     resolvewithplus('koa', fullpath),
     toresolvefileurl('../node_modules/koa/dist/koa.mjs'))
@@ -331,6 +330,7 @@ test('should handle mixed exports', () => {
 
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
+    type: 'commonjs',
     exports: {
       './package.json': './package.json',
       '.': [ {
@@ -403,6 +403,7 @@ test('resolve import or commonjs according to package type', () => {
 
   assert.strictEqual(resolvewithplus.gettargetindex({
     name: 'test',
+    type: 'commonjs',
     exports: {
       '.': {
         deno: './server.deno.js',
