@@ -258,10 +258,16 @@ const esmparse = (spec, specifier, opts = {}) => {
     // "exports": { "import": "./lib/index.js" },
     // "exports": { ".": "./lib/index.js" },
     // "exports": { ".": { "import": "./lib/index.js" } }
-    if (!indexval && spec[specdot])
-      indexval = typeof spec[specdot] === 'string'
-        ? specifier === specimport && esmparse(spec[specdot], specifier, opts)
-        : esmparse(spec[specdot], specifier, opts)
+    if (!indexval && spec[specdot]) {
+      indexval = (opts.priority || [ specruntime, specdefault ])
+        .reduce((prev, specname) => (
+          prev || (
+            specname = specname === spectype
+              ? getspectypenamedexportdefault(opts.packagejsontype)
+              : specname,
+            esmparse(spec[specdot], specname, opts)
+          )), false)
+    }
 
     // "exports": {
     //   ".": "./lib/index.test.js",
