@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.1.1 _Oct.19.2023_
+   * [support user-defined priority list](https://github.com/iambumblehead/resolvewithplus/pull/62) when resolving nested export expressions
  * 2.1.0 _Oct.15.2023_
    * [when user-defined priority list](https://github.com/iambumblehead/resolvewithplus/pull/61) includes "import" return packagejson.module before packagejson.main
  * 2.0.9 _Oct.15.2023_
