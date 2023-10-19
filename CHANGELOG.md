@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.1.2 _Oct.19.2023_
+   * [remove unused condition](https://github.com/iambumblehead/resolvewithplus/pull/63) and resolved error where fileurl path was not correctly resolved for package.json "main", "browser" and "module" definitions
  * 2.1.1 _Oct.19.2023_
    * [support user-defined priority list](https://github.com/iambumblehead/resolvewithplus/pull/62) when resolving nested export expressions
  * 2.1.0 _Oct.15.2023_
