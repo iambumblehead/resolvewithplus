@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.1.3 _Oct.20.2023_
+   * resolve full path from package.json "main", "browser" and "module" definitions. resolves [this issue at esmock.](https://github.com/iambumblehead/esmock/issues/260)
  * 2.1.2 _Oct.19.2023_
    * [remove unused condition](https://github.com/iambumblehead/resolvewithplus/pull/63) and resolved error where fileurl path was not correctly resolved for package.json "main", "browser" and "module" definitions
  * 2.1.1 _Oct.19.2023_
