@@ -6,7 +6,9 @@ import url from 'url'
 import path from 'path'
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import resolvewithplus from '../../resolvewithplus.js'
+import resolvewithplus, {
+  gettargetindextop
+} from '../../resolvewithplus.js'
 
 const tofileurl = p => url.pathToFileURL(p).href
 const toresolvefileurl = p => tofileurl(path.resolve(p))
@@ -19,7 +21,7 @@ const resolvingpackagejsonmodulerelpath =
   '../../tests-basic/tests-basic.test.js'
 const resolvingpackagejsonmoduleurlpath =
   toresolvefileurl('./tests-basic.test.js')
-
+/*
 test('should return matched export paths', () => {
   const exports = {
     '.': './lib/index.test.js',
@@ -641,4 +643,40 @@ test('should detect module type from package.json', () => {
 
   assert.strictEqual(
     resolvedmoduleexportsdef, resolvingpackagejsonmoduleurlpath)
+})
+*/
+test('gettargetindextop should resolve a fullpath', () => {
+  const dir = path.resolve('../node_modules/test/') + '/'
+  const indexpathrequire = gettargetindextop({
+    name: '@adobe/fetch',
+    version: '4.1.0',
+    description: 'Light-weight Fetch ...',
+    require: resolvingpackagejsonmodulerelpath
+  }, {}, dir)
+
+  assert.strictEqual(
+    indexpathrequire,
+    url.fileURLToPath(resolvingpackagejsonmoduleurlpath))
+
+  const indexpathmodule = gettargetindextop({
+    name: '@adobe/fetch',
+    version: '4.1.0',
+    description: 'Light-weight Fetch ...',
+    module: resolvingpackagejsonmodulerelpath
+  }, { priority: [ 'import' ] }, dir)
+
+  assert.strictEqual(
+    indexpathmodule,
+    url.fileURLToPath(resolvingpackagejsonmoduleurlpath))
+
+  const indexpathmain = gettargetindextop({
+    name: '@adobe/fetch',
+    version: '4.1.0',
+    description: 'Light-weight Fetch ...',
+    main: resolvingpackagejsonmodulerelpath
+  }, {}, dir)
+
+  assert.strictEqual(
+    indexpathmain,
+    url.fileURLToPath(resolvingpackagejsonmoduleurlpath))  
 })

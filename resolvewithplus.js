@@ -336,7 +336,7 @@ const gettargetindextopmain = (main, opts = {}, dir = '') => {
 // > If both "exports" and "main" are defined, the "exports" field
 // > takes precedence over "main" in supported versions of Node.js.
 const gettargetindextop = (packagejson, opts = {}, dir = '', index = false) => {
-  const packagejsontype = opts.packagejsontype
+  const packagejsontype = getpackagejsontype(packagejson)
 
   // these 'top' level packagejson values allow commonjs resolution
   // and commonjs resolver can resolve "./name/index.jx" from "./name"
@@ -573,3 +573,7 @@ export default Object.assign(resolvewith, {
   esmparse,
   cache
 })
+
+export {
+  gettargetindextop
+}
