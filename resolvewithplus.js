@@ -338,9 +338,11 @@ const gettargetindextopmain = (main, opts = {}, dir = '') => {
 const gettargetindextop = (packagejson, opts = {}, dir = '', index = false) => {
   const packagejsontype = opts.packagejsontype
 
-  if (opts.isspectype !== false)
+  if (opts.isspectype !== false) {
     index = packagejson[packagejsontype]
       || packagejson[getspectypenamedexportdefault(packagejsontype)]
+    index = index && path.join(dir, index)
+  }
 
   // if priorty list includes 'import', return packagejson.module
   if (!index && (opts.priority || []).includes(spectypemoduleimport)
