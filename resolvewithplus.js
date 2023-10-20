@@ -338,10 +338,14 @@ const gettargetindextopmain = (main, opts = {}, dir = '') => {
 const gettargetindextop = (packagejson, opts = {}, dir = '', index = false) => {
   const packagejsontype = opts.packagejsontype
 
+  // these 'top' level packagejson values allow commonjs resolution
+  // and commonjs resolver can resolve "./name/index.jx" from "./name"
+  // because of this, the directory is passed down and used to locate
+  // the literal path or any possible index-paths found in the dir
   if (opts.isspectype !== false) {
     index = packagejson[packagejsontype]
       || packagejson[getspectypenamedexportdefault(packagejsontype)]
-    index = index && path.join(dir, index)
+    index = index && gettargetindextopmain(index, opts, dir)
   }
 
   // if priorty list includes 'import', return packagejson.module
