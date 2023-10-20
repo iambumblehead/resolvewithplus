@@ -21,7 +21,7 @@ const resolvingpackagejsonmodulerelpath =
   '../../tests-basic/tests-basic.test.js'
 const resolvingpackagejsonmoduleurlpath =
   toresolvefileurl('./tests-basic.test.js')
-/*
+
 test('should return matched export paths', () => {
   const exports = {
     '.': './lib/index.test.js',
@@ -644,7 +644,7 @@ test('should detect module type from package.json', () => {
   assert.strictEqual(
     resolvedmoduleexportsdef, resolvingpackagejsonmoduleurlpath)
 })
-*/
+
 test('gettargetindextop should resolve a fullpath', () => {
   const dir = path.resolve('../node_modules/test/') + '/'
   const indexpathrequire = gettargetindextop({
