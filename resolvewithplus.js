@@ -216,6 +216,11 @@ const getesmkeyvalmatch = (esmkey, esmval, idpath, opts, keyvalmx = false) => {
           //   './mystuff/*.js',
           //   './src/mystuff/*.js',
           //   './mystuff/index.js')
+          console.log([
+            expandedkey,
+            path.join(pathfirstdir, expandedkey),
+            path.join(resolvedkey, esmval[nestkey].split('*')[1])            
+          ])
           exp[nestkey] = getesmkeyvalglobreplaced(
             expandedkey,
             path.join(pathfirstdir, expandedkey),
