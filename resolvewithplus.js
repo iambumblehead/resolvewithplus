@@ -204,47 +204,28 @@ const getesmkeyvalmatch = (esmkey, esmval, idpath, opts, keyvalmx = false) => {
       // }
       // ```
       if (isobj(esmval) && esmkey.includes('*')) {
-        const expandedkey = getesmkeyvalglobreplaced(
-          esmkey, idpath, idpath)
-        const expandedkeyname = expandedkey && expandedkey
-          .split(/\.?\//).find(name => name)
+        const resolvedkey = getesmkeyvalglobreplaced(esmkey, idpath, idpath)
+        // './mystuff', './*' -> 'mystuff/*',
+        const expandedkey = path.join(resolvedkey, esmkey)
+        const expandedspec = Object.keys(esmval).reduce((exp, nestkey) => {
+          // ./src/*/index.js -> 'src'
+          const pathfirstdir = esmval[nestkey].split(/\.?\//).find(e => e)
 
-        if (expandedkey) {
-          // fragile. expand spec value from expanded key path
-          //
-          // input ({
-          //    default: './src/*/index.js',
-          //    types: './types/*/index.d.ts'
-          // })
-          //
-          // output ({
-          //    default: './src/mystuff/index.js',
-          //    types: './types/mystuff/index.d.ts'
-          // })
-          const expandedspec = Object.keys(esmval).reduce((exp, nestkey) => {
-            exp[nestkey] = esmval[nestkey]
-              .split('*').join(expandedkeyname)
+          // eg,
+          // exp[nestkey] = getesmkeyvalglobreplaced(
+          //   './mystuff/*.js',
+          //   './src/mystuff/*.js',
+          //   './mystuff/index.js')
+          exp[nestkey] = getesmkeyvalglobreplaced(
+            expandedkey,
+            path.join(pathfirstdir, expandedkey),
+            path.join(resolvedkey, esmval[nestkey].split('*')[1]))
 
-            return exp
-          }, {})
+          return exp
+        }, {})
 
-          keyvalmx = Object.keys(expandedspec).reduce((resolved, nestkey) => {
-            if (resolved) return resolved
-
-            const nestkeypathvalue = expandedspec[nestkey]
-            const nestkeypathvaluedir = nestkeypathvalue
-              .split(/\.?\//).find(name => name)
-
-            // create a "fullpath" moduleId from expanded path dir
-            // ```
-            // ('src', 'mystuff') => './src/mystuff')
-            const idpathexpanded = './' + path.join(
-              nestkeypathvaluedir, expandedkey)
-
-            // eslint-disable-next-line no-use-before-define
-            return esmparse(expandedspec, idpathexpanded, opts)
-          }, null)
-        }
+        // eslint-disable-next-line no-use-before-define
+        return esmparse(expandedspec, idpath, opts)
       }
 
       keyvalmx = keyvalmx || esmval
