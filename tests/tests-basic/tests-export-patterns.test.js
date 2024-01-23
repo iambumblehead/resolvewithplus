@@ -275,6 +275,25 @@ test('should mock exports from nodejsexample_12_exports, nested cond', () => {
     noderesolvedfeaturenode)
 })
 
+// "asterisk-directory named-property exports"
+// from: https://github.com/iambumblehead/esmock/issues/289 @dschnare
+// {
+//   "exports": {
+//     "./*": {
+//       "default": "./src/*/index.js",
+//       "types": "./types/*/index.d.ts"
+//     }
+//   }
+// }
+test('should mock exports from nodejsexample_13_exports, asterisk dir', () => {
+  const noderesolvedindex = toresolvefileurl(
+    './nodejsexample_13_exports/src/mystuff/index.js')
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_13_exports/mystuff'),
+    noderesolvedindex)
+})
+
 // "exports": './lib/index.js',
 // "exports": { "import": "./lib/index.js" },
 // "exports": { ".": "./lib/index.js" },

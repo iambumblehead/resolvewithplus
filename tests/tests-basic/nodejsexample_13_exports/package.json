@@ -1,0 +1,14 @@
+{
+  "name": "nodejsexample_13_exports",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iambumblehead/resolvewithplus.git"
+  },
+  "exports": {
+    "./*": {
+      "default": "./src/*/index.js",
+      "types": "./types/*/index.d.ts"
+    }
+  }
+}
