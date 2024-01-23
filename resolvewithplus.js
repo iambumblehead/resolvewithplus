@@ -204,6 +204,7 @@ const getesmkeyvalmatch = (esmkey, esmval, idpath, opts, keyvalmx = false) => {
       // }
       // ```
       if (isobj(esmval) && esmkey.includes('*')) {
+        console.log([ esmkey, idpath, idpath ])        
         const resolvedkey = getesmkeyvalglobreplaced(esmkey, idpath, idpath)
         // './mystuff', './*' -> 'mystuff/*',
         const expandedkey = path.join(resolvedkey, esmkey)
