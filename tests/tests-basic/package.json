@@ -18,6 +18,7 @@
     "nodejsexample_10_exports": "file:nodejsexample_10_exports",
     "nodejsexample_11_exports": "file:nodejsexample_11_exports",
     "nodejsexample_12_exports": "file:nodejsexample_12_exports",
+    "nodejsexample_13_exports": "file:nodejsexample_13_exports",
     "resolvewithplus": "file:.."
   },
   "workspaces": [

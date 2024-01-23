@@ -183,23 +183,78 @@ const getesmkeyvalglobreplaced = (esmkey, esmval, pathlocal) => {
 //
 //   All instances of * on the right hand side will then be replaced
 //   with this value, including if it contains any / separators.
-const getesmkeyvalmatch = (esmkey, esmval, path, keyvalmatch = false) => {
-  if (ispathesmmatch(esmkey, path)) {
-    if (esmval.includes('*')) {
-      if (ispathesmmatch(esmval, path)) {
-        keyvalmatch = path
+const getesmkeyvalmatch = (esmkey, esmval, idpath, opts, keyvalmx = false) => {
+  if (ispathesmmatch(esmkey, idpath)) {
+    if (String(esmval).includes('*')) {
+      if (ispathesmmatch(esmval, idpath)) {
+        keyvalmx = idpath
       } else if (esmkey.includes('*') && esmkey !== esmval) {
-        keyvalmatch = getesmkeyvalglobreplaced(esmkey, esmval, path)
+        keyvalmx = getesmkeyvalglobreplaced(esmkey, esmval, idpath)
       }
     } else {
-      keyvalmatch = esmval
+      // if below condition is true, assume exports look this way and,
+      //   * the namespace defined on the key is valid for the moduleId,
+      //   * expanded key used as replacement for nested path value wildcard
+      // ```
+      // "exports": {
+      //   "./*": {
+      //     "default": "./src/*/index.js",
+      //     "types": "./types/*/index.d.ts"
+      //   }
+      // }
+      // ```
+      if (isobj(esmval) && esmkey.includes('*')) {
+        const expandedkey = getesmkeyvalglobreplaced(
+          esmkey, idpath, idpath)
+        const expandedkeyname = expandedkey && expandedkey
+          .split(/\.?\//).find(name => name)
+
+        if (expandedkey) {
+          // fragile. expand spec value from expanded key path
+          //
+          // input ({
+          //    default: './src/*/index.js',
+          //    types: './types/*/index.d.ts'
+          // })
+          //
+          // output ({
+          //    default: './src/mystuff/index.js',
+          //    types: './types/mystuff/index.d.ts'
+          // })
+          const expandedspec = Object.keys(esmval).reduce((exp, nestkey) => {
+            exp[nestkey] = esmval[nestkey]
+              .split('*').join(expandedkeyname)
+
+            return exp
+          }, {})
+
+          keyvalmx = Object.keys(expandedspec).reduce((resolved, nestkey) => {
+            if (resolved) return resolved
+
+            const nestkeypathvalue = expandedspec[nestkey]
+            const nestkeypathvaluedir = nestkeypathvalue
+              .split(/\.?\//).find(name => name)
+
+            // create a "fullpath" moduleId from expanded path dir
+            // ```
+            // ('src', 'mystuff') => './src/mystuff')
+            const idpathexpanded = './' + path.join(
+              nestkeypathvaluedir, expandedkey)
+
+            // eslint-disable-next-line no-use-before-define
+            return esmparse(expandedspec, idpathexpanded, opts)
+          }, null)
+        }
+      }
+
+      keyvalmx = keyvalmx || esmval
     }
   }
 
-  return keyvalmatch
+  return keyvalmx
 }
 
-const esmparselist = (list, spec, specifier, key = list[0]) => {
+const esmparselist = (list, spec, specifier, opts, key = list[0]) => {
   if (!list.length) return null
 
   const isKeyValid = isESMImportSubpathRe.test(specifier)
@@ -207,9 +262,9 @@ const esmparselist = (list, spec, specifier, key = list[0]) => {
     : isRelPathRe.test(key)
 
   return (isKeyValid
-    && typeof spec[key] === 'string'
-    && getesmkeyvalmatch(key, spec[key], specifier))
-    || esmparselist(list.slice(1), spec, specifier)
+    && (typeof spec[key] === 'string' || isobj(spec[key]))
+    && getesmkeyvalmatch(key, spec[key], specifier, opts))
+    || esmparselist(list.slice(1), spec, specifier, opts)
 }
 
 const esmparse = (spec, specifier, opts = {}) => {
@@ -266,7 +321,7 @@ const esmparse = (spec, specifier, opts = {}) => {
     //   "./lib/*": "./lib/*.js"
     // }
     if (!indexval)
-      indexval = esmparselist(Object.keys(spec), spec, specifier)
+      indexval = esmparselist(Object.keys(spec), spec, specifier, opts)
 
     // "exports": "./lib/index.js",
     // "exports": { "import": "./lib/index.js" },
