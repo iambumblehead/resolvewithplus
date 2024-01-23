@@ -205,25 +205,25 @@ const getesmkeyvalmatch = (esmkey, esmval, idpath, opts, keyvalmx = false) => {
       // ```
       if (isobj(esmval) && esmkey.includes('*')) {
         const resolvedkey = idpath // 'mystuff'
-        const expandedkey = path.join(idpath, esmkey) // 'mystuff/*'
+        const expandedkey = path.posix.join(idpath, esmkey) // 'mystuff/*'
         const expandedspec = Object.keys(esmval).reduce((exp, nestkey) => {
           // ./src/*/index.js -> 'src'
           const pathfirstdir = esmval[nestkey].split(/\.?\//).find(e => e)
 
           // eg,
           // exp[nestkey] = getesmkeyvalglobreplaced(
-          //   './mystuff/*.js',
-          //   './src/mystuff/*.js',
-          //   './mystuff/index.js')
+          //   'mystuff/*',
+          //   'src/mystuff/*',
+          //   'mystuff/index')
           console.log([
             expandedkey,
-            path.join(pathfirstdir, expandedkey),
-            path.join(resolvedkey, esmval[nestkey].split('*')[1])
+            path.posix.join(pathfirstdir, expandedkey),
+            path.posix.join(resolvedkey, esmval[nestkey].split('*')[1])
           ])
           exp[nestkey] = getesmkeyvalglobreplaced(
             expandedkey,
-            path.join(pathfirstdir, expandedkey),
-            path.join(resolvedkey, esmval[nestkey].split('*')[1]))
+            path.posix.join(pathfirstdir, expandedkey),
+            path.posix.join(resolvedkey, esmval[nestkey].split('*')[1]))
 
           return exp
         }, {})
