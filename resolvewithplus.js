@@ -23,7 +23,7 @@ const esmStrGlobRe = /(\*)/g
 const esmStrPathCharRe = /([./])/g
 const protocolNode = /^node:/
 const protocolFile = /^file:/
-const supportedExtensions = [ '.js', '.mjs', '.ts', '.tsx', '.json', '.node' ]
+const supportedExtensions = ['.js', '.mjs', '.ts', '.tsx', '.json', '.node']
 const supportedIndexNames = supportedExtensions.map(extn => `index${extn}`)
 const node_modules = 'node_modules'
 const packagejson = 'package.json'
@@ -101,7 +101,7 @@ const firstSyncFilePath = (dir, fileslist) => {
 //    c. let I = I - 1
 // 5. return DIRS
 const getasnode_module_paths = (start, parts = start.split(path.sep)) => {
-  const next_module_paths = (parts, tuple = [ [], [] ]) => {
+  const next_module_paths = (parts, tuple = [[], []]) => {
     if (!parts.length)
       return tuple[1]
 
@@ -169,7 +169,6 @@ const getesmkeyvalglobreplaced = (esmkey, esmval, pathlocal) => {
   const isesmkeymatchRe = new RegExp(
     esmkey.replace(esmStrPathCharRe, '\\$1').replace(esmStrGlobRe, '(.*)'))
 
-  // eslint-disable-next-line prefer-destructuring
   const globmatch = (pathlocal.match(isesmkeymatchRe) || [])[1]
   return globmatch && esmval.replace('*', globmatch)
 }
@@ -247,7 +246,7 @@ const esmparselist = (list, spec, specifier, opts, key = list[0]) => {
 }
 
 const esmparse = (spec, specifier, opts = {}) => {
-  const priority = opts.priority || [ specruntime, specdefault ]
+  const priority = opts.priority || [specruntime, specdefault]
   let indexval = false
 
   if (typeof spec === 'string')
@@ -514,7 +513,7 @@ const esmparseimportpkg = (pspecifier, start, opts) => {
 //    b. LOAD_AS_DIRECTORY(DIR/X)
 //
 const getasnode_module = (targetpath, start, opts) => {
-  const [ pname, pspecifier ] = gettargetnameandspecifier(targetpath)
+  const [pname, pspecifier] = gettargetnameandspecifier(targetpath)
 
   if (isESMImportSubpathRe.test(pname))
     return esmparseimportpkg(targetpath, start, opts)
@@ -576,7 +575,7 @@ const createopts = (moduleId, parent, opts) => {
   // packagejson mock to more easily test different patternsn
   opts.packagejsonmap = opts.packagejsonmap || null
   if (!Array.isArray(opts.priority)) {
-    opts.priority = opts.isbrowser ? [ specbrowser ] : []
+    opts.priority = opts.isbrowser ? [specbrowser] : []
     opts.priority.push(spectype)
     opts.priority.push(specruntime)
     opts.priority.push(specdefault)
@@ -609,5 +608,6 @@ export default Object.assign(resolvewith, {
 })
 
 export {
-  gettargetindextop
+  gettargetindextop,
+  getesmkeyvalglobreplaced
 }
