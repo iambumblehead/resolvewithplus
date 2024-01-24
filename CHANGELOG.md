@@ -1,6 +1,8 @@
 # changelog
 
- * 2.1.4 _Jan.01.2024_
+ * 2.1.5 _Tbd.23.2024_
+   * add tests for path pattern resolver
+ * 2.1.4 _Jan.23.2024_
    * [resolve nested exports defined on named-properties](https://github.com/iambumblehead/resolvewithplus/pull/65) with wildcards, eg `exports: { './*': { default: './src/*/index.js' } }` resolves [this issue at esmock](https://github.com/iambumblehead/esmock/issues/289)
  * 2.1.3 _Oct.20.2023_
    * resolve full path from package.json "main", "browser" and "module" definitions. resolves [this issue at esmock.](https://github.com/iambumblehead/esmock/issues/260)
