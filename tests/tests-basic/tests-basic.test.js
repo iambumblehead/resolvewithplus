@@ -6,8 +6,10 @@ import url from 'url'
 import path from 'path'
 import test from 'node:test'
 import assert from 'node:assert/strict'
+
 import resolvewithplus, {
-  gettargetindextop
+  gettargetindextop,
+  getesmkeyvalglobreplaced
 } from '../../resolvewithplus.js'
 
 const tofileurl = p => url.pathToFileURL(p).href
@@ -349,10 +351,10 @@ test('should handle mixed exports, import', () => {
         type: 'module',
         exports: {
           './package.json': './package.json',
-          '.': [ {
+          '.': [{
             import: resolvingpackagejsonmodulerelpath,
             require: resolvingpackagejsonmodulerelpathother
-          }, './index.cjs' ],
+          }, './index.cjs'],
           './helpers': {
             import: resolvingpackagejsonmodulerelpathother,
             require: resolvingpackagejsonmodulerelpathother
@@ -361,10 +363,10 @@ test('should handle mixed exports, import', () => {
             import: resolvingpackagejsonmodulerelpathother,
             types: resolvingpackagejsonmodulerelpathother
           },
-          './yargs': [ {
+          './yargs': [{
             import: resolvingpackagejsonmodulerelpathother,
             require: resolvingpackagejsonmodulerelpathother
-          }, './yargs' ]
+          }, './yargs']
         }
       }
     }
@@ -382,10 +384,10 @@ test('should handle mixed exports, commonjs', () => {
         type: 'commonjs',
         exports: {
           './package.json': './package.json',
-          '.': [ {
+          '.': [{
             import: resolvingpackagejsonmodulerelpathother,
             require: resolvingpackagejsonmodulerelpath
-          }, resolvingpackagejsonmodulerelpathother ],
+          }, resolvingpackagejsonmodulerelpathother],
           './helpers': {
             import: resolvingpackagejsonmodulerelpathother,
             require: resolvingpackagejsonmodulerelpathother
@@ -394,10 +396,10 @@ test('should handle mixed exports, commonjs', () => {
             import: resolvingpackagejsonmodulerelpathother,
             types: './browser.d.ts'
           },
-          './yargs': [ {
+          './yargs': [{
             import: resolvingpackagejsonmodulerelpathother,
             require: resolvingpackagejsonmodulerelpathother
-          }, resolvingpackagejsonmodulerelpathother ]
+          }, resolvingpackagejsonmodulerelpathother]
         }
       }
     }
@@ -514,7 +516,7 @@ test('resolve full path for older main, browser and export fields', () => {
 
 test('should return browser or import whichiver first', () => {
   const resolvedbrowser = resolvewithplus('test', import.meta.url, {
-    priority: [ 'browser', 'import', 'default' ],
+    priority: ['browser', 'import', 'default'],
     packagejsonmap: {
       [resolvingpackagejsonpath]: {
         name: 'test',
@@ -533,7 +535,7 @@ test('should return browser or import whichiver first', () => {
   assert.strictEqual(resolvedbrowser, resolvingpackagejsonmoduleurlpath)
 
   const resolveddefault = resolvewithplus('test', import.meta.url, {
-    priority: [ 'default', 'browser', 'import' ],
+    priority: ['default', 'browser', 'import'],
     packagejsonmap: {
       [resolvingpackagejsonpath]: {
         name: 'test',
@@ -588,7 +590,7 @@ test('should detect module type from package.json', () => {
   assert.strictEqual(resolvedmodule, resolvingpackagejsonmoduleurlpath)
 
   const resolvedmodule2 = resolvewithplus('test', import.meta.url, {
-    priority: [ 'import', 'browser', 'default' ],
+    priority: ['import', 'browser', 'default'],
     packagejsonmap: {
       [resolvingpackagejsonpath]: {
         name: 'test',
@@ -663,7 +665,7 @@ test('gettargetindextop should resolve a fullpath', () => {
     version: '4.1.0',
     description: 'Light-weight Fetch ...',
     module: resolvingpackagejsonmodulerelpath
-  }, { priority: [ 'import' ] }, dir)
+  }, { priority: ['import'] }, dir)
 
   assert.strictEqual(
     indexpathmodule,
@@ -679,4 +681,24 @@ test('gettargetindextop should resolve a fullpath', () => {
   assert.strictEqual(
     indexpathmain,
     url.fileURLToPath(resolvingpackagejsonmoduleurlpath))  
+})
+
+test('getesmkeyvalglobreplaced should expand globby path groups', () => {
+  [[
+    'src/mystuff/index.js',
+    'mystuff/*', 'src/mystuff/*', 'mystuff/index.js'
+  ], [
+    'types/mystuff/index.d.ts',
+    'mystuff/*', 'types/mystuff/*', 'mystuff/index.d.ts'
+  ], [
+    './src/features/x.js',
+    './features/*.js', './src/features/*.js', './features/x.js'
+  ], [
+    './src/features/y/y.js',
+    './features/*.js', './src/features/*.js', './features/y/y.js'
+  ], [
+    './src/internal/z.js',
+    '#internal/*.js', './src/internal/*.js', '#internal/z.js'
+  ]].map(tuple => console.log(tuple) || assert.strictEqual(
+    getesmkeyvalglobreplaced(...tuple.slice(1)), tuple[0]))
 })
