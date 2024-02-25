@@ -201,7 +201,7 @@ const getesmkeyvalglobreplaced = (esmkey, esmval, pathlocal) => {
 // ex,
 //   ('./mystuff', './*', './src/*/index.js') => './src/mystuff/index.js'
 //   ('./mystuff/index', './*', './src/*.js') => './src/mystuff/index.js'
-const getesmkeyidpathrefpathexpanded = (idpath, esmkey, refpath, xp = null) => {
+const getesmkeyidpathrefpathexpanded = (idpath, esmkey, refpath) => {
   const asteriskIndex = esmkey.indexOf('*') || 0
   const asteriskBefore = esmkey.slice(0, asteriskIndex)
   const asteriskAfter = esmkey.slice(asteriskIndex + 1)
@@ -216,9 +216,7 @@ const getesmkeyidpathrefpathexpanded = (idpath, esmkey, refpath, xp = null) => {
     .slice(-asteriskAfter)
     .slice(asteriskBefore.length)
 
-  xp = refpath.replace('*', asteriskFromIdPath)
-
-  return xp
+  return refpath.replace('*', asteriskFromIdPath)
 }
 
 // esm patterns may have globby key AND path values as in this example,
