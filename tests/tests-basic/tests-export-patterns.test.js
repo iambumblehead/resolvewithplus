@@ -334,4 +334,3 @@ test('should return exports sugar', () => {
     resolvewithplus.esmparse({ '.': { import: './lib/index.js' } }, 'import'),
     './lib/index.js')
 })
-
