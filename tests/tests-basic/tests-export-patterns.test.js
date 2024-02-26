@@ -294,6 +294,25 @@ test('should mock exports from nodejsexample_13_exports, asterisk dir', () => {
     noderesolvedindex)
 })
 
+// "asterisk-directory named-property wildcard exports"
+// from: https://github.com/iambumblehead/esmock/issues/293 @Jeff-Tham
+// {
+//   "exports": {
+//     "./*": {
+//       "require": "./src/*.js",
+//       "import": "./types/*.d.ts"
+//     }
+//   }
+// }
+test('should mock exports from nodejsexample_14_exports, asterisk dir', () => {
+  const noderesolvedindex = toresolvefileurl(
+    './nodejsexample_14_exports/src/mystuff/index.js')
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_14_exports/mystuff/index'),
+    noderesolvedindex)
+})
+
 // "exports": './lib/index.js',
 // "exports": { "import": "./lib/index.js" },
 // "exports": { ".": "./lib/index.js" },

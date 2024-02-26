@@ -173,6 +173,52 @@ const getesmkeyvalglobreplaced = (esmkey, esmval, pathlocal) => {
   return globmatch && esmval.replace('*', globmatch)
 }
 
+// inherently complex to explain, this function "expands" the
+// requested idpath to include exported wildcard path parts
+//
+// imagine this idpath is imported,
+// 'thepackage/myfile'
+//
+// imagine 'thepackage' exports the following,
+// {
+//   "exports": {
+//     "./*": {
+//       "require": "./src/*.js",
+//       "import": "./types/*.d.ts"
+//     }
+//   }
+// }
+//
+// this function returns the path './src/myfile.js'
+//
+// this is done in the following way,
+//  * ensure esmkey './*' matches idpath './myfile'
+//  * calculate idpath's substring matching the wildcard, eg 'myfile'
+//    * split the esmkey around the asterisk to get './' and ''
+//    * remove the matches from idpath './myfile' to get 'myfile'
+//  * replace glob refpath './src/*.js" with matched 'myfile', './src/myfile.js'
+//
+// ex,
+//   ('./mystuff', './*', './src/*/index.js') => './src/mystuff/index.js'
+//   ('./mystuff/index', './*', './src/*.js') => './src/mystuff/index.js'
+const getesmkeyidpathrefpathexpanded = (idpath, esmkey, refpath) => {
+  const asteriskIndex = esmkey.indexOf('*') || 0
+  const asteriskBefore = esmkey.slice(0, asteriskIndex)
+  const asteriskAfter = esmkey.slice(asteriskIndex + 1)
+
+  if (!(idpath.startsWith(asteriskBefore)
+        && idpath.endsWith(asteriskAfter)))
+    return null
+
+  // strip esmkey before and after from idpath,
+  // put remaining idpath inside refpath asterisk
+  const asteriskFromIdPath = idpath
+    .slice(-asteriskAfter.length)
+    .slice(asteriskBefore.length)
+
+  return refpath.replace('*', asteriskFromIdPath)
+}
+
 // esm patterns may have globby key AND path values as in this example,
 //
 //   "exports": { "./features/*.js": "./src/features/*.js" },
@@ -203,20 +249,9 @@ const getesmkeyvalmatch = (esmkey, esmval, idpath, opts, keyvalmx = false) => {
       // }
       // ```
       if (isobj(esmval) && esmkey.includes('*')) {
-        const resolvedkey = idpath // 'mystuff'
-        const expandedkey = path.posix.join(idpath, esmkey) // 'mystuff/*'
         const expandedspec = Object.keys(esmval).reduce((exp, nestkey) => {
-          const pathfirstdir = esmval[nestkey] // ./src/a/b.js -> 'src'
-            .split(/\.?\//).find(e => e)
-
-          // eg,
-          // getesmkeyvalglobreplaced(
-          //   'mystuff/*', 'src/mystuff/*', 'mystuff/index.js')
-          // 'src/mystuff/index.js'
-          exp[nestkey] = getesmkeyvalglobreplaced(
-            expandedkey,
-            path.posix.join(pathfirstdir, expandedkey),
-            path.posix.join(resolvedkey, esmval[nestkey].split('*')[1]))
+          exp[nestkey] = getesmkeyidpathrefpathexpanded(
+            idpath, esmkey, esmval[nestkey])
 
           return exp
         }, {})
@@ -609,5 +644,6 @@ export default Object.assign(resolvewith, {
 
 export {
   gettargetindextop,
-  getesmkeyvalglobreplaced
+  getesmkeyvalglobreplaced,
+  getesmkeyidpathrefpathexpanded
 }

@@ -19,7 +19,7 @@ resolvewithplus('react-dom/server', '/resolvewith/test/', {
 ```
 
 
-`resolvewithplus` resolves module paths à la [node.js' import.meta.resolve function][33] and the [import-meta-resolve npm package.][35] It exists mostly to be small and to resolve module paths for `esmock`. [It's size is ~7kB][36] compared to [import-meta-resolve's ~76kB size.][37] For more details, [see the wiki.](https://github.com/iambumblehead/resolvewithplus/wiki)
+`resolvewithplus` resolves module paths à la [node.js' import.meta.resolve function][33] and the [import-meta-resolve npm package.][35] It exists mostly to be small and to resolve module paths for `esmock`. [It's size is ~8kB][36] compared to [import-meta-resolve's ~75kB size.][37] For more details, [see the wiki.](https://github.com/iambumblehead/resolvewithplus/wiki)
 
  ![scrounge](https://github.com/iambumblehead/scroungejs/raw/main/img/hand.png) 
 
