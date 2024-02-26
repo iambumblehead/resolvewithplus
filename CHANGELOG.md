@@ -1,6 +1,6 @@
 # changelog
 
- * 2.1.5 _Feb.24.2024_
+ * 2.1.5 _Feb.26.2024_
    * [add tests](https://github.com/iambumblehead/resolvewithplus/pull/66) for path pattern resolver
    * [resolve more nested export](https://github.com/iambumblehead/resolvewithplus/pull/67) wildcard-scenarious
  * 2.1.4 _Jan.23.2024_
