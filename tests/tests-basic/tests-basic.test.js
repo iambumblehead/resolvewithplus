@@ -9,7 +9,8 @@ import assert from 'node:assert/strict'
 
 import resolvewithplus, {
   gettargetindextop,
-  getesmkeyvalglobreplaced
+  getesmkeyvalglobreplaced,
+  getesmkeyidpathrefpathexpanded
 } from '../../resolvewithplus.js'
 
 const tofileurl = p => url.pathToFileURL(p).href
@@ -701,4 +702,16 @@ test('getesmkeyvalglobreplaced should expand globby path groups', () => {
     '#internal/*.js', './src/internal/*.js', '#internal/z.js'
   ]].map(tuple => console.log(tuple) || assert.strictEqual(
     getesmkeyvalglobreplaced(...tuple.slice(1)), tuple[0]))
+})
+
+test('getesmkeyidpathrefpathexpanded should expand globby path groups', () => {
+  assert.strictEqual(
+    getesmkeyidpathrefpathexpanded(
+      './mystuff', './*', './src/*/index.js'),
+    './src/mystuff/index.js')
+
+  assert.strictEqual(
+    getesmkeyidpathrefpathexpanded(
+      './mystuff/index', './*', './src/*.js'),
+    './src/mystuff/index.js')
 })

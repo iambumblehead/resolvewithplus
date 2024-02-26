@@ -213,7 +213,7 @@ const getesmkeyidpathrefpathexpanded = (idpath, esmkey, refpath) => {
   // strip esmkey before and after from idpath,
   // put remaining idpath inside refpath asterisk
   const asteriskFromIdPath = idpath
-    .slice(-asteriskAfter)
+    .slice(-asteriskAfter.length)
     .slice(asteriskBefore.length)
 
   return refpath.replace('*', asteriskFromIdPath)
@@ -644,5 +644,6 @@ export default Object.assign(resolvewith, {
 
 export {
   gettargetindextop,
-  getesmkeyvalglobreplaced
+  getesmkeyvalglobreplaced,
+  getesmkeyidpathrefpathexpanded
 }
