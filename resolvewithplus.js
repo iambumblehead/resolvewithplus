@@ -318,7 +318,9 @@ const esmparse = (spec, specifier, opts = {}) => {
           // if dynamic 'spectype', lookup 'commonjs' or 'module'
           // according to package.json
           specname = specname === spectype
-            ? getspectypenamedexportdefault(opts.packagejsontype)
+            ? isDirPathRe.test(specifier)
+              ? getspectypenamedexportdefault(opts.packagejsontype)
+              : specifier
             : specname,
           esmparse(spec[specname], specifier, opts))
       ), false)
