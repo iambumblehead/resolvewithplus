@@ -280,14 +280,6 @@ const esmparselist = (list, spec, specifier, opts, key = list[0]) => {
     || esmparselist(list.slice(1), spec, specifier, opts)
 }
 
-// ('require', ['node', 'default']) => false
-// ('node', ['node', 'default']) => true
-// ('.', ['node', 'default']) => true
-// ('./any', ['node', 'default']) => true
-// ('deno', ['node', 'default']) => false
-const specnameisnavigable = (specname, priority) => specname
-  && (specname.startsWith('.') || priority.contains(specname))
-
 const esmparse = (spec, specifier, opts = {}) => {
   const priority = opts.priority || [specruntime, specdefault]
   let indexval = false
