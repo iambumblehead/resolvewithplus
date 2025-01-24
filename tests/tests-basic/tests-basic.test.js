@@ -91,6 +91,10 @@ test('should return fileurl paths, as import.meta.resolve', async () => {
     resolvewithplus('yargs', fullpath))
 
   assert.strictEqual(
+    await metaresolve('openai', fullpathfileurl),
+    resolvewithplus('openai', fullpath))
+
+  assert.strictEqual(
     await metaresolve('got', fullpathfileurl),
     resolvewithplus('got', fullpath))
 
