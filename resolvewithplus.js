@@ -318,8 +318,8 @@ const esmparse = (spec, specifier, opts = {}) => {
           // if dynamic 'spectype', lookup 'commonjs' or 'module'
           // according to package.json
           specname = specname === spectype
-            ? getspectypenamedexportdefault(specifier === specimport
-              ? specifier : opts.packagejsontype)
+            ? (getspectypenamedexportdefault(specifier)
+              || getspectypenamedexportdefault(opts.packagejsontype))
             : specname,
           esmparse(spec[specname], specifier, opts))
       ), false)
