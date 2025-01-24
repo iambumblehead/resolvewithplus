@@ -1,4 +1,4 @@
-// Filename: resolvewithplus.spec.js  
+// Filename: resolvewithplus.spec.js
 // Timestamp: 2017.04.23-23:31:33 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
@@ -174,7 +174,7 @@ test('should return null when given id to withpath inaccessible module', () => {
 test('should follow the behaviour of require.resolve', () => {
   const dirname = path.dirname(url.fileURLToPath(import.meta.url))
   const dirnameroot = path.resolve(dirname + '/../../')
-  
+
   // needed in case, resolvewith is cloned to a different directory name
   const resolvewithrootdirname = path.basename(dirnameroot)
   const resolvewithresolved = path
@@ -207,7 +207,7 @@ test('should handle package.json "exports" field', () => {
 
 test('should handle package.json "exports" field, $.[0].import', () => {
   const fullpath = path.resolve('../testfiles/')
-  
+
   assert.strictEqual(
     resolvewithplus('yargs', fullpath),
     toresolvefileurl('../node_modules/yargs/index.mjs'))
@@ -215,7 +215,7 @@ test('should handle package.json "exports" field, $.[0].import', () => {
 
 test('should handle package.json stringy "exports" field (got)', () => {
   const fullpath = path.resolve('../testfiles/')
-  
+
   assert.strictEqual(
     resolvewithplus('got', fullpath),
     toresolvefileurl('../node_modules/got/dist/source/index.js'))
@@ -223,7 +223,7 @@ test('should handle package.json stringy "exports" field (got)', () => {
 
 test('should handle package.json "main": "./lib" field (pg)', () => {
   const fullpath = path.resolve('../testfiles/')
-  
+
   assert.strictEqual(
     resolvewithplus('pg', fullpath),
     toresolvefileurl('../node_modules/pg/lib/index.js'))
@@ -288,7 +288,7 @@ test('should handle exports.import path definition', () => {
       }
     }
   })
-  
+
   assert.strictEqual(resolved, resolvingpackagejsonmoduleurlpath)
 })
 
@@ -378,7 +378,7 @@ test('should handle mixed exports, import', () => {
   })
 
   assert.strictEqual(resolved, resolvingpackagejsonmoduleurlpath)
-})  
+})
 
 test('should handle mixed exports, commonjs', () => {
   // used by 'yargs@17.5.1'
@@ -430,7 +430,7 @@ test('resolve import or commonjs according to package type', () => {
   })
 
   assert.strictEqual(resolvedmodule, resolvingpackagejsonmoduleurlpath)
-  
+
   const resolvedmain = resolvewithplus('test', import.meta.url, {
     packagejsonmap: {
       [resolvingpackagejsonpath]: {
@@ -481,7 +481,6 @@ test('resolve import or commonjs according to package type', () => {
   })
 
   assert.strictEqual(resolveddotimport2, resolvingpackagejsonmoduleurlpath)
-
 
   const resolveddotdefault = resolvewithplus('test', import.meta.url, {
     packagejsonmap: {
@@ -685,7 +684,7 @@ test('gettargetindextop should resolve a fullpath', () => {
 
   assert.strictEqual(
     indexpathmain,
-    url.fileURLToPath(resolvingpackagejsonmoduleurlpath))  
+    url.fileURLToPath(resolvingpackagejsonmoduleurlpath))
 })
 
 test('getesmkeyvalglobreplaced should expand globby path groups', () => {

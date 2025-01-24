@@ -7,7 +7,7 @@ if (import.meta.resolve.constructor.name === 'AsyncFunction') {
     assert.strictEqual(
       await import.meta.resolve('js-a'),
       resolvewithplus('js-a'))
-  })  
+  })
 } else {
   test('should return workspace paths', () => {
     assert.strictEqual(
