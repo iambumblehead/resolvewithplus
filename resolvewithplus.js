@@ -61,7 +61,7 @@ const pathToPosix = pathany => isWin32PathRe.test(pathany)
 const isfilesync = (file, stat) => {
   try {
     stat = fs.statSync(file)
-  } catch (e) {
+  } catch {
     stat = false
   }
 
@@ -256,7 +256,6 @@ const getesmkeyvalmatch = (esmkey, esmval, idpath, opts, keyvalmx = false) => {
           return exp
         }, {})
 
-        // eslint-disable-next-line no-use-before-define
         return esmparse(expandedspec, idpath, opts)
       }
 
@@ -492,7 +491,6 @@ const esmparseimport = (targetpath, specifier, pjson, opts) => {
   return firstmatch && (
     isRelPathRe.test(firstmatch)
       ? path.join(targetpath, firstmatch)
-      // eslint-disable-next-line no-use-before-define
       : resolvewith(firstmatch, targetpath, { isposixpath: true }))
 }
 

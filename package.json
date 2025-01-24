@@ -30,9 +30,9 @@
     "file"
   ],
   "devDependencies": {
-    "c8": "^8.0.1",
-    "eslint": "^8.49.0",
-    "eslint-plugin-markdown": "^3.0.1"
+    "c8": "^10.0.1",
+    "eslint": "^9.13.0",
+    "eslint-plugin-markdown": "^5.1.0"
   },
   "scripts": {
     "test:install": "cd tests && npm run install:all",

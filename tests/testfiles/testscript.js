@@ -1,4 +1,4 @@
-// Filename: testscript.js  
+// Filename: testscript.js
 // Timestamp: 2015.07.15-12:04:02 (last modified)
 // Author(s): bumblehead <chris@bumblehead.com>
 
