@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.1.7 _Sep.01.2025_
+   * match [exact export paths,](https://github.com/iambumblehead/resolvewithplus/pull/71) thanks @matz3
  * 2.1.6 _Jan.24.2025_
    * [resolve issue](https://github.com/iambumblehead/resolvewithplus/pull/68) preventing correct resolution of openai import specifier
    * [update eslint](https://github.com/iambumblehead/resolvewithplus/pull/69) to latest major version
