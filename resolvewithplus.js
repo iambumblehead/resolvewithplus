@@ -150,11 +150,19 @@ const gettargetnameandspecifier = target =>
 // the right hand side target pattern as a ** glob against the list of files
 // within the package.
 //
+// Paths need to match exactly. Partial matches are only valid when using the
+// star glob pattern.
+//
 // './lib/*' './lib/index' -> true
+// './lib/feature', './lib/feature' -> true
 // './lib/feature', './lib/index' -> false
+// './lib/feature', './lib/feature/something' -> false
 const ispathesmmatch = (pathesm, pathlocal) => {
   const isesmkeymatchRe = new RegExp(
-    pathesm.replace(esmStrPathCharRe, '\\$1').replace(esmStrGlobRe, '.*'))
+    '^' +
+    pathesm.replace(esmStrPathCharRe, '\\$1').replace(esmStrGlobRe, '.*') +
+    '$'
+  )
 
   return isesmkeymatchRe.test(pathlocal)
 }
