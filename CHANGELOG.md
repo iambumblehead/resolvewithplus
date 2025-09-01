@@ -1,5 +1,7 @@
 # changelog
 
+ * 2.1.8 _???.??.2025_
+   * increment test node version and [remove c8,](https://github.com/iambumblehead/resolvewithplus/pull/73)
  * 2.1.7 _Sep.01.2025_
    * match [exact export paths,](https://github.com/iambumblehead/resolvewithplus/pull/71) thanks @matz3
  * 2.1.6 _Jan.24.2025_
