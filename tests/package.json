@@ -24,6 +24,7 @@
     "test:test-basic": "cd tests-basic && npm test",
     "test:all": "npm-run-all test:test*",
     "test:all-cover": "c8 --src=../resolvewithplus.js npm run test:all",
+    "test:all-cover": "cd tests-basic && npm run test-cover",
     "test:all-ci": "npm run mini && npm run test:all"
   }
 }

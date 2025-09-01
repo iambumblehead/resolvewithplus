@@ -3,3 +3,4 @@ bower_components
 README.html
 .tern-port
 package-lock.json
+coverage

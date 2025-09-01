@@ -31,7 +31,9 @@
     "test-workspaces-js": "npm --prefix workspaces-js/js-b test",
     "test-workspaces-ts": "npm --prefix workspaces-ts/ts-b test",
     "test-workspaces": "npm run test-workspaces-js && npm run test-workspaces-ts",
-    "test-vanilla": "node --experimental-import-meta-resolve --test tests-basic.test.js tests-export-patterns.test.js tests-import-patterns.test.js",
-    "test": "npm run test-workspaces && npm run test-vanilla"
+    "test-vanilla": "node --test tests-basic.test.js tests-export-patterns.test.js tests-import-patterns.test.js",
+    "test-vanilla-cover": "node --experimental-test-coverage --test-coverage-include=../../resolvewithplus.js --test",
+    "test": "npm run test-workspaces && npm run test-vanilla",
+    "test-cover": "npm run test-workspaces && npm run test-vanilla-cover"
   }
 }
