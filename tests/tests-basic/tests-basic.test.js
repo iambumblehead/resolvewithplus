@@ -234,7 +234,7 @@ test('should handle package.json "main": "./lib" field (pg)', () => {
 
   assert.strictEqual(
     resolvewithplus('pg', fullpath),
-    toresolvefileurl('../node_modules/pg/lib/index.js'))
+    toresolvefileurl('../node_modules/pg/esm/index.mjs'))
 })
 
 test('should return values from cache', () => {

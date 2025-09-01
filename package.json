@@ -30,7 +30,6 @@
     "file"
   ],
   "devDependencies": {
-    "c8": "^10.0.1",
     "eslint": "^9.34.0",
     "eslint-plugin-markdown": "^5.1.0"
   },
