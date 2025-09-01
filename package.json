@@ -1,6 +1,6 @@
 {
   "name": "resolvewithplus",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "resolvewith with extra power",
   "readmeFilename": "README.md",
   "license": "ISC",
@@ -31,7 +31,7 @@
   ],
   "devDependencies": {
     "c8": "^10.0.1",
-    "eslint": "^9.13.0",
+    "eslint": "^9.34.0",
     "eslint-plugin-markdown": "^5.1.0"
   },
   "scripts": {
