@@ -81,8 +81,12 @@ test('should mock all exports from nodejsexample_01_exports', () => {
 test('should mock all exports from nodejsexample_02_exports', () => {
   const noderesolvedlibindex = toresolvefileurl(
     './nodejsexample_02_exports/lib/index.test.js')
+  const noderesolvedlibstuff = toresolvefileurl(
+    './nodejsexample_02_exports/lib/stuff.js')
   const noderesolvedfeatureindex = toresolvefileurl(
     './nodejsexample_02_exports/feature/index.test.js')
+  const noderesolvedfeaturestuff = toresolvefileurl(
+    './nodejsexample_02_exports/feature/stuff.js')
   const noderesolvedpackagejson = toresolvefileurl(
     './nodejsexample_02_exports/package.json')
 
@@ -95,24 +99,24 @@ test('should mock all exports from nodejsexample_02_exports', () => {
     noderesolvedlibindex)
 
   assert.strictEqual(
-    resolvewithplus('nodejsexample_02_exports/lib/index'),
-    noderesolvedlibindex)
+    resolvewithplus('nodejsexample_02_exports/lib/stuff'),
+    noderesolvedlibstuff)
 
   assert.strictEqual(
-    resolvewithplus('nodejsexample_02_exports/lib/index.js'),
-    noderesolvedlibindex)
+    resolvewithplus('nodejsexample_02_exports/lib/stuff.js'),
+    noderesolvedlibstuff)
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_02_exports/feature'),
     noderesolvedfeatureindex)
 
   assert.strictEqual(
-    resolvewithplus('nodejsexample_02_exports/feature/index'),
-    noderesolvedfeatureindex)
+    resolvewithplus('nodejsexample_02_exports/feature/stuff'),
+    noderesolvedfeaturestuff)
 
   assert.strictEqual(
-    resolvewithplus('nodejsexample_02_exports/feature/index.js'),
-    noderesolvedfeatureindex)
+    resolvewithplus('nodejsexample_02_exports/feature/stuff.js'),
+    noderesolvedfeaturestuff)
 
   assert.strictEqual(
     resolvewithplus('nodejsexample_02_exports/package.json'),
@@ -311,6 +315,32 @@ test('should mock exports from nodejsexample_14_exports, asterisk dir', () => {
   assert.strictEqual(
     resolvewithplus('nodejsexample_14_exports/mystuff/index'),
     noderesolvedindex)
+})
+
+// "exports": {
+//   ".": {
+//     "import": "./src/index.js"
+//   },
+//   "./mystuff": {
+//     "import": "./src/mystuff/index.js"
+//   },
+//   "./*": {
+//     "import": "./src/*"
+//   }
+// }
+test('should mock exports from nodejsexample_15_exports, partial match', () => {
+  const noderesolvedmystuff = toresolvefileurl(
+    './nodejsexample_15_exports/src/mystuff/index.js')
+  const noderesolvedmystufffeature = toresolvefileurl(
+    './nodejsexample_15_exports/src/mystuff/feature.js')
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_15_exports/mystuff'),
+    noderesolvedmystuff)
+
+  assert.strictEqual(
+    resolvewithplus('nodejsexample_15_exports/mystuff/feature.js'),
+    noderesolvedmystufffeature)
 })
 
 // "exports": './lib/index.js',

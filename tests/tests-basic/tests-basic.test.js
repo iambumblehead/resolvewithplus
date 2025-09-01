@@ -39,16 +39,24 @@ test('should return matched export paths', () => {
     .getesmkeyvalmatch(key, o[key], path)
 
   assert.strictEqual(
-    getmatch(exports, '.', './lib/index.test.js'),
+    getmatch(exports, '.', '.'),
     './lib/index.test.js')
 
   assert.strictEqual(
-    getmatch(exports, './lib', './lib/index.test.js'),
+    getmatch(exports, './lib', './lib'),
     './lib/index.test.js')
 
   assert.strictEqual(
     getmatch(exports, './lib/*', './lib/index.test.js'),
     './lib/index.test.js')
+
+  assert.strictEqual(
+    getmatch(exports, './lib/*', './lib/feature.js'),
+    './lib/feature.js')
+
+  assert.strictEqual(
+    getmatch(exports, './lib/*', './lib/feature'),
+    './lib/feature.js')
 
   assert.strictEqual(
     getmatch(exports, './submodule.js', './submodule.js'),
