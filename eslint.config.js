@@ -1,9 +1,18 @@
+import { defineConfig } from "eslint/config"
+import stylistic from '@stylistic/eslint-plugin'
 import js from '@eslint/js'
-import markdown from 'eslint-plugin-markdown'
+import markdown from "@eslint/markdown"
 
-export default [
-  js.configs.recommended,
-  ...markdown.configs.recommended,
+export default defineConfig([
+  {
+    files: ["**/*js","*js"],
+    ...js.configs.recommended
+  },
+  {
+    files: ["*.md"],
+    plugins: {markdown},
+    extends: ["markdown/recommended"]
+  },
   {
     ignores: [],
     languageOptions: {
@@ -23,25 +32,29 @@ export default [
         Promise: true
       }
     },
+    plugins: {
+      '@stylistic': stylistic
+    },
     rules: {
       "no-trailing-spaces": ["error"],
       "global-require": 0,
       "no-sequences": 0,
       "no-unused-vars": "error",
       "semi": [2, "never"],
-      "strict": [2, "never"],
+      // "strict": [2, "never"],
       "one-var": [2, {
         "let": "always",
         "const": "never"
       }],
       "space-in-parens": [2, "never" ],
-      "indent": [2, 2, {
-        "flatTernaryExpressions": true,
-        "VariableDeclarator": {
-          "let": 2,
-          "const": 3
-        }
-      }],
+      // "indent": [2, 2, {
+      //   "flatTernaryExpressions": true,
+      //   "VariableDeclarator": {
+      //     "let": 2,
+      //     "const": 3
+      //   }
+      // }],
+      "@stylistic/indent": ["error", 2],
       "camelcase": 0,
       "func-names": [2, "never"],
       "newline-per-chained-call": 0,
@@ -77,4 +90,4 @@ export default [
       "no-confusing-arrow": 0
     }
   }
-]
+])
