@@ -375,7 +375,7 @@ const esmparse = (spec, specifier, opts = {}) => {
 // 3. If X.json is a file, parse X.json to a JavaScript Object.  STOP
 // 4. If X.node is a file, load X.node as binary addon.  STOP
 const getasfilesync = (f, opts = {}) => {
-  var filepath = null
+  var filepath
   var filepathts = opts.istypescript
       && isJsExtnRe.test(f) && f.replace(isJsExtnRe, '.ts')
 
@@ -585,7 +585,7 @@ const getasnode_module = (targetpath, start, opts) => {
 // 4. THROW "not found"
 //
 const begin = (moduleId, parent, opts) => {
-  var fullpath = null
+  var fullpath
 
   parent = typeof parent === 'string'
     ? getasdirname(getaspath(decodeURI(parent)))

@@ -27,7 +27,3 @@ resolvewithplus('react-dom/server', '/resolvewith/test/', {
 [35]: https://www.npmjs.com/package/import-meta-resolve
 [36]: https://packagephobia.com/result?p=resolvewithplus
 [37]: https://packagephobia.com/result?p=import-meta-resolve
-[39]: https://github.com/iambumblehead/resolvewithplus
-
-
-
