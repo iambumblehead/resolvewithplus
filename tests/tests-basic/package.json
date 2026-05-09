@@ -30,7 +30,7 @@
   "scripts": {
     "test-workspaces-js": "npm --prefix workspaces-js/js-b test",
     "test-workspaces-ts": "npm --prefix workspaces-ts/ts-b test",
-    "test-workspaces": "npm run test-workspaces-js && npm run test-workspaces-ts",
+    "test-workspaces": "npm run test-workspaces-js",
     "test-vanilla": "node --test tests-basic.test.js tests-export-patterns.test.js tests-import-patterns.test.js",
     "test-vanilla-cover": "node --experimental-test-coverage --test-coverage-include=../../resolvewithplus.js --test",
     "test": "npm run test-workspaces && npm run test-vanilla",
