@@ -3,7 +3,7 @@ resolvewithplus
 ![npm](https://img.shields.io/npm/v/resolvewithplus) ![Build Status](https://github.com/iambumblehead/resolvewithplus/workflows/test/badge.svg) [![install size](https://packagephobia.now.sh/badge?p=resolvewithplus)](https://packagephobia.now.sh/result?p=resolvewithplus)
 
 
-```javascript
+```js
   INVALIDSYNTAX#
 resolvewithplus('koa', '/resolvewith/test/')
 // 'file:///resolvewith/node_modules/koa/dist/koa.mjs'

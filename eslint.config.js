@@ -5,13 +5,13 @@ import markdown from "@eslint/markdown"
 
 export default defineConfig([
   {
-    files: ["**/*js","*js"],
-    ...js.configs.recommended
-  },
-  {
-    files: ["*.md"],
+    files: ["*.md", "*.md/*.js"],
     plugins: {markdown},
     extends: ["markdown/recommended"]
+  },
+  {
+    files: ["**/*js","*js","**/*.md/*.js","*.md/*.js"],
+    ...js.configs.recommended
   },
   {
     ignores: [],
