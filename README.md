@@ -4,14 +4,11 @@ resolvewithplus
 
 
 ```js
-  INVALIDSYNTAX#
 resolvewithplus('koa', '/resolvewith/test/')
 // 'file:///resolvewith/node_modules/koa/dist/koa.mjs'
-  INVALIDSYNTAX#
 resolvewithplus('react-dom/server', '/resolvewith/test/', {
   isbrowser: true
-  INVALIDSYNTAX#
-})INVALIDSYNTAX#
+})
 // 'file:///resolvewith/node_modules/react-dom/server.browser.js'
 
 resolvewithplus('react-dom/server', '/resolvewith/test/', {

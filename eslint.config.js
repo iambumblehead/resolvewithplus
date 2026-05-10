@@ -4,6 +4,7 @@ import js from '@eslint/js'
 import markdown from "@eslint/markdown"
 
 export default defineConfig([
+  ...markdown.configs.processor,
   {
     files: ["*.md", "*.md/*.js"],
     plugins: {markdown},
