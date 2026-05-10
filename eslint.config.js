@@ -4,14 +4,23 @@ import js from '@eslint/js'
 import markdown from "@eslint/markdown"
 
 export default defineConfig([
+  ...markdown.configs.processor,
   {
-    files: ["**/*js","*js"],
+    files: ["*.md", "*.md/*.js"],
+    plugins: {markdown},
+    extends: ["markdown/recommended"]
+  },
+  {
+    files: ["**/*js","*js","*.md/*.js"],
     ...js.configs.recommended
   },
   {
-    files: ["*.md"],
-    plugins: {markdown},
-    extends: ["markdown/recommended"]
+    files: ["*.md/*js"],
+    languageOptions: {
+      globals: {
+        resolvewithplus: true
+      }
+    }
   },
   {
     ignores: [],
