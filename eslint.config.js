@@ -11,8 +11,16 @@ export default defineConfig([
     extends: ["markdown/recommended"]
   },
   {
-    files: ["**/*js","*js","**/*.md/*.js","*.md/*.js"],
+    files: ["**/*js","*js","*.md/*.js"],
     ...js.configs.recommended
+  },
+  {
+    files: ["*.md/*js"],
+    languageOptions: {
+      globals: {
+        resolvewithplus: true
+      }
+    }
   },
   {
     ignores: [],
